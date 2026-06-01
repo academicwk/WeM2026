@@ -192,8 +192,8 @@
         </div>
     </main>
 
-    <script>
-        // ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
+<script>
+        // 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
             
@@ -209,10 +209,6 @@
             document.getElementById('display-name').textContent = user.name;
             document.getElementById('display-role').textContent = user.status;
             
-            document.getElementById('info-name').textContent = user.name;
-            document.getElementById('info-status').textContent = user.status;
-            document.getElementById('info-class').textContent = user.className || "-";
-
             // ฟังก์ชันแสดงวันและเวลาแบบ Real-time
             function updateClock() {
                 const now = new Date();
@@ -225,14 +221,18 @@
                     second: '2-digit' 
                 });
 
-                document.getElementById('current-date').textContent = `${dateString} | ${timeString}`;
+                const clockElement = document.getElementById('current-date');
+                if (clockElement) {
+                    clockElement.textContent = `${dateString} | ${timeString}`;
+                }
             }
 
             // เรียกใช้งานและอัปเดตทุกๆ 1 วินาที
             setInterval(updateClock, 1000);
             updateClock();
+        });
 
-        // ควบคุม Sidebar บนมือถือ
+        // 2. ควบคุม Sidebar บนมือถือ
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -241,7 +241,7 @@
             overlay.classList.toggle('hidden');
         }
 
-        // ออกจากระบบ
+        // 3. ออกจากระบบ (ล้างข้อมูลผู้ใช้ และกลับไปหน้า index.html)
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
