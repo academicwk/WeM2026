@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แผนการจัดการเรียนรู้ | WeM System</title>
+    <title>แผนการจัดการเรียนรู้ | WeM</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,50 +22,109 @@
         }
     </script>
 </head>
-<body class="bg-slate-100 font-sans antialiased text-gray-800 flex flex-col h-screen overflow-hidden">
+<body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
 
-    <!-- Header Bar -->
-    <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b">
-        <div class="flex items-center gap-4">
-            <a href="main.html" class="w-10 h-10 bg-slate-100 hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm" title="กลับหน้าหลัก">
-                <i class="fa-solid fa-arrow-left text-lg"></i>
+    <aside id="sidebar" class="bg-navy-900 w-64 h-full flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-20 shadow-2xl shrink-0">
+        <div class="flex items-center justify-center py-4 border-b border-navy-800">
+            <div class="bg-white px-10 py-2 rounded-xl shadow-md flex items-center justify-center">
+                <img src="https://img2.pic.in.th/WeM2.png" alt="WeM2" border="0" class="h-10 w-auto object-contain">
+            </div>
+        </div>
+
+        <div class="p-4 border-b border-navy-800">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md shrink-0 mt-1 overflow-hidden border border-gray-200">
+                    <img id="sidebar-user-img" src="" class="w-full h-full object-cover hidden">
+                    <i id="sidebar-user-icon" class="fa-solid fa-user-tie text-xl text-navy-900"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <h2 id="display-firstname" class="text-gold-400 font-bold leading-tight">กำลังโหลด...</h2>
+                    <h2 id="display-lastname" class="text-gold-400 font-bold leading-tight mb-2"></h2>
+                    <p id="display-position" class="text-white text-xs mt-1 truncate"></p>
+                    <p id="display-group" class="text-white text-xs mt-1 truncate"></p>
+                    <p id="display-room" class="text-white text-xs mt-1 truncate"></p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-3 space-y-1 overflow-y-auto">
+            <a href="main.html" class="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-house w-5 text-center"></i>
+                <span class="font-medium text-sm">หน้าหลัก</span>
             </a>
-            <div class="border-l-4 border-gold-500 pl-3 py-1">
-                <h2 class="text-xl font-bold text-navy-900 leading-none">แผนการจัดการเรียนรู้ / แผนการจัดประสบการณ์</h2>
-                <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบอัปโหลดและติดตามความคืบหน้าการส่งแผนการสอนออนไลน์</p>
-            </div>
-        </div>
-        <div class="hidden sm:flex items-center text-sm bg-navy-900 text-white py-2 px-4 rounded-xl shadow-sm gap-3">
-            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center overflow-hidden border border-gray-300">
-                <img id="header-user-img" src="" class="w-full h-full object-cover hidden">
-                <i id="header-user-icon" class="fa-solid fa-user text-navy-900 text-sm"></i>
-            </div>
-            <div>
-                <p class="font-bold leading-none text-gold-400" id="header-user-name">กำลังโหลด...</p>
-                <p class="text-[10px] text-gray-400 mt-1" id="header-user-pos">-</p>
-            </div>
-        </div>
-    </header>
+            <a href="main.html#zone-academic" class="flex items-center gap-3 px-4 py-2 bg-navy-800 text-white rounded-lg transition-colors border-l-4 border-gold-400">
+                <i class="fa-solid fa-book-open w-5 text-center text-gold-400"></i>
+                <span class="font-medium text-sm">วิชาการ</span>
+            </a>
+            <a href="main.html#zone-hr" class="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-users w-5 text-center"></i>
+                <span class="font-medium text-sm">บุคคล</span>
+            </a>
+            <a href="main.html#zone-budget" class="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-coins w-5 text-center"></i>
+                <span class="font-medium text-sm">งบประมาณ</span>
+            </a>
+            <a href="main.html#zone-admin" class="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-building w-5 text-center"></i>
+                <span class="font-medium text-sm">บริหารงานทั่วไป</span>
+            </a>
+        </nav>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 p-6 overflow-y-auto bg-slate-50">
-        <!-- Grid Layout สำหรับการ์ดทั้ง 8 หน่วยเรียนรู้ -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto" id="unit-cards-container">
-            <!-- JavaScript จะทำการสร้างการ์ดหน่วยการเรียนรู้ 1-8 มารวมไว้ที่นี่แบบอัตโนมัติ -->
+        <div class="p-4 border-t border-navy-800 text-center">
+            <button onclick="handleLogout()" class="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors shadow-sm mb-2 text-sm">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="font-medium">ออกจากระบบ</span>
+            </button>
+            <p class="text-[10px] text-blue-300">WeM System Version 2.0.1</p>
+        </div>
+    </aside>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="border-l-4 border-gold-500 pl-3 py-1">
+                    <h2 class="text-xl font-bold text-navy-900 leading-none">ระบบบริหารจัดการทางการศึกษา Watkhod e-Management : WeM</h2>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5">โรงเรียนเทศบาลวัดโขดทิมทาราม | กองการศึกษา เทศบาลนครระยอง</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2">
+                <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="Icon" border="0" class="h-12 w-auto object-contain">
+                <span id="current-date"></span>
+            </div>
+        </header>
+
+        <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
+            
+            <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-200 sticky top-0 bg-slate-50 z-10 pt-2">
+                <a href="main.html" class="w-10 h-10 bg-white hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm border border-gray-200 shrink-0" title="กลับหน้าหลัก">
+                    <i class="fa-solid fa-arrow-left text-lg"></i>
+                </a>
+                <div>
+                    <h2 class="text-2xl font-bold text-navy-900">แผนการจัดการเรียนรู้ / แผนการจัดประสบการณ์</h2>
+                    <p class="text-sm font-medium text-gray-500 mt-1">ระบบอัปโหลดและติดตามความคืบหน้าการส่งแผนการสอนออนไลน์</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 max-w-7xl mx-auto pb-10" id="unit-cards-container">
+                </div>
         </div>
     </main>
 
-    <!-- อินพุตสำหรับซ่อนเพื่อเลือกไฟล์ PDF -->
     <input type="file" id="pdfUploader" accept="application/pdf" class="hidden" onchange="handleFileSelect(event)">
 
     <script>
-        // กำหนด URL ของ API อันเดียวกับระบบหลักของคุณ
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
         let currentUser = null;
-        let uploadedData = {}; // เก็บข้อมูลลิงก์ไฟล์ที่เคยอัปโหลดไว้แล้วจากฐานข้อมูล
-        let currentUploadParams = null; // เก็บพารามิเตอร์ชั่วคราวขณะกดอัปโหลด
+        let uploadedData = {}; 
+        let currentUploadParams = null; 
 
+        // 1. ทำงานเมื่อโหลดหน้าเว็บ
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
             if (!userData) {
@@ -74,24 +133,57 @@
             }
 
             currentUser = JSON.parse(userData);
+            const fullName = currentUser.name || "";
+            const nameParts = fullName.split(" ");
             
-            // อัปเดตข้อมูลผู้ใช้บน Header ของหน้านี้
-            document.getElementById('header-user-name').textContent = currentUser.name;
-            document.getElementById('header-user-pos').textContent = currentUser.position || "ครูผู้สอน";
-            
-            const headerImg = document.getElementById('header-user-img');
-            const headerIcon = document.getElementById('header-user-icon');
-            if(currentUser.image && currentUser.image.trim() !== "") {
-                headerImg.src = currentUser.image;
-                headerImg.classList.remove('hidden');
-                headerIcon.classList.add('hidden');
+            // โหลดข้อมูลใส่ Sidebar
+            document.getElementById('display-firstname').textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            document.getElementById('display-lastname').textContent = nameParts.slice(1).join(" ") || ""; 
+            document.getElementById('display-position').textContent = currentUser.position || "-";
+            document.getElementById('display-group').textContent = currentUser.group || "-";
+            document.getElementById('display-room').textContent = currentUser.room || "-";
+
+            const sidebarImg = document.getElementById('sidebar-user-img');
+            const sidebarIcon = document.getElementById('sidebar-user-icon');
+            if (currentUser.image && currentUser.image.trim() !== "") {
+                sidebarImg.src = currentUser.image;
+                sidebarImg.classList.remove('hidden');
+                sidebarIcon.classList.add('hidden');
             }
 
-            // เริ่มต้นดึงข้อมูลประวัติการอัปโหลดแผนการสอนจาก Google Sheets
+            // เริ่มนาฬิกา
+            function updateClock() {
+                const now = new Date();
+                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const clockElement = document.getElementById('current-date');
+                if (clockElement) {
+                    clockElement.textContent = `${now.toLocaleDateString('th-TH', dateOptions)} | ${timeString}`;
+                }
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // ดึงข้อมูลการอัปโหลดจากฐานข้อมูล
             fetchLessonPlans();
         });
 
-        // ฟังก์ชันดึงข้อมูลประวัติการอัปโหลดแผนการสอนจากหลังบ้าน
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('wem_user');
+            window.location.href = "index.html";
+        }
+
+        // ==========================================
+        // ระบบจัดการแผนการสอน (Lesson Plans)
+        // ==========================================
+
         async function fetchLessonPlans() {
             const container = document.getElementById('unit-cards-container');
             container.innerHTML = `
@@ -111,27 +203,23 @@
                 if (result.status === 'success') {
                     uploadedData = result.data || {};
                 }
-                // เรียกฟังก์ชันเรนเดอร์สร้างการ์ด 8 การ์ดทันที
                 renderUnitCards();
             } catch (error) {
                 console.error(error);
                 Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้', 'error');
-                renderUnitCards(); // เผื่อกรณี Error ให้โหลดหน้าเปล่าขึ้นมาก่อนเพื่อไม่ให้หน้าจอค้าง
+                renderUnitCards(); 
             }
         }
 
-        // ฟังก์ชันสร้างการ์ด 8 หน่วยการเรียนรู้พร้อมการแสดงผล 4 สัปดาห์ย่อย
         function renderUnitCards() {
             const container = document.getElementById('unit-cards-container');
             container.innerHTML = '';
 
-            // วนลูปสร้างการ์ดทั้งหมด 8 หน่วยการเรียนรู้
             for (let unit = 1; unit <= 8; unit++) {
                 let completedItems = 0;
-                let totalItems = 8; // แต่ละหน่วยมี 4 สัปดาห์ สัปดาห์ละ 2 ฉบับ (แผน + บันทึกหลังสอน) รวมเป็น 8 รายการ
+                let totalItems = 8; 
                 let rowsHtml = '';
 
-                // วนลูปสร้างแถวภายในหน่วยนั้นๆ ทั้งหมด 4 สัปดาห์
                 for (let week = 1; week <= 4; week++) {
                     const planKey = `unit_${unit}_week_${week}_plan`;
                     const logKey = `unit_${unit}_week_${week}_log`;
@@ -142,31 +230,27 @@
                     if (planUrl) completedItems++;
                     if (logUrl) completedItems++;
 
-                    // สร้างสไตล์ปุ่ม PDF แผนการสอน
                     const planBtnView = planUrl 
-                        ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center shadow transition-colors" title="ดูไฟล์ PDF แผนการสอน"><i class="fa-solid fa-file-pdf"></i></a>`
+                        ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center shadow transition-colors" title="ดูไฟล์ PDF"><i class="fa-solid fa-file-pdf"></i></a>`
                         : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf"></i></button>`;
 
-                    // สร้างสไตล์ปุ่ม PDF บันทึกหลังสอน
                     const logBtnView = logUrl 
-                        ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center shadow transition-colors" title="ดูไฟล์ PDF บันทึกหลังสอน"><i class="fa-solid fa-file-pdf"></i></a>`
+                        ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center shadow transition-colors" title="ดูไฟล์ PDF"><i class="fa-solid fa-file-pdf"></i></a>`
                         : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf"></i></button>`;
 
                     rowsHtml += `
-                        <div class="grid grid-cols-12 gap-2 items-center py-2.5 border-b border-slate-100 last:border-none text-sm">
-                            <div class="col-span-4 font-bold text-gray-700">สัปดาห์ที่ ${week}</div>
+                        <div class="grid grid-cols-12 gap-2 items-center py-2.5 border-b border-slate-100 last:border-none text-sm hover:bg-slate-50/50 transition-colors">
+                            <div class="col-span-4 font-bold text-gray-700 pl-2">สัปดาห์ที่ ${week}</div>
                             
-                            <!-- คอลัมน์แผนการสอน -->
                             <div class="col-span-4 flex items-center gap-2 justify-center border-r border-slate-100">
-                                <button onclick="openUploader(${unit}, ${week}, 'plan')" class="w-8 h-8 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded-lg flex items-center justify-center shadow-sm transition-all" title="อัปโหลด/แก้ไข แผนการสอน">
+                                <button onclick="openUploader(${unit}, ${week}, 'plan')" class="w-8 h-8 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded-lg flex items-center justify-center shadow-sm transition-all border border-gray-200" title="อัปโหลด/แก้ไข แผนการสอน">
                                     <i class="fa-solid fa-pen text-xs"></i>
                                 </button>
                                 ${planBtnView}
                             </div>
                             
-                            <!-- คอลัมน์บันทึกหลังสอน -->
                             <div class="col-span-4 flex items-center gap-2 justify-center">
-                                <button onclick="openUploader(${unit}, ${week}, 'log')" class="w-8 h-8 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded-lg flex items-center justify-center shadow-sm transition-all" title="อัปโหลด/แก้ไข บันทึกหลังสอน">
+                                <button onclick="openUploader(${unit}, ${week}, 'log')" class="w-8 h-8 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded-lg flex items-center justify-center shadow-sm transition-all border border-gray-200" title="อัปโหลด/แก้ไข บันทึกหลังสอน">
                                     <i class="fa-solid fa-pen text-xs"></i>
                                 </button>
                                 ${logBtnView}
@@ -175,25 +259,21 @@
                     `;
                 }
 
-                // คำนวณเปอร์เซ็นต์ความคืบหน้าของการ์ดใบนี้
                 const progressPercent = Math.round((completedItems / totalItems) * 100);
-                
-                // กำหนดสีของแถบความคืบหน้าตามปริมาณงานที่ส่ง
                 let barColor = 'bg-red-500';
-                if(progressPercent >= 100) barColor = 'bg-green-500';
+                if(progressPercent === 100) barColor = 'bg-green-500';
                 else if(progressPercent >= 50) barColor = 'bg-blue-500';
-                else if(progressPercent >= 25) barColor = 'bg-amber-500';
+                else if(progressPercent > 0) barColor = 'bg-amber-500';
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col transition-all hover:shadow-md";
+                card.className = "bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col transition-all hover:shadow-md h-fit";
                 card.innerHTML = `
-                    <!-- หัวการ์ดแสดงลำดับหน่วยการเรียนรู้ -->
-                    <div class="flex items-center justify-between mb-4 pb-2 border-b-2 border-slate-100">
-                        <div class="flex items-center gap-2">
-                            <div class="w-9 h-9 bg-navy-900 text-gold-400 font-bold rounded-xl flex items-center justify-center shadow-sm text-sm">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b-2 border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-navy-900 text-gold-400 font-bold rounded-xl flex items-center justify-center shadow-sm text-base">
                                 ${unit}
                             </div>
-                            <h3 class="font-bold text-navy-900 text-base">หน่วยการเรียนรู้ที่ ${unit}</h3>
+                            <h3 class="font-bold text-navy-900 text-lg">หน่วยการเรียนรู้ที่ ${unit}</h3>
                         </div>
                         <div class="text-right">
                             <span class="text-xs font-bold text-gray-500">ส่งแล้ว ${completedItems}/${totalItems} รายการ</span>
@@ -201,20 +281,17 @@
                         </div>
                     </div>
                     
-                    <!-- แถบโปรเกรสบาร์แสดงความคืบหน้าของหน่วย -->
-                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4 shadow-inner">
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-4 shadow-inner">
                         <div class="h-full ${barColor} transition-all duration-500" style="width: ${progressPercent}%"></div>
                     </div>
 
-                    <!-- ตารางหัวคอลัมน์ภายในหน่วย -->
-                    <div class="grid grid-cols-12 gap-2 bg-slate-50 py-1.5 px-2 rounded-lg text-center text-xs font-bold text-slate-500 mb-2">
+                    <div class="grid grid-cols-12 gap-2 bg-slate-100 py-2 px-2 rounded-lg text-center text-xs font-bold text-slate-600 mb-2 shadow-sm">
                         <div class="col-span-4 text-left pl-2">รายการแผน</div>
                         <div class="col-span-4">แผนการสอน</div>
                         <div class="col-span-4">บันทึกหลังสอน</div>
                     </div>
 
-                    <!-- แถวข้อมูลสัปดาห์ 1-4 -->
-                    <div class="flex flex-col px-2 flex-1">
+                    <div class="flex flex-col flex-1">
                         ${rowsHtml}
                     </div>
                 `;
@@ -222,35 +299,31 @@
             }
         }
 
-        // ฟังก์ชันกระตุ้นการคลิกกล่องอัปโหลดไฟล์อินพุต
         function openUploader(unit, week, type) {
             currentUploadParams = { unit, week, type };
             document.getElementById('pdfUploader').click();
         }
 
-        // ฟังก์ชันจับความเปลี่ยนแปลงเมื่อเลือกไฟล์ PDF และตรวจสอบประเภทไฟล์
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // บังคับสิทธิ์เฉพาะไฟล์ประเภท PDF เท่านั้นตามข้อสั่งการ
             if (file.type !== "application/pdf") {
                 Swal.fire('รูปแบบไฟล์ไม่ถูกต้อง', 'ระบบรองรับการอัปโหลดเฉพาะไฟล์นามสกุล PDF เท่านั้นครับ', 'error');
                 event.target.value = '';
                 return;
             }
 
+            // ไฟล์ PDF อาจจะมีขนาดใหญ่ จึงใช้ FileReader อ่านเป็น base64 แล้วส่งไปให้ Google Apps Script
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Data = e.target.result;
-                // ส่งต่อไปประมวลผลเซฟลงระบบหลังบ้าน
                 uploadLessonPlanToDatabase(base64Data, file.name);
             };
             reader.readAsDataURL(file);
-            event.target.value = ''; // รีเซ็ตค่าอินพุตเพื่อให้อัปโหลดซ้ำไฟล์เดิมได้
+            event.target.value = ''; 
         }
 
-        // ฟังก์ชันส่งไฟล์ PDF ขึ้นไปบันทึกบนฐานข้อมูล Google Sheets
         function uploadLessonPlanToDatabase(base64, filename) {
             const typeLabel = currentUploadParams.type === 'plan' ? 'แผนการจัดการเรียนรู้' : 'บันทึกหลังสอน';
             
@@ -280,7 +353,6 @@
                 if (res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'อัปโหลดสำเร็จ', text: `บันทึกไฟล์เรียบร้อยแล้ว`, timer: 1500, showConfirmButton: false });
                     
-                    // อัปเดตข้อมูลชุดตัวแปรของหน้านี้ทันที และสั่งวาดการ์ดใหม่ให้มีเปอร์เซ็นต์วิ่งขึ้นทันที
                     const dataKey = `unit_${currentUploadParams.unit}_week_${currentUploadParams.week}_${currentUploadParams.type}`;
                     uploadedData[dataKey] = res.fileUrl;
                     renderUnitCards();
