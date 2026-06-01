@@ -31,13 +31,16 @@
         </div>
 
         <div class="p-4 border-b border-navy-800">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md shrink-0 mt-1">
                     <i class="fa-solid fa-user-tie text-xl text-navy-900"></i>
                 </div>
-                <div>
-                    <h2 id="display-name" class="text-white font-semibold leading-tight">กำลังโหลด...</h2>
-                    <p id="display-role" class="text-gold-400 text-xs mt-1">...</p>
+                <div class="overflow-hidden">
+                    <h2 id="display-firstname" class="text-gold-400 font-bold leading-tight">กำลังโหลด...</h2>
+                    <h2 id="display-lastname" class="text-gold-400 font-bold leading-tight mb-2"></h2>
+                    <p id="display-position" class="text-white text-xs mt-1 truncate"></p>
+                    <p id="display-group" class="text-white text-xs mt-1 truncate"></p>
+                    <p id="display-room" class="text-white text-xs mt-1 truncate"></p>
                 </div>
             </div>
         </div>
@@ -190,7 +193,7 @@
     </main>
 
 <script>
-        // 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
+// 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
             
@@ -202,9 +205,20 @@
 
             const user = JSON.parse(userData);
 
-            // แสดงผลข้อมูลผู้ใช้งาน
-            document.getElementById('display-name').textContent = user.name;
-            document.getElementById('display-role').textContent = user.status;
+            // แยกชื่อและนามสกุลด้วยช่องว่าง (Space)
+            const fullName = user.name || "";
+            const nameParts = fullName.split(" ");
+            const firstName = nameParts[0] || "ไม่ระบุชื่อ";
+            // นำส่วนที่เหลือมาต่อกันเป็นนามสกุล (เผื่อมีเว้นวรรค 2 ที)
+            const lastName = nameParts.slice(1).join(" ") || ""; 
+
+            // แสดงผลข้อมูลผู้ใช้งานที่ Sidebar
+            document.getElementById('display-firstname').textContent = firstName;
+            document.getElementById('display-lastname').textContent = lastName;
+            
+            document.getElementById('display-position').textContent = user.position || "-";
+            document.getElementById('display-group').textContent = user.group || "-";
+            document.getElementById('display-room').textContent = user.room || "-";
             
             // ฟังก์ชันแสดงวันและเวลาแบบ Real-time
             function updateClock() {
