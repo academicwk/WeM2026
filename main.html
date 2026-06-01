@@ -23,10 +23,9 @@
 </head>
 <body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
 
-    <aside id="sidebar" class="bg-navy-900 w-64 h-full flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-20 shadow-2xl">
-        <div class="flex items-center justify-center h-20 border-b border-navy-800 px-4">
-            <div class="text-white text-sm font-bold tracking-wider">ระบบบริหารจัดการ</div>
-            <div class="text-white text-xl font-bold tracking-wider">WeM</div>
+<aside id="sidebar" class="bg-navy-900 w-64 h-full flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-20 shadow-2xl">
+        <div class="flex items-center justify-center py-6 border-b border-navy-800">
+            <img src="https://img2.pic.in.th/WeM2.png" alt="WeM2" border="0" class="h-16 w-auto rounded-xl object-contain shadow-md">
         </div>
 
         <div class="p-6 border-b border-navy-800">
@@ -47,24 +46,29 @@
                 <span class="font-medium">หน้าหลัก</span>
             </a>
             <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
+                <i class="fa-solid fa-book-open w-5 text-center"></i>
+                <span class="font-medium">วิชาการ</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
                 <i class="fa-solid fa-users w-5 text-center"></i>
-                <span class="font-medium">จัดการบุคลากร</span>
+                <span class="font-medium">บุคคล</span>
             </a>
             <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-chart-pie w-5 text-center"></i>
-                <span class="font-medium">รายงานสรุปผล</span>
+                <i class="fa-solid fa-coins w-5 text-center"></i>
+                <span class="font-medium">งบประมาณ</span>
             </a>
             <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-gear w-5 text-center"></i>
-                <span class="font-medium">ตั้งค่าระบบ</span>
+                <i class="fa-solid fa-building w-5 text-center"></i>
+                <span class="font-medium">บริหารงานทั่วไป</span>
             </a>
         </nav>
 
-        <div class="p-4 border-t border-navy-800">
-            <button onclick="handleLogout()" class="flex items-center justify-center gap-2 w-full px-4 py-3 text-gray-300 hover:text-white hover:bg-red-600/80 rounded-lg transition-colors">
+        <div class="p-4 border-t border-navy-800 text-center">
+            <button onclick="handleLogout()" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors shadow-sm mb-2">
                 <i class="fa-solid fa-right-from-bracket"></i>
                 <span class="font-medium">ออกจากระบบ</span>
             </button>
+            <p class="text-[10px] text-blue-300">WeM System Version 2.0.1</p>
         </div>
     </aside>
 
@@ -84,52 +88,105 @@
             </div>
         </header>
 
-        <div class="flex-1 p-6 overflow-y-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4 border-b-4 border-b-navy-800">
-                    <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center">
-                        <i class="fa-solid fa-file-lines text-2xl text-navy-800"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">เอกสารทั้งหมด</p>
-                        <h3 class="text-2xl font-bold text-navy-900">128</h3>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4 border-b-4 border-b-gold-500">
-                    <div class="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center">
-                        <i class="fa-solid fa-clipboard-check text-2xl text-gold-500"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">ประเมินแล้ว</p>
-                        <h3 class="text-2xl font-bold text-navy-900">84</h3>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4 border-b-4 border-b-gray-400">
-                    <div class="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center">
-                        <i class="fa-solid fa-clock-rotate-left text-2xl text-gray-600"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">รอการตรวจสอบ</p>
-                        <h3 class="text-2xl font-bold text-navy-900">44</h3>
-                    </div>
+<div class="flex-1 p-6 overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 text-center border-t-4 border-t-gold-500">
+                <h2 class="text-2xl font-bold text-navy-900 mb-1">ยินดีต้อนรับสู่ระบบบริหารจัดการ WeM</h2>
+                <p class="text-gray-600 font-medium">โรงเรียนเทศบาลวัดโขดทิมทาราม</p>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-blue-600"></i> ระบบบริหารงานวิชาการ
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-blue-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูวิชาการ</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-blue-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูวิชาการ</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-blue-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูวิชาการ</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-blue-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูวิชาการ</span>
+                    </a>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <h3 class="font-bold text-navy-900 flex items-center gap-2">
-                        <i class="fa-solid fa-list-ul text-gold-500"></i> ข้อมูลเบื้องต้นของคุณ
-                    </h3>
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-amber-600"></i> ระบบบริหารงานบุคคล
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-amber-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบุคคล</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-amber-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบุคคล</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-amber-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบุคคล</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-amber-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบุคคล</span>
+                    </a>
                 </div>
-                <div class="p-6">
-                    <p class="text-gray-600 mb-4">ระบบจะนำตัวแปรเหล่านี้ไปส่งต่อให้ API ในหน้าอื่นๆ เพื่อคัดกรองข้อมูลเฉพาะส่วนบุคคลได้</p>
-                    <div class="bg-slate-50 rounded-lg p-4 font-mono text-sm border border-slate-200">
-                        <ul class="space-y-2">
-                            <li><strong class="text-navy-800">ชื่อ-สกุล:</strong> <span id="info-name" class="text-gray-700"></span></li>
-                            <li><strong class="text-navy-800">สถานะ/ตำแหน่ง:</strong> <span id="info-status" class="text-gray-700"></span></li>
-                            <li><strong class="text-navy-800">ชั้นเรียนที่รับผิดชอบ:</strong> <span id="info-class" class="text-gray-700"></span></li>
-                        </ul>
-                    </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-coins text-green-600"></i> ระบบบริหารงานงบประมาณ
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-green-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูงบประมาณ</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-green-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูงบประมาณ</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-green-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูงบประมาณ</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-green-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูงบประมาณ</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-building text-purple-600"></i> ระบบบริหารงานทั่วไป
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-purple-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบริหารทั่วไป</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-purple-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบริหารทั่วไป</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-purple-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบริหารทั่วไป</span>
+                    </a>
+                    <a href="#" class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-4 flex flex-col items-center justify-center text-center transition-all">
+                        <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-cube text-purple-600"></i></div>
+                        <span class="text-sm font-medium text-gray-700">เมนูบริหารทั่วไป</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -156,10 +213,24 @@
             document.getElementById('info-status').textContent = user.status;
             document.getElementById('info-class').textContent = user.className || "-";
 
-            // แสดงวันที่ปัจจุบัน
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString('th-TH', options);
-        });
+            // ฟังก์ชันแสดงวันและเวลาแบบ Real-time
+            function updateClock() {
+                const now = new Date();
+                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                const dateString = now.toLocaleDateString('th-TH', dateOptions);
+                
+                const timeString = now.toLocaleTimeString('th-TH', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+
+                document.getElementById('current-date').textContent = `${dateString} | ${timeString}`;
+            }
+
+            // เรียกใช้งานและอัปเดตทุกๆ 1 วินาที
+            setInterval(updateClock, 1000);
+            updateClock();
 
         // ควบคุม Sidebar บนมือถือ
         function toggleSidebar() {
