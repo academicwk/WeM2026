@@ -236,6 +236,9 @@
 
     
 <script>
+        // กำหนด URL ของ API
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+
         // 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
@@ -248,12 +251,9 @@
             const user = JSON.parse(userData);
             const fullName = user.name || "";
             const nameParts = fullName.split(" ");
-            const firstName = nameParts[0] || "ไม่ระบุชื่อ";
-            const lastName = nameParts.slice(1).join(" ") || ""; 
-
-            // แสดงผลข้อมูลผู้ใช้งาน
-            document.getElementById('display-firstname').textContent = firstName;
-            document.getElementById('display-lastname').textContent = lastName;
+            
+            document.getElementById('display-firstname').textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            document.getElementById('display-lastname').textContent = nameParts.slice(1).join(" ") || ""; 
             document.getElementById('display-position').textContent = user.position || "-";
             document.getElementById('display-group').textContent = user.group || "-";
             document.getElementById('display-room').textContent = user.room || "-";
@@ -261,14 +261,16 @@
             // การตรวจสอบสิทธิ์สำหรับปุ่ม "การตั้งค่าระบบ"
             const btnSettings = document.getElementById('btn-settings');
             if (fullName !== "นายพีระศิน ไชยศร") {
-                // ถ้าไม่ใช่ ให้จางลงและกดไม่ได้
                 btnSettings.classList.add('opacity-30', 'pointer-events-none');
                 btnSettings.classList.remove('hover:bg-navy-800', 'hover:text-white');
                 btnSettings.onclick = (e) => e.preventDefault();
             }
 
-            // นำสถานะการเปิด/ปิดเมนูมาใช้งาน
+            // นำสถานะเริ่มต้นที่ค้างในเครื่องมาแสดงก่อน (เพื่อความรวดเร็วของหน้าตาเว็บ)
             applyMenuStates();
+
+            // ร้องขอค่าการตั้งค่าล่าสุดจาก Google Sheets แบบซ่อนอยู่เบื้องหลัง
+            fetchSettingsFromDatabase();
             
             // ฟังก์ชันนาฬิกา
             function updateClock() {
@@ -285,10 +287,29 @@
         });
 
         // ==========================================
-        // ส่วนควบคุมสถานะเมนูย่อย (Settings Logic)
+        // ส่วนควบคุมสถานะเมนูย่อย และเชื่อมต่อ Database
         // ==========================================
 
-        // อัปเดตการแสดงผลของปุ่มเมนูตามสถานะที่บันทึกไว้
+        // ฟังก์ชันดึงค่าจาก Google Sheets
+        async function fetchSettingsFromDatabase() {
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getSettings' })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.settings) {
+                    // นำค่าที่ดึงมาจาก Sheet ทับลงไปใน Local Storage แล้วจัดหน้าจอใหม่
+                    localStorage.setItem('wem_sys_settings', JSON.stringify(result.settings));
+                    applyMenuStates();
+                }
+            } catch (error) {
+                console.error("โหลดการตั้งค่าล้มเหลว:", error);
+            }
+        }
+
+        // อัปเดตการแสดงผลของปุ่มเมนูตามสถานะ
         function applyMenuStates() {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
@@ -305,19 +326,16 @@
             });
         }
 
-// เปิด Modal และสร้างปุ่มสวิตช์ตั้งค่าจากปุ่มหน้าหลักโดยอัตโนมัติ (Dynamic)
+        // เปิด Modal แบบ Dynamic
         function openSettingsModal() {
             const modal = document.getElementById('settingsModal');
             const container = document.getElementById('settings-container');
-            container.innerHTML = ''; // เคลียร์รายการเก่าออกก่อน
+            container.innerHTML = ''; 
 
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            
-            // 1. ดึงปุ่มเมนูย่อยทั้งหมดที่มีอยู่ในหน้าหลัก ณ ขณะนั้นมารวมไว้
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
             const groupedMenus = {};
 
-            // 2. จัดกลุ่มปุ่มเมนูย่อยตามโซนระบบงานหลักอัตโนมัติ
             menuLinks.forEach(link => {
                 const parentBox = link.closest('.mb-8') || link.parentElement;
                 const zoneHeader = parentBox ? parentBox.querySelector('h3') : null;
@@ -333,7 +351,6 @@
                 });
             });
 
-            // 3. นำกลุ่มข้อมูลที่ได้มาสร้างเป็น UI สวิตช์เปิด-ปิดในหน้าจอตั้งค่า
             for (const [zoneTitle, menus] of Object.entries(groupedMenus)) {
                 const zoneDiv = document.createElement('div');
                 zoneDiv.className = 'mb-6';
@@ -354,23 +371,32 @@
                 });
                 container.appendChild(zoneDiv);
             }
-
             modal.classList.remove('hidden');
         }
 
-        // บันทึกสถานะลง LocalStorage และอัปเดตหน้าจอทันที
+        // บันทึกสถานะ (เปลี่ยนหน้าจอทันที และส่งข้อมูลไปเซฟที่ Sheet เบื้องหลัง)
         function toggleMenuState(id, state) {
+            // อัปเดต UI ให้ผู้ใช้เห็นทันทีแบบลื่นไหล
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             savedSettings[id] = state;
             localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
             applyMenuStates(); 
+
+            // ส่งข้อมูลไปเซฟที่ Google Sheets เบื้องหลัง
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'saveSetting',
+                    menuId: id,
+                    isEnabled: state
+                })
+            }).catch(err => console.error("ไม่สามารถบันทึกไปที่ Sheet ได้:", err));
         }
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').classList.add('hidden');
         }
 
-        // ควบคุม Sidebar บนมือถือ
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -378,11 +404,10 @@
             overlay.classList.toggle('hidden');
         }
 
-        // ออกจากระบบ
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
         }
-</script>
+    </script>
 </body>
 </html>
