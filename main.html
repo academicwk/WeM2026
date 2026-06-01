@@ -567,7 +567,7 @@
             document.getElementById('editUserModal').classList.add('hidden');
         }
 
-        // เซฟข้อมูลที่แก้ไข
+// เซฟข้อมูลที่แก้ไข
         function handleSaveUserEdit(e) {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
@@ -590,11 +590,9 @@
                 if(res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
                     closeEditUserModal();
-                    // อัปเดตข้อมูลบนการ์ดทันทีโดยไม่ต้องโหลดใหม่
-                    document.getElementById(`name-user-${id}`).textContent = data.name;
-                    document.getElementById(`pos-user-${id}`).textContent = data.position;
-                    document.getElementById(`group-user-${id}`).textContent = data.group;
-                    document.getElementById(`room-user-${id}`).textContent = data.room;
+                    
+                    // สั่งให้โหลดข้อมูลผู้ใช้งานใหม่ทั้งหมดทันที เพื่อรีเฟรชหน้าจอให้ตรงกับฐานข้อมูลจริง
+                    openUserSettingsModal(); 
                 } else {
                     Swal.fire('ข้อผิดพลาด', res.message, 'error');
                 }
