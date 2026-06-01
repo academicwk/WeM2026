@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนการจัดการเรียนรู้ | WeM System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'] },
+                    colors: {
+                        navy: { 800: '#1e3a8a', 900: '#0f172a' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 font-sans antialiased text-gray-800 flex flex-col h-screen overflow-hidden">
+
+    <!-- Header Bar -->
+    <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b">
+        <div class="flex items-center gap-4">
+            <a href="main.html" class="w-10 h-10 bg-slate-100 hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm" title="กลับหน้าหลัก">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </a>
+            <div class="border-l-4 border-gold-500 pl-3 py-1">
+                <h2 class="text-xl font-bold text-navy-900 leading-none">แผนการจัดการเรียนรู้ / แผนการจัดประสบการณ์</h2>
+                <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบอัปโหลดและติดตามความคืบหน้าการส่งแผนการสอนออนไลน์</p>
+            </div>
+        </div>
+        <div class="hidden sm:flex items-center text-sm bg-navy-900 text-white py-2 px-4 rounded-xl shadow-sm gap-3">
+            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center overflow-hidden border border-gray-300">
+                <img id="header-user-img" src="" class="w-full h-full object-cover hidden">
+                <i id="header-user-icon" class="fa-solid fa-user text-navy-900 text-sm"></i>
+            </div>
+            <div>
+                <p class="font-bold leading-none text-gold-400" id="header-user-name">กำลังโหลด...</p>
+                <p class="text-[10px] text-gray-400 mt-1" id="header-user-pos">-</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 overflow-y-auto bg-slate-50">
+        <!-- Grid Layout สำหรับการ์ดทั้ง 8 หน่วยเรียนรู้ -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto" id="unit-cards-container">
+            <!-- JavaScript จะทำการสร้างการ์ดหน่วยการเรียนรู้ 1-8 มารวมไว้ที่นี่แบบอัตโนมัติ -->
+        </div>
+    </main>
+
+    <!-- อินพุตสำหรับซ่อนเพื่อเลือกไฟล์ PDF -->
+    <input type="file" id="pdfUploader" accept="application/pdf" class="hidden" onchange="handleFileSelect(event)">
+
+    <script>
+        // กำหนด URL ของ API อันเดียวกับระบบหลักของคุณ
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        
+        let currentUser = null;
+        let uploadedData = {}; // เก็บข้อมูลลิงก์ไฟล์ที่เคยอัปโหลดไว้แล้วจากฐานข้อมูล
+        let currentUploadParams = null; // เก็บพารามิเตอร์ชั่วคราวขณะกดอัปโหลด
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const userData = localStorage.getItem('wem_user');
+            if (!userData) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentUser = JSON.parse(userData);
+            
+            // อัปเดตข้อมูลผู้ใช้บน Header ของหน้านี้
+            document.getElementById('header-user-name').textContent = currentUser.name;
+            document.getElementById('header-user-pos').textContent = currentUser.position || "ครูผู้สอน";
+            
+            const headerImg = document.getElementById('header-user-img');
+            const headerIcon = document.getElementById('header-user-icon');
+            if(currentUser.image && currentUser.image.trim() !== "") {
+                headerImg.src = currentUser.image;
+                headerImg.classList.remove('hidden');
+                headerIcon.classList.add('hidden');
+            }
+
+            // เริ่มต้นดึงข้อมูลประวัติการอัปโหลดแผนการสอนจาก Google Sheets
+            fetchLessonPlans();
+        });
+
+        // ฟังก์ชันดึงข้อมูลประวัติการอัปโหลดแผนการสอนจากหลังบ้าน
+        async function fetchLessonPlans() {
+            const container = document.getElementById('unit-cards-container');
+            container.innerHTML = `
+                <div class="col-span-full text-center py-20">
+                    <i class="fa-solid fa-spinner fa-spin text-5xl text-navy-800"></i>
+                    <p class="mt-4 font-bold text-gray-600 text-lg">กำลังดึงข้อมูลแผนการจัดการเรียนรู้...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getLessonPlans', username: currentUser.username })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    uploadedData = result.data || {};
+                }
+                // เรียกฟังก์ชันเรนเดอร์สร้างการ์ด 8 การ์ดทันที
+                renderUnitCards();
+            } catch (error) {
+                console.error(error);
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้', 'error');
+                renderUnitCards(); // เผื่อกรณี Error ให้โหลดหน้าเปล่าขึ้นมาก่อนเพื่อไม่ให้หน้าจอค้าง
+            }
+        }
+
+        // ฟังก์ชันสร้างการ์ด 8 หน่วยการเรียนรู้พร้อมการแสดงผล 4 สัปดาห์ย่อย
+        function renderUnitCards() {
+            const container = document.getElementById('unit-cards-container');
+            container.innerHTML = '';
+
+            // วนลูปสร้างการ์ดทั้งหมด 8 หน่วยการเรียนรู้
+            for (let unit = 1; unit <= 8; unit++) {
+                let completedItems = 0;
+                let totalItems = 8; // แต่ละหน่วยมี 4 สัปดาห์ สัปดาห์ละ 2 ฉบับ (แผน + บันทึกหลังสอน) รวมเป็น 8 รายการ
+                let rowsHtml = '';
+
+                // วนลูปสร้างแถวภายในหน่วยนั้นๆ ทั้งหมด 4 สัปดาห์
+                for (let week = 1; week <= 4; week++) {
+                    const planKey = `unit_${unit}_week_${week}_plan`;
+                    const logKey = `unit_${unit}_week_${week}_log`;
+                    
+                    const planUrl = uploadedData[planKey] || '';
+                    const logUrl = uploadedData[logKey] || '';
+
+                    if (planUrl) completedItems++;
+                    if (logUrl) completedItems++;
+
+                    // สร้างสไตล์ปุ่ม PDF แผนการสอน
+                    const planBtnView = planUrl 
+                        ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center shadow transition-colors" title="ดูไฟล์ PDF แผนการสอน"><i class="fa-solid fa-file-pdf"></i></a>`
+                        : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf"></i></button>`;
+
+                    // สร้างสไตล์ปุ่ม PDF บันทึกหลังสอน
+                    const logBtnView = logUrl 
+                        ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center shadow transition-colors" title="ดูไฟล์ PDF บันทึกหลังสอน"><i class="fa-solid fa-file-pdf"></i></a>`
+                        : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf"></i></button>`;
+
+                    rowsHtml += `
+                        <div class="grid grid-cols-12 gap-2 items-center py-2.5 border-b border-slate-100 last:border-none text-sm">
+                            <div class="col-span-4 font-bold text-gray-700">สัปดาห์ที่ ${week}</div>
+                            
+                            <!-- คอลัมน์แผนการสอน -->
+                            <div class="col-span-4 flex items-center gap-2 justify-center border-r border-slate-100">
+                                <button onclick="openUploader(${unit}, ${week}, 'plan')" class="w-8 h-8 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded-lg flex items-center justify-center shadow-sm transition-all" title="อัปโหลด/แก้ไข แผนการสอน">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                ${planBtnView}
+                            </div>
+                            
+                            <!-- คอลัมน์บันทึกหลังสอน -->
+                            <div class="col-span-4 flex items-center gap-2 justify-center">
+                                <button onclick="openUploader(${unit}, ${week}, 'log')" class="w-8 h-8 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded-lg flex items-center justify-center shadow-sm transition-all" title="อัปโหลด/แก้ไข บันทึกหลังสอน">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                ${logBtnView}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // คำนวณเปอร์เซ็นต์ความคืบหน้าของการ์ดใบนี้
+                const progressPercent = Math.round((completedItems / totalItems) * 100);
+                
+                // กำหนดสีของแถบความคืบหน้าตามปริมาณงานที่ส่ง
+                let barColor = 'bg-red-500';
+                if(progressPercent >= 100) barColor = 'bg-green-500';
+                else if(progressPercent >= 50) barColor = 'bg-blue-500';
+                else if(progressPercent >= 25) barColor = 'bg-amber-500';
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col transition-all hover:shadow-md";
+                card.innerHTML = `
+                    <!-- หัวการ์ดแสดงลำดับหน่วยการเรียนรู้ -->
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b-2 border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 bg-navy-900 text-gold-400 font-bold rounded-xl flex items-center justify-center shadow-sm text-sm">
+                                ${unit}
+                            </div>
+                            <h3 class="font-bold text-navy-900 text-base">หน่วยการเรียนรู้ที่ ${unit}</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-gray-500">ส่งแล้ว ${completedItems}/${totalItems} รายการ</span>
+                            <p class="text-sm font-black text-navy-900">${progressPercent}%</p>
+                        </div>
+                    </div>
+                    
+                    <!-- แถบโปรเกรสบาร์แสดงความคืบหน้าของหน่วย -->
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4 shadow-inner">
+                        <div class="h-full ${barColor} transition-all duration-500" style="width: ${progressPercent}%"></div>
+                    </div>
+
+                    <!-- ตารางหัวคอลัมน์ภายในหน่วย -->
+                    <div class="grid grid-cols-12 gap-2 bg-slate-50 py-1.5 px-2 rounded-lg text-center text-xs font-bold text-slate-500 mb-2">
+                        <div class="col-span-4 text-left pl-2">รายการแผน</div>
+                        <div class="col-span-4">แผนการสอน</div>
+                        <div class="col-span-4">บันทึกหลังสอน</div>
+                    </div>
+
+                    <!-- แถวข้อมูลสัปดาห์ 1-4 -->
+                    <div class="flex flex-col px-2 flex-1">
+                        ${rowsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        // ฟังก์ชันกระตุ้นการคลิกกล่องอัปโหลดไฟล์อินพุต
+        function openUploader(unit, week, type) {
+            currentUploadParams = { unit, week, type };
+            document.getElementById('pdfUploader').click();
+        }
+
+        // ฟังก์ชันจับความเปลี่ยนแปลงเมื่อเลือกไฟล์ PDF และตรวจสอบประเภทไฟล์
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // บังคับสิทธิ์เฉพาะไฟล์ประเภท PDF เท่านั้นตามข้อสั่งการ
+            if (file.type !== "application/pdf") {
+                Swal.fire('รูปแบบไฟล์ไม่ถูกต้อง', 'ระบบรองรับการอัปโหลดเฉพาะไฟล์นามสกุล PDF เท่านั้นครับ', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result;
+                // ส่งต่อไปประมวลผลเซฟลงระบบหลังบ้าน
+                uploadLessonPlanToDatabase(base64Data, file.name);
+            };
+            reader.readAsDataURL(file);
+            event.target.value = ''; // รีเซ็ตค่าอินพุตเพื่อให้อัปโหลดซ้ำไฟล์เดิมได้
+        }
+
+        // ฟังก์ชันส่งไฟล์ PDF ขึ้นไปบันทึกบนฐานข้อมูล Google Sheets
+        function uploadLessonPlanToDatabase(base64, filename) {
+            const typeLabel = currentUploadParams.type === 'plan' ? 'แผนการจัดการเรียนรู้' : 'บันทึกหลังสอน';
+            
+            Swal.fire({
+                title: 'กำลังอัปโหลดไฟล์...',
+                text: `ระบบกำลังบันทึก ${typeLabel} สัปดาห์ที่ ${currentUploadParams.week} หน่วยที่ ${currentUploadParams.unit}`,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            const payload = {
+                action: 'uploadLessonPlan',
+                username: currentUser.username,
+                unit: currentUploadParams.unit,
+                week: currentUploadParams.week,
+                fileType: currentUploadParams.type,
+                base64: base64,
+                filename: filename
+            };
+
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'อัปโหลดสำเร็จ', text: `บันทึกไฟล์เรียบร้อยแล้ว`, timer: 1500, showConfirmButton: false });
+                    
+                    // อัปเดตข้อมูลชุดตัวแปรของหน้านี้ทันที และสั่งวาดการ์ดใหม่ให้มีเปอร์เซ็นต์วิ่งขึ้นทันที
+                    const dataKey = `unit_${currentUploadParams.unit}_week_${currentUploadParams.week}_${currentUploadParams.type}`;
+                    uploadedData[dataKey] = res.fileUrl;
+                    renderUnitCards();
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถส่งไฟล์ไปที่หลังบ้านได้สำเร็จ', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
