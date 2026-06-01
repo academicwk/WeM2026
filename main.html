@@ -70,7 +70,11 @@
                 <i class="fa-solid fa-gears w-5 text-center text-gray-400"></i>
                 <span class="font-medium">การตั้งค่าระบบ</span>
             </button>
-            
+
+            <button id="btn-user-settings" onclick="openUserSettingsModal()" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors w-full text-left mt-1 border-t border-navy-800 pt-3">
+                <i class="fa-solid fa-users-gear w-5 text-center text-gray-400"></i>
+                <span class="font-medium">การตั้งค่าผู้ใช้งาน</span>
+            </button>
         </nav>
 
         <div class="p-4 border-t border-navy-800 text-center">
@@ -234,6 +238,68 @@
         </div>
     </div>
 
+    <div id="userSettingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-users-gear text-gold-400"></i> การตั้งค่าผู้ใช้งาน
+                </h3>
+                <button onclick="closeUserSettingsModal()" class="text-gray-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="user-cards-container" class="p-6 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50">
+                </div>
+        </div>
+    </div>
+
+    <div id="editUserModal" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-center justify-center backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-white">แก้ไขข้อมูลผู้ใช้งาน</h3>
+            </div>
+            <div class="p-6">
+                <form id="editUserForm" onsubmit="handleSaveUserEdit(event)" class="space-y-4">
+                    <input type="hidden" id="edit-id">
+                    <div>
+                        <label class="block text-sm font-bold text-navy-900 mb-1">ชื่อ-นามสกุล</label>
+                        <input type="text" id="edit-name" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-navy-800 outline-none" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">Username</label>
+                            <input type="text" id="edit-username" class="w-full border rounded-lg px-3 py-2 outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">Password</label>
+                            <input type="text" id="edit-password" class="w-full border rounded-lg px-3 py-2 outline-none" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-navy-900 mb-1">ตำแหน่ง / วิทยฐานะ</label>
+                        <input type="text" id="edit-position" class="w-full border rounded-lg px-3 py-2 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">กลุ่มสาระฯ</label>
+                            <input type="text" id="edit-group" class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">ห้องประจำ</label>
+                            <input type="text" id="edit-room" class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="closeEditUserModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">ยกเลิก</button>
+                        <button type="submit" class="px-4 py-2 bg-gold-500 text-navy-900 rounded-lg font-bold hover:bg-gold-400 shadow">บันทึกข้อมูล</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
     
 <script>
         // กำหนด URL ของ API
@@ -258,12 +324,17 @@
             document.getElementById('display-group').textContent = user.group || "-";
             document.getElementById('display-room').textContent = user.room || "-";
 
-            // การตรวจสอบสิทธิ์สำหรับปุ่ม "การตั้งค่าระบบ"
+            // การตรวจสอบสิทธิ์สำหรับปุ่ม
             const btnSettings = document.getElementById('btn-settings');
+            const btnUserSettings = document.getElementById('btn-user-settings'); // ปุ่มใหม่
             if (fullName !== "นายพีระศิน ไชยศร") {
                 btnSettings.classList.add('opacity-30', 'pointer-events-none');
                 btnSettings.classList.remove('hover:bg-navy-800', 'hover:text-white');
                 btnSettings.onclick = (e) => e.preventDefault();
+
+                btnUserSettings.classList.add('opacity-30', 'pointer-events-none');
+                btnUserSettings.classList.remove('hover:bg-navy-800', 'hover:text-white');
+                btnUserSettings.onclick = (e) => e.preventDefault();
             }
 
             // นำสถานะเริ่มต้นที่ค้างในเครื่องมาแสดงก่อน (เพื่อความรวดเร็วของหน้าตาเว็บ)
@@ -407,6 +478,169 @@
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
+        }
+
+    // ==========================================
+        // ส่วนจัดการข้อมูลผู้ใช้งาน (User Settings)
+        // ==========================================
+        let currentUploadingUserId = null;
+
+        async function openUserSettingsModal() {
+            document.getElementById('userSettingsModal').classList.remove('hidden');
+            const container = document.getElementById('user-cards-container');
+            container.innerHTML = '<div class="col-span-full text-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i><p class="mt-4 font-medium text-gray-600">กำลังโหลดข้อมูลผู้ใช้งาน...</p></div>';
+
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getAllUsers' })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    renderUserCards(result.users);
+                }
+            } catch (error) {
+                container.innerHTML = '<p class="col-span-full text-center text-red-500 py-10">เกิดข้อผิดพลาดในการดึงข้อมูล</p>';
+            }
+        }
+
+        function closeUserSettingsModal() {
+            document.getElementById('userSettingsModal').classList.add('hidden');
+        }
+
+        function renderUserCards(users) {
+            const container = document.getElementById('user-cards-container');
+            container.innerHTML = '';
+
+            users.forEach(u => {
+                if(!u.id) return; // ข้ามแถวว่าง
+                const defaultImg = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+                const userImg = u.Image || defaultImg;
+                
+                // เก็บข้อมูลดิบไว้ในปุ่มดินสอ
+                const userDataStr = encodeURIComponent(JSON.stringify(u));
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow border border-gray-100 p-5 flex flex-col relative group transition hover:shadow-md";
+                card.innerHTML = `
+                    <button onclick="openEditUserModal('${userDataStr}')" class="absolute top-3 right-3 w-8 h-8 bg-gray-100 hover:bg-gold-400 hover:text-navy-900 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm">
+                        <i class="fa-solid fa-pen text-sm"></i>
+                    </button>
+                    <div class="flex items-center gap-4 border-b pb-4 mb-4">
+                        <div class="relative w-16 h-16 shrink-0 cursor-pointer group-hover:opacity-90" onclick="triggerImageUpload('${u.id}')" title="คลิกเพื่อเปลี่ยนรูปโปรไฟล์">
+                            <img src="${userImg}" class="w-full h-full rounded-full object-cover border-2 border-navy-800" id="img-user-${u.id}">
+                            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-camera text-white text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="font-bold text-navy-900 text-lg truncate" id="name-user-${u.id}">${u.Name}</h4>
+                            <p class="text-xs text-gray-500">ID: ${u.Username} | รหัสผ่าน: ${u.Password}</p>
+                        </div>
+                    </div>
+                    <div class="text-sm space-y-1 text-gray-600">
+                        <p><i class="fa-solid fa-id-badge w-5 text-gold-500 text-center"></i> <span id="pos-user-${u.id}">${u.Position || '-'}</span></p>
+                        <p><i class="fa-solid fa-layer-group w-5 text-gold-500 text-center"></i> <span id="group-user-${u.id}">${u.Group || '-'}</span></p>
+                        <p><i class="fa-solid fa-chalkboard-user w-5 text-gold-500 text-center"></i> <span id="room-user-${u.id}">${u.Room || '-'}</span></p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // เปิดหน้าต่างแก้ไข
+        function openEditUserModal(userStrEncoded) {
+            const u = JSON.parse(decodeURIComponent(userStrEncoded));
+            document.getElementById('edit-id').value = u.id;
+            document.getElementById('edit-name').value = u.Name;
+            document.getElementById('edit-username').value = u.Username;
+            document.getElementById('edit-password').value = u.Password;
+            document.getElementById('edit-position').value = u.Position || '';
+            document.getElementById('edit-group').value = u.Group || '';
+            document.getElementById('edit-room').value = u.Room || '';
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.add('hidden');
+        }
+
+        // เซฟข้อมูลที่แก้ไข
+        function handleSaveUserEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const data = {
+                action: 'updateUser',
+                id: id,
+                name: document.getElementById('edit-name').value,
+                username: document.getElementById('edit-username').value,
+                password: document.getElementById('edit-password').value,
+                position: document.getElementById('edit-position').value,
+                group: document.getElementById('edit-group').value,
+                room: document.getElementById('edit-room').value
+            };
+
+            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(data) })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
+                    closeEditUserModal();
+                    // อัปเดตข้อมูลบนการ์ดทันทีโดยไม่ต้องโหลดใหม่
+                    document.getElementById(`name-user-${id}`).textContent = data.name;
+                    document.getElementById(`pos-user-${id}`).textContent = data.position;
+                    document.getElementById(`group-user-${id}`).textContent = data.group;
+                    document.getElementById(`room-user-${id}`).textContent = data.room;
+                } else {
+                    Swal.fire('ข้อผิดพลาด', res.message, 'error');
+                }
+            }).catch(err => Swal.fire('ข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', 'error'));
+        }
+
+        // อัปโหลดรูปภาพ
+        function triggerImageUpload(userId) {
+            currentUploadingUserId = userId;
+            document.getElementById('imageUploader').click();
+        }
+
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result;
+                uploadImageToGas(currentUploadingUserId, base64Data, file.name);
+            };
+            reader.readAsDataURL(file);
+            event.target.value = ''; // รีเซ็ต input
+        }
+
+        function uploadImageToGas(userId, base64, filename) {
+            const imgElement = document.getElementById(`img-user-${userId}`);
+            const oldSrc = imgElement.src;
+            imgElement.src = "https://i.gifer.com/ZKZg.gif"; // ภาพหมุนโหลด
+
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'uploadImage', id: userId, base64: base64, filename: filename })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    imgElement.src = res.imageUrl; // ใส่รูปล่าสุดจาก Drive
+                    Swal.fire({ icon: 'success', title: 'อัปเดตรูปโปรไฟล์สำเร็จ', timer: 1500, showConfirmButton: false, toast: true, position: 'top-end' });
+                } else {
+                    imgElement.src = oldSrc;
+                    Swal.fire('ข้อผิดพลาด', res.message, 'error');
+                }
+            }).catch(err => {
+                imgElement.src = oldSrc;
+                Swal.fire('ข้อผิดพลาด', 'อัปโหลดรูปภาพล้มเหลว', 'error');
+            });
         }
     </script>
 </body>
