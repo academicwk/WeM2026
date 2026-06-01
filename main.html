@@ -305,41 +305,55 @@
             });
         }
 
-        // เปิด Modal และสร้างปุ่มสวิตช์อัตโนมัติ
+// เปิด Modal และสร้างปุ่มสวิตช์ตั้งค่าจากปุ่มหน้าหลักโดยอัตโนมัติ (Dynamic)
         function openSettingsModal() {
             const modal = document.getElementById('settingsModal');
             const container = document.getElementById('settings-container');
-            container.innerHTML = ''; // เคลียร์ของเก่า
+            container.innerHTML = ''; // เคลียร์รายการเก่าออกก่อน
 
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            const zones = document.querySelectorAll('h3'); // วนลูปหา 4 โซนหลัก
+            
+            // 1. ดึงปุ่มเมนูย่อยทั้งหมดที่มีอยู่ในหน้าหลัก ณ ขณะนั้นมารวมไว้
+            const menuLinks = document.querySelectorAll('a[id^="menu-"]');
+            const groupedMenus = {};
 
-            zones.forEach(zone => {
-                const zoneTitle = zone.textContent.trim();
+            // 2. จัดกลุ่มปุ่มเมนูย่อยตามโซนระบบงานหลักอัตโนมัติ
+            menuLinks.forEach(link => {
+                const parentBox = link.closest('.mb-8') || link.parentElement;
+                const zoneHeader = parentBox ? parentBox.querySelector('h3') : null;
+                const zoneTitle = zoneHeader ? zoneHeader.textContent.trim() : 'ระบบงานอื่นๆ';
+
+                if (!groupedMenus[zoneTitle]) {
+                    groupedMenus[zoneTitle] = [];
+                }
+                
+                groupedMenus[zoneTitle].push({
+                    id: link.id,
+                    name: link.querySelector('span').textContent.trim()
+                });
+            });
+
+            // 3. นำกลุ่มข้อมูลที่ได้มาสร้างเป็น UI สวิตช์เปิด-ปิดในหน้าจอตั้งค่า
+            for (const [zoneTitle, menus] of Object.entries(groupedMenus)) {
                 const zoneDiv = document.createElement('div');
                 zoneDiv.className = 'mb-6';
                 zoneDiv.innerHTML = `<h4 class="font-bold text-navy-900 mb-3 border-b-2 border-gold-400 pb-1 inline-block">${zoneTitle}</h4>`;
                 
-                // หาเมนูย่อยในโซนนั้นๆ
-                const links = zone.nextElementSibling.querySelectorAll('a[id^="menu-"]');
-                links.forEach(link => {
-                    const id = link.id;
-                    const name = link.querySelector('span').textContent;
-                    const isChecked = savedSettings[id] !== false ? 'checked' : '';
-                    
+                menus.forEach(menu => {
+                    const isChecked = savedSettings[menu.id] !== false ? 'checked' : '';
                     const item = document.createElement('div');
                     item.className = 'flex justify-between items-center mb-2 bg-slate-50 p-3 rounded-lg border border-slate-100 shadow-sm';
                     item.innerHTML = `
-                        <span class="text-sm font-medium text-gray-700">${name}</span>
+                        <span class="text-sm font-medium text-gray-700">${menu.name}</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" class="sr-only peer" onchange="toggleMenuState('${id}', this.checked)" ${isChecked}>
+                          <input type="checkbox" class="sr-only peer" onchange="toggleMenuState('${menu.id}', this.checked)" ${isChecked}>
                           <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                         </label>
                     `;
                     zoneDiv.appendChild(item);
                 });
                 container.appendChild(zoneDiv);
-            });
+            }
 
             modal.classList.remove('hidden');
         }
