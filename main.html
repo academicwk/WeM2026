@@ -33,8 +33,9 @@
 
         <div class="p-4 border-b border-navy-800">
             <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md shrink-0 mt-1">
-                    <i class="fa-solid fa-user-tie text-xl text-navy-900"></i>
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md shrink-0 mt-1 overflow-hidden border border-gray-200">
+                    <img id="sidebar-user-img" src="" class="w-full h-full object-cover hidden">
+                    <i id="sidebar-user-icon" class="fa-solid fa-user-tie text-xl text-navy-900"></i>
                 </div>
                 <div class="overflow-hidden">
                     <h2 id="display-firstname" class="text-gold-400 font-bold leading-tight">กำลังโหลด...</h2>
@@ -106,8 +107,7 @@
             </div>
         </header>
 
-<div class="flex-1 p-6 overflow-y-auto">
-
+        <div class="flex-1 p-6 overflow-y-auto">
             <div class="mb-8">
                 <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-book-open text-blue-600"></i> ระบบบริหารงานวิชาการ
@@ -215,10 +215,10 @@
                     </a>
                 </div>
             </div>
-    
         </div>
     </main>
-<div id="settingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
+
+    <div id="settingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
@@ -228,9 +228,7 @@
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
             </div>
-            
             <div id="settings-container" class="p-6 overflow-y-auto flex-1"></div>
-            
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end">
                 <button onclick="closeSettingsModal()" class="bg-navy-800 hover:bg-navy-900 text-white font-medium py-2 px-6 rounded-lg transition-colors">
                     เสร็จสิ้น
@@ -249,9 +247,7 @@
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
             </div>
-            
-            <div id="user-cards-container" class="p-6 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50">
-                </div>
+            <div id="user-cards-container" class="p-6 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50"></div>
         </div>
     </div>
 
@@ -302,9 +298,9 @@
 
     <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
     
-<script>
-        // กำหนด URL ของ API
+    <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        const DEFAULT_PROFILE_IMG = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
         // 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
         document.addEventListener("DOMContentLoaded", () => {
@@ -325,9 +321,12 @@
             document.getElementById('display-group').textContent = user.group || "-";
             document.getElementById('display-room').textContent = user.room || "-";
 
-            // การตรวจสอบสิทธิ์สำหรับปุ่ม
+            // แสดงผลรูปโปรไฟล์ในแถบด้านข้าง (Sidebar) ทันที
+            updateSidebarImage(user.image);
+
+            // การตรวจสอบสิทธิ์สำหรับปุ่ม Admin
             const btnSettings = document.getElementById('btn-settings');
-            const btnUserSettings = document.getElementById('btn-user-settings'); // ปุ่มใหม่
+            const btnUserSettings = document.getElementById('btn-user-settings');
             if (fullName !== "นายพีระศิน ไชยศร") {
                 btnSettings.classList.add('opacity-30', 'pointer-events-none');
                 btnSettings.classList.remove('hover:bg-navy-800', 'hover:text-white');
@@ -338,13 +337,9 @@
                 btnUserSettings.onclick = (e) => e.preventDefault();
             }
 
-            // นำสถานะเริ่มต้นที่ค้างในเครื่องมาแสดงก่อน (เพื่อความรวดเร็วของหน้าตาเว็บ)
             applyMenuStates();
-
-            // ร้องขอค่าการตั้งค่าล่าสุดจาก Google Sheets แบบซ่อนอยู่เบื้องหลัง
             fetchSettingsFromDatabase();
             
-            // ฟังก์ชันนาฬิกา
             function updateClock() {
                 const now = new Date();
                 const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -358,11 +353,21 @@
             updateClock();
         });
 
-        // ==========================================
-        // ส่วนควบคุมสถานะเมนูย่อย และเชื่อมต่อ Database
-        // ==========================================
+        // ฟังก์ชันช่วยอัปเดตรูปที่ Sidebar ทันที
+        function updateSidebarImage(imgData) {
+            const sidebarImg = document.getElementById('sidebar-user-img');
+            const sidebarIcon = document.getElementById('sidebar-user-icon');
+            if (imgData && imgData.trim() !== "") {
+                sidebarImg.src = imgData;
+                sidebarImg.classList.remove('hidden');
+                sidebarIcon.classList.add('hidden');
+            } else {
+                sidebarImg.classList.add('hidden');
+                sidebarIcon.classList.remove('hidden');
+            }
+        }
 
-        // ฟังก์ชันดึงค่าจาก Google Sheets
+        // ฟังก์ชันดึงค่าสวิตช์เมนูจาก Google Sheets
         async function fetchSettingsFromDatabase() {
             try {
                 const response = await fetch(GAS_API_URL, {
@@ -370,9 +375,7 @@
                     body: JSON.stringify({ action: 'getSettings' })
                 });
                 const result = await response.json();
-                
                 if (result.status === 'success' && result.settings) {
-                    // นำค่าที่ดึงมาจาก Sheet ทับลงไปใน Local Storage แล้วจัดหน้าจอใหม่
                     localStorage.setItem('wem_sys_settings', JSON.stringify(result.settings));
                     applyMenuStates();
                 }
@@ -381,15 +384,12 @@
             }
         }
 
-        // อัปเดตการแสดงผลของปุ่มเมนูตามสถานะ
         function applyMenuStates() {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
-            
             menuLinks.forEach(link => {
                 const id = link.id;
-                const isEnabled = savedSettings[id] !== false; // ค่าเริ่มต้นคือ true
-                
+                const isEnabled = savedSettings[id] !== false;
                 if (!isEnabled) {
                     link.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
                 } else {
@@ -398,7 +398,6 @@
             });
         }
 
-        // เปิด Modal แบบ Dynamic
         function openSettingsModal() {
             const modal = document.getElementById('settingsModal');
             const container = document.getElementById('settings-container');
@@ -413,14 +412,8 @@
                 const zoneHeader = parentBox ? parentBox.querySelector('h3') : null;
                 const zoneTitle = zoneHeader ? zoneHeader.textContent.trim() : 'ระบบงานอื่นๆ';
 
-                if (!groupedMenus[zoneTitle]) {
-                    groupedMenus[zoneTitle] = [];
-                }
-                
-                groupedMenus[zoneTitle].push({
-                    id: link.id,
-                    name: link.querySelector('span').textContent.trim()
-                });
+                if (!groupedMenus[zoneTitle]) { groupedMenus[zoneTitle] = []; }
+                groupedMenus[zoneTitle].push({ id: link.id, name: link.querySelector('span').textContent.trim() });
             });
 
             for (const [zoneTitle, menus] of Object.entries(groupedMenus)) {
@@ -446,42 +439,31 @@
             modal.classList.remove('hidden');
         }
 
-        // บันทึกสถานะ (เปลี่ยนหน้าจอทันที และส่งข้อมูลไปเซฟที่ Sheet เบื้องหลัง)
         function toggleMenuState(id, state) {
-            // อัปเดต UI ให้ผู้ใช้เห็นทันทีแบบลื่นไหล
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             savedSettings[id] = state;
             localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
             applyMenuStates(); 
 
-            // ส่งข้อมูลไปเซฟที่ Google Sheets เบื้องหลัง
             fetch(GAS_API_URL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    action: 'saveSetting',
-                    menuId: id,
-                    isEnabled: state
-                })
-            }).catch(err => console.error("ไม่สามารถบันทึกไปที่ Sheet ได้:", err));
+                body: JSON.stringify({ action: 'saveSetting', menuId: id, isEnabled: state })
+            }).catch(err => console.error(err));
         }
 
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
         }
-
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
         }
 
-    // ==========================================
+        // ==========================================
         // ส่วนจัดการข้อมูลผู้ใช้งาน (User Settings)
         // ==========================================
         let currentUploadingUserId = null;
@@ -497,29 +479,21 @@
                     body: JSON.stringify({ action: 'getAllUsers' })
                 });
                 const result = await response.json();
-                
-                if (result.status === 'success') {
-                    renderUserCards(result.users);
-                }
+                if (result.status === 'success') { renderUserCards(result.users); }
             } catch (error) {
                 container.innerHTML = '<p class="col-span-full text-center text-red-500 py-10">เกิดข้อผิดพลาดในการดึงข้อมูล</p>';
             }
         }
 
-        function closeUserSettingsModal() {
-            document.getElementById('userSettingsModal').classList.add('hidden');
-        }
+        function closeUserSettingsModal() { document.getElementById('userSettingsModal').classList.add('hidden'); }
 
         function renderUserCards(users) {
             const container = document.getElementById('user-cards-container');
             container.innerHTML = '';
 
             users.forEach(u => {
-                if(!u.id) return; // ข้ามแถวว่าง
-                const defaultImg = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-                const userImg = u.Image || defaultImg;
-                
-                // เก็บข้อมูลดิบไว้ในปุ่มดินสอ
+                if(!u.id) return; 
+                const userImg = (u.Image && u.Image.trim() !== "") ? u.Image : DEFAULT_PROFILE_IMG;
                 const userDataStr = encodeURIComponent(JSON.stringify(u));
 
                 const card = document.createElement('div');
@@ -550,7 +524,6 @@
             });
         }
 
-        // เปิดหน้าต่างแก้ไข
         function openEditUserModal(userStrEncoded) {
             const u = JSON.parse(decodeURIComponent(userStrEncoded));
             document.getElementById('edit-id').value = u.id;
@@ -563,11 +536,8 @@
             document.getElementById('editUserModal').classList.remove('hidden');
         }
 
-        function closeEditUserModal() {
-            document.getElementById('editUserModal').classList.add('hidden');
-        }
+        function closeEditUserModal() { document.getElementById('editUserModal').classList.add('hidden'); }
 
-// เซฟข้อมูลที่แก้ไข
         function handleSaveUserEdit(e) {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
@@ -591,7 +561,18 @@
                     Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
                     closeEditUserModal();
                     
-                    // สั่งให้โหลดข้อมูลผู้ใช้งานใหม่ทั้งหมดทันที เพื่อรีเฟรชหน้าจอให้ตรงกับฐานข้อมูลจริง
+                    // หากคนแก้คือ Admin แก้ข้อมูลตัวเอง ให้ทำการรีเฟรชข้อมูลที่ Sidebar ด้วย
+                    const currentUser = JSON.parse(localStorage.getItem('wem_user'));
+                    if (currentUser && String(data.name) === String(currentUser.name)) {
+                        currentUser.position = data.position;
+                        currentUser.group = data.group;
+                        currentUser.room = data.room;
+                        localStorage.setItem('wem_user', JSON.stringify(currentUser));
+                        
+                        document.getElementById('display-position').textContent = data.position || "-";
+                        document.getElementById('display-group').textContent = data.group || "-";
+                        document.getElementById('display-room').textContent = data.room || "-";
+                    }
                     openUserSettingsModal(); 
                 } else {
                     Swal.fire('ข้อผิดพลาด', res.message, 'error');
@@ -599,38 +580,29 @@
             }).catch(err => Swal.fire('ข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', 'error'));
         }
 
-        // อัปโหลดรูปภาพ
         function triggerImageUpload(userId) {
             currentUploadingUserId = userId;
             document.getElementById('imageUploader').click();
         }
 
-      function handleImageSelect(event) {
+        function handleImageSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                // สร้างตัวแปรภาพเพื่อเตรียมย่อขนาด (ลดปัญหา API พังเพราะรูปใหญ่เกิน)
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 400; // กำหนดความกว้างสูงสุด 400px (พอดีกับโปรไฟล์)
+                    const MAX_WIDTH = 400; 
                     const MAX_HEIGHT = 400;
                     let width = img.width;
                     let height = img.height;
 
-                    // คำนวณสัดส่วนรูปภาพ
                     if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                     } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                     }
 
                     canvas.width = width;
@@ -638,21 +610,20 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // บีบอัดเป็น base64 (คุณภาพ 80%) เพื่อให้ไฟล์เล็กที่สุด
-                    const compressedBase64 = canvas.toDataURL(file.type || 'image/jpeg', 0.8);
-                    
+                    // บีบอัดรูปภาพให้เล็กเพื่อประหยัดพื้นที่เซลล์ใน Sheet และโหลดเร็วขึ้น
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
                     uploadImageToGas(currentUploadingUserId, compressedBase64, file.name);
                 }
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
-            event.target.value = ''; // รีเซ็ต input
+            event.target.value = ''; 
         }
 
         function uploadImageToGas(userId, base64, filename) {
             const imgElement = document.getElementById(`img-user-${userId}`);
             const oldSrc = imgElement.src;
-            imgElement.src = "https://i.gifer.com/ZKZg.gif"; // ภาพหมุนโหลด
+            imgElement.src = "https://i.gifer.com/ZKZg.gif"; 
 
             fetch(GAS_API_URL, {
                 method: 'POST',
@@ -661,9 +632,18 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    // เติมพารามิเตอร์เวลาป้องกันแคชรูปเก่า (ทำให้เปลี่ยนรูปแล้วเห็นผลทันที)
-                    imgElement.src = res.imageUrl + "&t=" + new Date().getTime(); 
+                    imgElement.src = res.imageUrl; 
                     Swal.fire({ icon: 'success', title: 'อัปเดตรูปโปรไฟล์สำเร็จ', timer: 1500, showConfirmButton: false, toast: true, position: 'top-end' });
+                    
+                    // เช็คว่าถ้า Admin เปลี่ยนรูปของตัวเอง ให้เปลี่ยนรูปที่แถบด้านข้าง (Sidebar) ทันทีโดยไม่ต้องรอล็อกอินใหม่
+                    const currentUser = JSON.parse(localStorage.getItem('wem_user'));
+                    const targetCardName = document.getElementById(`name-user-${userId}`).textContent.trim();
+                    
+                    if (currentUser && currentUser.name === targetCardName) {
+                        currentUser.image = res.imageUrl;
+                        localStorage.setItem('wem_user', JSON.stringify(currentUser)); // บันทึกลงเครื่อง
+                        updateSidebarImage(res.imageUrl); // อัปเดต Sidebar จริงทันที
+                    }
                 } else {
                     imgElement.src = oldSrc;
                     Swal.fire('ข้อผิดพลาด', res.message, 'error');
