@@ -66,6 +66,11 @@
                 <i class="fa-solid fa-building w-5 text-center"></i>
                 <span class="font-medium">บริหารงานทั่วไป</span>
             </a>
+            <button id="btn-settings" onclick="openSettingsModal()" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-navy-800 hover:text-white rounded-lg transition-colors w-full text-left mt-4 border-t border-navy-800 pt-4">
+                <i class="fa-solid fa-gears w-5 text-center text-gray-400"></i>
+                <span class="font-medium">การตั้งค่าระบบ</span>
+            </button>
+            
         </nav>
 
         <div class="p-4 border-t border-navy-800 text-center">
@@ -98,28 +103,28 @@
 
 <div class="flex-1 p-6 overflow-y-auto">
 
-        <div class="mb-8">
+            <div class="mb-8">
                 <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-book-open text-blue-600"></i> ระบบบริหารงานวิชาการ
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <a href="#" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-acad-1" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-chalkboard-user text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">แผนการจัดการเรียนรู้/แผนการจัดประสบการณ์</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-acad-2" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-people-group text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC)</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-acad-3" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-flask text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">วิจัยเชิงปฏิบัติการในชั้นเรียน</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-acad-4" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-shapes text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สื่อการเรียนรู้</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-acad-5" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-file-circle-question text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">คลังข้อสอบ</span>
                     </a>
@@ -131,43 +136,43 @@
                     <i class="fa-solid fa-users text-amber-600"></i> ระบบบริหารงานบุคคล
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-1" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-user-gear text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">แผนพัฒนาตนเอง (ID Plan)</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-2" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-person-chalkboard text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการอบรม/สัมมนา</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-3" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-money-check-dollar text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สลิปเงินเดือน</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-4" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-money-bill-trend-up text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ผลการพิจารณาเลื่อนเงินเดือน</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-5" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-clipboard-check text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">แบบสรุปผลการประเมินข้อตกลงการปฏิบัติงาน (PA3)</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-6" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-calendar-check text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สถิติการมาเรียนของนักเรียน</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-7" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-weight-scale text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">น้ำหนัก/ส่วนสูงของนักเรียน</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-8" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-house-user text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการเยี่ยมบ้านนักเรียน</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-9" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-brain text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการประเมินจุดแข็ง/จุดอ่อน (SDQ)</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-hr-10" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-star text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานผลการประเมินคุณลักษณะอันพึงประสงค์</span>
                     </a>
@@ -179,11 +184,11 @@
                     <i class="fa-solid fa-coins text-green-600"></i> ระบบบริหารงานงบประมาณ
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <a href="#" class="group bg-white hover:bg-green-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-bud-1" class="group bg-white hover:bg-green-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-green-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-diagram-project text-green-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ระบบบริหารโครงการ</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-green-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-bud-2" class="group bg-white hover:bg-green-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-green-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-magnifying-glass-dollar text-green-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ระบบกำกับติดตามงบประมาณ</span>
                     </a>
@@ -195,11 +200,11 @@
                     <i class="fa-solid fa-building text-purple-600"></i> ระบบบริหารงานทั่วไป
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <a href="#" class="group bg-white hover:bg-purple-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-adm-1" class="group bg-white hover:bg-purple-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-purple-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-file-contract text-purple-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">คำสั่งสถานศึกษา</span>
                     </a>
-                    <a href="#" class="group bg-white hover:bg-purple-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                    <a href="#" id="menu-adm-2" class="group bg-white hover:bg-purple-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
                         <div class="w-8 h-8 bg-purple-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-comments text-purple-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการประชุมคณะกรรมการ</span>
                     </a>
@@ -208,72 +213,162 @@
     
         </div>
     </main>
+<div id="settingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gears text-gold-400"></i> ควบคุมการเปิด-ปิดระบบงานย่อย
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-gray-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="settings-container" class="p-6 overflow-y-auto flex-1"></div>
+            
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end">
+                <button onclick="closeSettingsModal()" class="bg-navy-800 hover:bg-navy-900 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                    เสร็จสิ้น
+                </button>
+            </div>
+        </div>
+    </div>
 
+    
 <script>
-// 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
+        // 1. ตรวจสอบข้อมูลเมื่อเข้าหน้านี้
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
             
-            // ถ้าไม่มีข้อมูลใน LocalStorage ให้เด้งกลับไปหน้าล็อกอิน
             if (!userData) {
                 window.location.href = "index.html";
                 return;
             }
 
             const user = JSON.parse(userData);
-
-            // แยกชื่อและนามสกุลด้วยช่องว่าง (Space)
             const fullName = user.name || "";
             const nameParts = fullName.split(" ");
             const firstName = nameParts[0] || "ไม่ระบุชื่อ";
-            // นำส่วนที่เหลือมาต่อกันเป็นนามสกุล (เผื่อมีเว้นวรรค 2 ที)
             const lastName = nameParts.slice(1).join(" ") || ""; 
 
-            // แสดงผลข้อมูลผู้ใช้งานที่ Sidebar
+            // แสดงผลข้อมูลผู้ใช้งาน
             document.getElementById('display-firstname').textContent = firstName;
             document.getElementById('display-lastname').textContent = lastName;
-            
             document.getElementById('display-position').textContent = user.position || "-";
             document.getElementById('display-group').textContent = user.group || "-";
             document.getElementById('display-room').textContent = user.room || "-";
+
+            // การตรวจสอบสิทธิ์สำหรับปุ่ม "การตั้งค่าระบบ"
+            const btnSettings = document.getElementById('btn-settings');
+            if (fullName !== "นายพีระศิน ไชยศร") {
+                // ถ้าไม่ใช่ ให้จางลงและกดไม่ได้
+                btnSettings.classList.add('opacity-30', 'pointer-events-none');
+                btnSettings.classList.remove('hover:bg-navy-800', 'hover:text-white');
+                btnSettings.onclick = (e) => e.preventDefault();
+            }
+
+            // นำสถานะการเปิด/ปิดเมนูมาใช้งาน
+            applyMenuStates();
             
-            // ฟังก์ชันแสดงวันและเวลาแบบ Real-time
+            // ฟังก์ชันนาฬิกา
             function updateClock() {
                 const now = new Date();
                 const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-                const dateString = now.toLocaleDateString('th-TH', dateOptions);
-                
-                const timeString = now.toLocaleTimeString('th-TH', { 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit' 
-                });
-
+                const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 const clockElement = document.getElementById('current-date');
                 if (clockElement) {
-                    clockElement.textContent = `${dateString} | ${timeString}`;
+                    clockElement.textContent = `${now.toLocaleDateString('th-TH', dateOptions)} | ${timeString}`;
                 }
             }
-
-            // เรียกใช้งานและอัปเดตทุกๆ 1 วินาที
             setInterval(updateClock, 1000);
             updateClock();
         });
 
-        // 2. ควบคุม Sidebar บนมือถือ
+        // ==========================================
+        // ส่วนควบคุมสถานะเมนูย่อย (Settings Logic)
+        // ==========================================
+
+        // อัปเดตการแสดงผลของปุ่มเมนูตามสถานะที่บันทึกไว้
+        function applyMenuStates() {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const menuLinks = document.querySelectorAll('a[id^="menu-"]');
+            
+            menuLinks.forEach(link => {
+                const id = link.id;
+                const isEnabled = savedSettings[id] !== false; // ค่าเริ่มต้นคือ true
+                
+                if (!isEnabled) {
+                    link.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
+                } else {
+                    link.classList.remove('opacity-40', 'pointer-events-none', 'grayscale');
+                }
+            });
+        }
+
+        // เปิด Modal และสร้างปุ่มสวิตช์อัตโนมัติ
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            const container = document.getElementById('settings-container');
+            container.innerHTML = ''; // เคลียร์ของเก่า
+
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const zones = document.querySelectorAll('h3'); // วนลูปหา 4 โซนหลัก
+
+            zones.forEach(zone => {
+                const zoneTitle = zone.textContent.trim();
+                const zoneDiv = document.createElement('div');
+                zoneDiv.className = 'mb-6';
+                zoneDiv.innerHTML = `<h4 class="font-bold text-navy-900 mb-3 border-b-2 border-gold-400 pb-1 inline-block">${zoneTitle}</h4>`;
+                
+                // หาเมนูย่อยในโซนนั้นๆ
+                const links = zone.nextElementSibling.querySelectorAll('a[id^="menu-"]');
+                links.forEach(link => {
+                    const id = link.id;
+                    const name = link.querySelector('span').textContent;
+                    const isChecked = savedSettings[id] !== false ? 'checked' : '';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center mb-2 bg-slate-50 p-3 rounded-lg border border-slate-100 shadow-sm';
+                    item.innerHTML = `
+                        <span class="text-sm font-medium text-gray-700">${name}</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" class="sr-only peer" onchange="toggleMenuState('${id}', this.checked)" ${isChecked}>
+                          <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                    `;
+                    zoneDiv.appendChild(item);
+                });
+                container.appendChild(zoneDiv);
+            });
+
+            modal.classList.remove('hidden');
+        }
+
+        // บันทึกสถานะลง LocalStorage และอัปเดตหน้าจอทันที
+        function toggleMenuState(id, state) {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            savedSettings[id] = state;
+            localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
+            applyMenuStates(); 
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        // ควบคุม Sidebar บนมือถือ
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
         }
 
-        // 3. ออกจากระบบ (ล้างข้อมูลผู้ใช้ และกลับไปหน้า index.html)
+        // ออกจากระบบ
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
         }
-    </script>
+</script>
 </body>
 </html>
