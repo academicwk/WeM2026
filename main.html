@@ -606,14 +606,45 @@
             document.getElementById('imageUploader').click();
         }
 
-        function handleImageSelect(event) {
+      function handleImageSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const base64Data = e.target.result;
-                uploadImageToGas(currentUploadingUserId, base64Data, file.name);
+                // สร้างตัวแปรภาพเพื่อเตรียมย่อขนาด (ลดปัญหา API พังเพราะรูปใหญ่เกิน)
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400; // กำหนดความกว้างสูงสุด 400px (พอดีกับโปรไฟล์)
+                    const MAX_HEIGHT = 400;
+                    let width = img.width;
+                    let height = img.height;
+
+                    // คำนวณสัดส่วนรูปภาพ
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // บีบอัดเป็น base64 (คุณภาพ 80%) เพื่อให้ไฟล์เล็กที่สุด
+                    const compressedBase64 = canvas.toDataURL(file.type || 'image/jpeg', 0.8);
+                    
+                    uploadImageToGas(currentUploadingUserId, compressedBase64, file.name);
+                }
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
             event.target.value = ''; // รีเซ็ต input
@@ -631,7 +662,8 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    imgElement.src = res.imageUrl; // ใส่รูปล่าสุดจาก Drive
+                    // เติมพารามิเตอร์เวลาป้องกันแคชรูปเก่า (ทำให้เปลี่ยนรูปแล้วเห็นผลทันที)
+                    imgElement.src = res.imageUrl + "&t=" + new Date().getTime(); 
                     Swal.fire({ icon: 'success', title: 'อัปเดตรูปโปรไฟล์สำเร็จ', timer: 1500, showConfirmButton: false, toast: true, position: 'top-end' });
                 } else {
                     imgElement.src = oldSrc;
