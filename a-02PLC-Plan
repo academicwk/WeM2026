@@ -149,7 +149,6 @@
             if (!userData) { window.location.href = "index.html"; return; }
             currentUser = JSON.parse(userData);
             
-            // ดึงข้อมูลครูทั้งหมดเผื่อไว้ใช้ใน Dropdown ทันทีที่เข้าหน้าเว็บ
             fetchAllUsersForDropdown();
         });
 
@@ -174,23 +173,19 @@
         }
 
         function openLunchModal() {
-            // คำนวณสายชั้น (ดึงจากตัวแรกหน้าเครื่องหมาย / หรือตัวเต็มถ้าไม่มี)
             const userRoom = currentUser.room || "";
             const gradePrefix = userRoom.split('/')[0] || userRoom; 
 
             document.getElementById('lunch-proposer').value = currentUser.name;
             document.getElementById('lunch-grade').value = gradePrefix || "ไม่ระบุสายชั้น";
 
-            // กรองครูที่มี Room ตรงกับสายชั้น
             const gradeMembers = allUsers.filter(u => u.Room && String(u.Room).startsWith(gradePrefix));
             const adminMembers = allUsers.filter(u => u.Room === "-");
 
-            // วาด Dropdown สมาชิก 1-12
             let memberHtml = '';
             for(let i=1; i<=12; i++) {
                 let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
                 gradeMembers.forEach(u => {
-                    // ไม่ให้มีชื่อตัวเองในช่องสมาชิก
                     if(u.Name !== currentUser.name) {
                         options += `<option value="${u.Name}">${u.Name}</option>`;
                     }
@@ -205,14 +200,12 @@
             }
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
-            // วาด Dropdown ผู้บริหาร
             const adminSelect = document.getElementById('lunch-admin');
             adminSelect.innerHTML = `<option value="">-- เลือกผู้บริหาร --</option>`;
             adminMembers.forEach(u => {
                 adminSelect.innerHTML += `<option value="${u.Name}">${u.Name} (${u.Position})</option>`;
             });
 
-            // วาดตาราง 15 สัปดาห์
             let tbodyHtml = '';
             for(let i=1; i<=15; i++) {
                 tbodyHtml += `
@@ -236,7 +229,6 @@
             document.getElementById('lunchModal').classList.add('hidden');
         }
 
-        // ฟังก์ชันแปลงวันที่ yyyy-mm-dd เป็นภาษาไทย
         function formatThaiDate(dateStr) {
             if(!dateStr) return "";
             const [y, m, d] = dateStr.split('-');
@@ -256,14 +248,12 @@
                 return;
             }
 
-            // รวบรวมสมาชิก
             let members = [];
             for(let i=1; i<=12; i++) {
                 let m = document.getElementById(`lunch-member-${i}`).value;
                 if(m) members.push(m);
             }
 
-            // รวบรวมแผน
             let plans = [];
             let hasAtLeastOnePlan = false;
             for(let i=1; i<=15; i++) {
