@@ -254,6 +254,16 @@
             "นางสาวรำไพ นิ่มขยัน"
         ];
 
+        // ฟังก์ชันสำหรับแสดง Loading Spinner (ปิดตัวเองอัตโนมัติเมื่อสั่ง Swal.close())
+        function showLoading(text = 'กำลังโหลดข้อมูล...') {
+            Swal.fire({
+                title: text,
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading()
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
             const userData = localStorage.getItem('wem_user');
             if (!userData) { window.location.href = "index.html"; return; }
@@ -280,8 +290,11 @@
             const userRoom = String(currentUser.room || "").trim();
             userGradePrefix = userRoom.split('/')[0].trim(); 
 
+            // แสดง Spinner ตอนเริ่มโหลดหน้า
+            showLoading('กำลังเตรียมข้อมูล...');
             await fetchAllUsersForDropdown();
             await fetchPLCPlanData();
+            Swal.close(); // ปิด Spinner ทันทีที่โหลดเสร็จ
         });
 
         function toggleSidebar() {
@@ -301,7 +314,6 @@
             if (container.classList.contains('hidden')) {
                 container.classList.remove('hidden');
                 icon.classList.add('rotate-180');
-                // ไหลลงมาให้เห็นชัดๆ
                 setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
             } else {
                 container.classList.add('hidden');
@@ -332,11 +344,6 @@
                     }
                 }
             } catch (e) { console.error(e); }
-        }
-
-        function checkLunchPLCPermission() {
-            // ไม่กันการเปิด Modal แต่เดี๋ยวไปคุมปุ่ม Submit แทนเพื่อให้ดูข้อมูลได้
-            openLunchModal();
         }
 
         function openLunchModal() {
@@ -483,7 +490,7 @@
                 return;
             }
 
-            Swal.fire({ title: 'กำลังบันทึกและสร้าง PDF...', text: 'กรุณารอสักครู่ (อาจใช้เวลา 5-10 วินาที)', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            showLoading('กำลังบันทึกและสร้าง PDF...\nกรุณารอสักครู่ (อาจใช้เวลา 5-10 วินาที)');
 
             fetch(GAS_API_URL, {
                 method: 'POST',
@@ -498,16 +505,20 @@
                 })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
+                    // แสดงแจ้งเตือนสำเร็จแบบไม่มีปุ่ม และตั้งเวลาปิด
                     Swal.fire({ 
                         icon: 'success', 
                         title: 'ส่งคำขอสำเร็จ', 
-                        html: `ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว<br><br><a href="${res.pdfUrl}" target="_blank" class="inline-block px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors shadow-md mt-4"><i class="fa-solid fa-file-pdf mr-2"></i>เปิดดูไฟล์ PDF ที่นี่</a>`,
-                        confirmButtonColor: '#1e3a8a',
-                        confirmButtonText: 'รับทราบ'
+                        text: 'ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(async () => {
+                        // เมื่อแจ้งเตือนปิดลง ให้โชว์ Spin เพื่อดึงข้อมูลอัปเดต
+                        showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
+                        await fetchPLCPlanData();
+                        closeLunchModal();
+                        Swal.close();
                     });
-                    
-                    fetchPLCPlanData();
-                    closeLunchModal();
                 } else {
                     Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
                 }
