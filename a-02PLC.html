@@ -347,7 +347,7 @@
             let memberHtml = '';
             for(let i=1; i<=12; i++) {
                 let savedMember = currentPLCPlan && currentPLCPlan.members[i-1] ? currentPLCPlan.members[i-1] : "";
-                let options = `<option value="">-- เลือกสมาชิก --</option>`;
+                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`; // <--- แก้เป็นแบบนี้ครับ
                 gradeMembers.forEach(u => {
                     if (!currentPLCPlan && u.Name === currentUser.name) return; 
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
