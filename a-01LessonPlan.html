@@ -66,6 +66,7 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <main class="flex-1 flex flex-col h-full relative w-full">
+        <!-- แถบด้านบนแสดงชื่อเมนู -->
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
@@ -85,7 +86,8 @@
 
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             
-            <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6">
+            <!-- Dashboard สถานะรวม -->
+            <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-4">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-chart-pie text-gold-500 mr-2"></i>ภาพรวมการส่งแผนการสอนและบันทึกหลังสอน</h3>
                     <span id="overall-text" class="text-sm font-bold text-gray-600">0/64 รายการ (0%)</span>
@@ -95,6 +97,34 @@
                 </div>
             </div>
 
+            <!-- แผงปุ่มดาวน์โหลดฟอร์ม Word 7 ปุ่มเตี้ยๆ -->
+            <div class="max-w-5xl mx-auto mb-6">
+                <div class="grid grid-cols-3 md:grid-cols-7 gap-2">
+                    <a href="https://docs.google.com/uc?export=download&id=11EwQV9bYRJT9CbFU5gwY2Nk9qd-kGhST" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">แผน 1 ชม.</span>
+                    </a>
+                    <a href="https://docs.google.com/uc?export=download&id=1UdQCTEeM62ODzc_3Ep5t6vA2J-hfcw5z" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">แผน 2 ชม.</span>
+                    </a>
+                    <a href="https://docs.google.com/uc?export=download&id=1p2Dbc1IZaVQVihW1QkOvctknCeQzKXyB" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">แผน 3 ชม.</span>
+                    </a>
+                    <a href="https://docs.google.com/uc?export=download&id=1o-VE8nlkNsD0f1gWNPmo9VzjUxw-ysky" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">แผน 4 ชม.</span>
+                    </a>
+                    <a href="https://docs.google.com/uc?export=download&id=1pw8pb2MjAECrLT7nQNJzIfJCucQSjys2" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">แผน 5 ชม.</span>
+                    </a>
+                    <a href="https://docs.google.com/uc?export=download&id=1GZ_MER45MaLvPl-DXCyYWUeusK-qPZVS" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">บันทึกหลังสอน</span>
+                    </a>
+                    <a href="https://docs.google.com/uc?export=download&id=https://docs.google.com/document/d/1wUjWtSA3tjOB4yAb_gfISUGgbuIyNuM3/edit?rtpof=true&tab=t.0" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-1.5 px-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-word text-blue-600"></i><span class="text-[11px] font-bold">หน้าปก/อื่นๆ</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ฟอร์มระบุรายวิชาและระดับชั้น -->
             <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     <div>
@@ -124,10 +154,12 @@
                 </div>
             </div>
 
+            <!-- Grid Layout แนวตั้ง 1 คอลัมน์ (Full width) -->
             <div class="grid grid-cols-1 gap-6 max-w-5xl mx-auto pb-10" id="unit-cards-container"></div>
         </div>
     </main>
 
+    <!-- Modal สำหรับอัปโหลดแผนการสอน (กรอกข้อมูล) -->
     <div id="planModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button onclick="closePlanModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -407,7 +439,6 @@
             const subject = document.getElementById('subject-input').value;
             const grade = document.getElementById('grade-input').value;
 
-            // ตรวจสอบว่าคุณครูระบุวิชาและชั้นหรือยัง (บังคับให้กรอก)
             if (!subject || !grade) {
                 Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุ "รายวิชา" และ "ระดับชั้น" ในกล่องด้านบนก่อนอัปโหลดไฟล์ครับ', 'warning');
                 if (type === 'plan') closePlanModal();
