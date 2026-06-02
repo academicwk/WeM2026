@@ -72,7 +72,7 @@
                 </a>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
                     <h2 class="text-xl font-bold text-navy-900 leading-none">ชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC)</h2>
-                    <p class="text-xs font-medium text-gray-500 mt-1.5">โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (Professional Learning Community : PLC) โดย นางสาววรรณธการ ศรประสิทธิ์</p>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5" id="plc-header-subtitle">โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (Professional Learning Community : PLC)</p>
                 </div>
             </div>
             <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
@@ -104,6 +104,7 @@
                     <div id="setup-options-container" class="hidden transform origin-top transition-all duration-300 ease-in-out pl-6 md:pl-16">
                         <div class="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 flex flex-col gap-3">
                             
+                            <!-- Lunch PLC -->
                             <div onclick="openLunchModal()" class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center justify-between w-full cursor-pointer group">
                                 <div class="flex items-center gap-3 overflow-hidden text-left">
                                     <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition-transform shadow-inner">
@@ -119,17 +120,21 @@
                                 </a>
                             </div>
 
-                            <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบ Open Class PLC จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center text-left focus:outline-none group opacity-70">
-                                <div class="flex items-center gap-3 overflow-hidden text-left w-full">
-                                    <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center text-lg shrink-0 shadow-inner">
+                            <!-- Open Class PLC -->
+                            <div onclick="openOpenClassModal()" class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-indigo-500 flex items-center justify-between w-full cursor-pointer group">
+                                <div class="flex items-center gap-3 overflow-hidden text-left">
+                                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition-transform shadow-inner">
                                         <i class="fa-solid fa-chalkboard-user"></i>
                                     </div>
                                     <div class="truncate">
-                                        <h3 class="text-sm font-bold text-navy-900 group-hover:text-amber-600 truncate">1.2 รูปแบบกลุ่มสาระฯ (Open Class)</h3>
+                                        <h3 class="text-sm font-bold text-navy-900 group-hover:text-indigo-700 truncate">1.2 รูปแบบกลุ่มสาระฯ (Open Class)</h3>
                                         <p class="text-[11px] text-gray-500 font-medium truncate mt-0.5">เสนอขอจัดตั้งกลุ่มในรูปแบบกลุ่มสาระฯ</p>
                                     </div>
                                 </div>
-                            </button>
+                                <a href="#" target="_blank" id="openclass-pdf-btn" onclick="event.stopPropagation()" class="hidden shrink-0 ml-2 px-3 py-1.5 bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm text-xs font-bold" title="เปิดดูเอกสาร PDF">
+                                    <i class="fa-solid fa-file-pdf mr-1"></i>ดูเอกสาร
+                                </a>
+                            </div>
 
                         </div>
                     </div>
@@ -154,6 +159,7 @@
         </div>
     </main>
 
+    <!-- Modal: Lunch PLC -->
     <div id="lunchModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
         <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
             
@@ -164,10 +170,6 @@
             
             <div class="p-6 overflow-y-auto max-h-[75vh]">
                 
-                <div id="lunch-readonly-notice" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 mb-4 rounded-r-lg text-sm font-bold shadow-sm">
-                    <i class="fa-solid fa-circle-info mr-1"></i> ดูอย่างเดียว : คุณไม่มีสิทธิ์แก้ไขคำขอนี้ (สงวนสิทธิ์เฉพาะหัวหน้าสายชั้น)
-                </div>
-
                 <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-blue-500 pl-3">ส่วนที่ 1: ข้อมูลจัดตั้งกลุ่ม</h4>
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -185,7 +187,8 @@
                     
                     <label class="text-xs font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-12)</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2" id="lunch-members-container">
-                        </div>
+                        <!-- JS จะสร้าง Dropdown -->
+                    </div>
 
                 </div>
 
@@ -200,7 +203,8 @@
                             </tr>
                         </thead>
                         <tbody id="lunch-plan-tbody" class="divide-y divide-slate-100">
-                            </tbody>
+                            <!-- JS จะสร้างแถว 15 แถวที่นี่ -->
+                        </tbody>
                     </table>
                 </div>
 
@@ -215,23 +219,65 @@
         </div>
     </div>
 
+    <!-- Modal: Open Class PLC -->
+    <div id="openClassModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
+        <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
+            
+            <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
+                <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-chalkboard-user text-indigo-400 mr-2"></i>แบบฟอร์มขอจัดตั้งกลุ่ม/เสนอแผน Open Class</h3>
+                <button onclick="closeOpenClassModal()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto max-h-[75vh]">
+                
+                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-indigo-500 pl-3">ส่วนที่ 1: ข้อมูลจัดตั้งกลุ่มสาระฯ</h4>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-700">ชื่อผู้เสนอคำขอ</label>
+                            <input type="text" id="oc-proposer" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-700">กลุ่มสาระการเรียนรู้</label>
+                            <input type="text" id="oc-dept" placeholder="เช่น สังคมศึกษาฯ, คณิตศาสตร์" class="w-full border p-2 rounded-lg bg-white text-gray-600 outline-none text-sm focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-200 my-1">
+                    
+                    <label class="text-xs font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-4)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2" id="oc-members-container">
+                        <!-- JS จะสร้าง Dropdown 4 ช่อง -->
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (3 วงรอบ)</h4>
+                
+                <div id="oc-cycles-container" class="space-y-4">
+                    <!-- JS จะสร้างโครงสร้าง 3 วงรอบที่นี่ -->
+                </div>
+
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+                <button onclick="closeOpenClassModal()" class="px-5 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors text-sm">ปิดหน้าต่าง</button>
+                <button id="oc-submit-btn" onclick="submitOpenClassPLC()" class="px-5 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-md transition-colors text-sm">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>บันทึกและสร้าง PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
         let currentUser = null;
         let allUsers = [];
-        let currentPLCPlan = null;
+        
+        let currentPLCPlan = null; // Lunch
+        let currentPLCOpenClass = null; // Open Class
+        
         let userGradePrefix = "";
-
-        const allowedLunchPLCUsers = [
-            "นางสาวสมสุข สุทธิธาทิพย์",
-            "นางสาวเจนจิรา สุธาศรี",
-            "นางสาวศศิธร พรหมประเสริฐ",
-            "นางสาวพัชริยา แย้มวัฒนะ",
-            "นางรัชดาภรณ์ คงทัน",
-            "นางสาววรรณธการ ศรประสิทธิ์",
-            "นางสาวรำไพ นิ่มขยัน"
-        ];
 
         function showLoading(text = 'กำลังโหลดข้อมูล...') {
             Swal.fire({
@@ -252,6 +298,7 @@
             document.getElementById('display-firstname').textContent = nameParts[0] || "ไม่ระบุชื่อ";
             document.getElementById('display-lastname').textContent = nameParts.slice(1).join(" ") || ""; 
             document.getElementById('display-position').textContent = currentUser.position || "-";
+            document.getElementById('plc-header-subtitle').textContent = `โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC) โดย ${currentUser.name}`;
 
             if (currentUser.image && currentUser.image.trim() !== "") {
                 document.getElementById('sidebar-user-img').src = currentUser.image;
@@ -270,7 +317,8 @@
 
             showLoading('กำลังเตรียมข้อมูล...');
             await fetchAllUsersForDropdown();
-            await fetchPLCPlanData();
+            await fetchPLCPlanData(); // Lunch
+            await fetchPLCPlanOpenClass(); // Open Class
             Swal.close(); 
         });
 
@@ -305,6 +353,9 @@
             } catch (err) { console.error(err); }
         }
 
+        // ==========================================
+        // LUNCH PLC FUNCTIONS
+        // ==========================================
         async function fetchPLCPlanData() {
             try {
                 const res = await fetch(GAS_API_URL, {
@@ -324,18 +375,6 @@
         }
 
         function openLunchModal() {
-            const isReadOnly = !allowedLunchPLCUsers.includes(currentUser.name);
-            const submitBtn = document.getElementById('lunch-submit-btn');
-            const readonlyNotice = document.getElementById('lunch-readonly-notice');
-            
-            if (isReadOnly) {
-                submitBtn.classList.add('hidden');
-                readonlyNotice.classList.remove('hidden');
-            } else {
-                submitBtn.classList.remove('hidden');
-                readonlyNotice.classList.add('hidden');
-            }
-
             document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : currentUser.name;
             document.getElementById('lunch-grade').value = currentPLCPlan ? currentPLCPlan.grade : (userGradePrefix || "ไม่ระบุสายชั้น");
 
@@ -347,18 +386,16 @@
             let memberHtml = '';
             for(let i=1; i<=12; i++) {
                 let savedMember = currentPLCPlan && currentPLCPlan.members[i-1] ? currentPLCPlan.members[i-1] : "";
-                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`; // <--- แก้เป็นแบบนี้ครับ
+                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
                 gradeMembers.forEach(u => {
                     if (!currentPLCPlan && u.Name === currentUser.name) return; 
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
                     options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
                 });
                 
-                let disabledAttr = isReadOnly ? "disabled" : "";
-                let bgClass = isReadOnly ? "bg-gray-100" : "bg-white";
                 memberHtml += `
                     <div>
-                        <select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-blue-500 outline-none ${bgClass}" ${disabledAttr}>
+                        <select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-blue-500 outline-none bg-white">
                             ${options}
                         </select>
                     </div>
@@ -384,17 +421,14 @@
                     mtOptions += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
                 });
 
-                let disabledAttr = isReadOnly ? "disabled" : "";
-                let bgClass = isReadOnly ? "bg-gray-100 text-gray-500" : "bg-white text-gray-600";
-
                 tbodyHtml += `
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
                         <td class="py-2 px-4 text-center font-bold text-gray-500 text-xs">${i}</td>
                         <td class="py-2 px-4">
-                            <input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 ${bgClass}" ${disabledAttr}>
+                            <input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600">
                         </td>
                         <td class="py-2 px-4">
-                            <select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 ${bgClass}" ${disabledAttr}>
+                            <select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600">
                                 ${mtOptions}
                             </select>
                         </td>
@@ -402,13 +436,10 @@
                 `;
             }
             document.getElementById('lunch-plan-tbody').innerHTML = tbodyHtml;
-
             document.getElementById('lunchModal').classList.remove('hidden');
         }
 
-        function closeLunchModal() {
-            document.getElementById('lunchModal').classList.add('hidden');
-        }
+        function closeLunchModal() { document.getElementById('lunchModal').classList.add('hidden'); }
 
         function formatThaiDate(dateStr) {
             if(!dateStr) return "";
@@ -433,54 +464,216 @@
             for(let i=1; i<=15; i++) {
                 let rawDate = document.getElementById(`lunch-date-${i}`).value;
                 let mt = document.getElementById(`lunch-mt-${i}`).value;
-                
                 if (rawDate || mt) {
                     hasAtLeastOnePlan = true;
-                    plans.push({
-                        week: i,
-                        dateThai: formatThaiDate(rawDate),
-                        dateRaw: rawDate,
-                        modelTeacher: mt
-                    });
+                    plans.push({ week: i, dateThai: formatThaiDate(rawDate), dateRaw: rawDate, modelTeacher: mt });
                 }
             }
 
-            if (!hasAtLeastOnePlan) {
-                Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกำหนดการกิจกรรมอย่างน้อย 1 สัปดาห์', 'warning');
-                return;
-            }
+            if (!hasAtLeastOnePlan) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกำหนดการกิจกรรมอย่างน้อย 1 สัปดาห์', 'warning'); return; }
 
             showLoading('กำลังบันทึกและสร้าง PDF...\nกรุณารอสักครู่ (อาจใช้เวลา 5-10 วินาที)');
 
             fetch(GAS_API_URL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    action: 'savePLCPlanLunch',
-                    proposer: proposer,
-                    grade: grade,
-                    members: members,
-                    plans: plans
-                })
+                body: JSON.stringify({ action: 'savePLCPlanLunch', proposer: proposer, grade: grade, members: members, plans: plans })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
-                    Swal.fire({ 
-                        icon: 'success', 
-                        title: 'ส่งคำขอสำเร็จ', 
-                        text: 'ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว',
-                        showConfirmButton: false,
-                        timer: 2000
+                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000
                     }).then(async () => {
                         showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
                         await fetchPLCPlanData();
                         closeLunchModal();
                         Swal.close();
                     });
-                } else {
-                    Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
+                } else { Swal.fire('เกิดข้อผิดพลาด', res.message, 'error'); }
+            }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
+        }
+
+
+        // ==========================================
+        // OPEN CLASS PLC FUNCTIONS
+        // ==========================================
+        async function fetchPLCPlanOpenClass() {
+            try {
+                const res = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getPLCPlanOpenClass', proposer: currentUser.name })
+                }).then(r => r.json());
+
+                if (res.status === 'success' && res.data) {
+                    currentPLCOpenClass = res.data;
+                    if (currentPLCOpenClass.pdfUrl) {
+                        const pdfBtn = document.getElementById('openclass-pdf-btn');
+                        pdfBtn.href = currentPLCOpenClass.pdfUrl;
+                        pdfBtn.classList.remove('hidden');
+                    }
                 }
-            }).catch(e => {
-                Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error');
-            });
+            } catch (e) { console.error(e); }
+        }
+
+        function openOpenClassModal() {
+            document.getElementById('oc-proposer').value = currentPLCOpenClass ? currentPLCOpenClass.proposer : currentUser.name;
+            document.getElementById('oc-dept').value = currentPLCOpenClass ? currentPLCOpenClass.department : "";
+
+            const validTeachers = allUsers.filter(u => u.Room !== "-"); // ตัดผู้บริหารออก
+
+            // สมาชิก 4 คน
+            let memberHtml = '';
+            for(let i=1; i<=4; i++) {
+                let savedMember = currentPLCOpenClass && currentPLCOpenClass.members[i-1] ? currentPLCOpenClass.members[i-1] : "";
+                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
+                validTeachers.forEach(u => {
+                    if (!currentPLCOpenClass && u.Name === currentUser.name) return; 
+                    let isSelected = (u.Name === savedMember) ? "selected" : "";
+                    options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
+                });
+                memberHtml += `
+                    <div>
+                        <select id="oc-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-indigo-500 outline-none bg-white">
+                            ${options}
+                        </select>
+                    </div>
+                `;
+            }
+            document.getElementById('oc-members-container').innerHTML = memberHtml;
+
+            // วงรอบ 3 รอบ (Plan, Do, See)
+            let cyclesHtml = '';
+            for(let i=1; i<=3; i++) {
+                let p = currentPLCOpenClass && currentPLCOpenClass.cycles ? currentPLCOpenClass.cycles.find(x => x.cycle === i) : null;
+                
+                let p_date = p && p.plan ? p.plan.dateRaw : "";
+                let p_mt = p && p.plan ? p.plan.mt : "";
+                let d_date = p && p.do ? p.do.dateRaw : "";
+                let d_time = p && p.do ? p.do.time : "";
+                let d_room = p && p.do ? p.do.room : "";
+                let d_subject = p && p.do ? p.do.subject : "";
+                let d_mt = p && p.do ? p.do.mt : "";
+                let s_date = p && p.see ? p.see.dateRaw : "";
+                let s_mt = p && p.see ? p.see.mt : "";
+
+                let mtOptionsP = `<option value="">-- เลือก Model Teacher --</option>`;
+                let mtOptionsD = `<option value="">-- เลือก Model Teacher --</option>`;
+                let mtOptionsS = `<option value="">-- เลือก Model Teacher --</option>`;
+                
+                validTeachers.forEach(u => {
+                    mtOptionsP += `<option value="${u.Name}" ${u.Name === p_mt ? "selected" : ""}>${u.Name}</option>`;
+                    mtOptionsD += `<option value="${u.Name}" ${u.Name === d_mt ? "selected" : ""}>${u.Name}</option>`;
+                    mtOptionsS += `<option value="${u.Name}" ${u.Name === s_mt ? "selected" : ""}>${u.Name}</option>`;
+                });
+
+                cyclesHtml += `
+                    <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                        <div class="bg-indigo-100 text-indigo-900 font-bold px-4 py-2 text-sm border-b border-indigo-200">
+                            <i class="fa-solid fa-arrows-spin mr-1"></i> วงรอบที่ ${i}
+                        </div>
+                        <div class="p-3 bg-white space-y-3">
+                            
+                            <!-- ขั้น Plan -->
+                            <div class="flex flex-col sm:flex-row gap-2 items-center">
+                                <span class="w-full sm:w-20 font-bold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded text-center shrink-0">ขั้น Plan</span>
+                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600" title="วันที่">
+                                <select id="oc-c${i}-p-mt" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
+                                    ${mtOptionsP}
+                                </select>
+                            </div>
+
+                            <!-- ขั้น Do -->
+                            <div class="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded border border-slate-100">
+                                <span class="w-full sm:w-20 font-bold text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded text-center shrink-0">ขั้น Do</span>
+                                <div class="grid grid-cols-2 md:flex gap-2 w-full">
+                                    <input type="date" id="oc-c${i}-d-d" value="${d_date}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600" title="วันที่">
+                                    <input type="time" id="oc-c${i}-d-t" value="${d_time}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600" title="เวลา">
+                                    <input type="text" id="oc-c${i}-d-r" value="${d_room}" placeholder="ห้องเรียน" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
+                                    <input type="text" id="oc-c${i}-d-s" value="${d_subject}" placeholder="รายวิชา" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
+                                    <select id="oc-c${i}-d-mt" class="w-full col-span-2 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
+                                        ${mtOptionsD}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- ขั้น See -->
+                            <div class="flex flex-col sm:flex-row gap-2 items-center">
+                                <span class="w-full sm:w-20 font-bold text-xs text-green-700 bg-green-50 px-2 py-1 rounded text-center shrink-0">ขั้น See</span>
+                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600" title="วันที่">
+                                <select id="oc-c${i}-s-mt" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
+                                    ${mtOptionsS}
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('oc-cycles-container').innerHTML = cyclesHtml;
+            document.getElementById('openClassModal').classList.remove('hidden');
+        }
+
+        function closeOpenClassModal() { document.getElementById('openClassModal').classList.add('hidden'); }
+
+        function submitOpenClassPLC() {
+            const proposer = document.getElementById('oc-proposer').value;
+            const dept = document.getElementById('oc-dept').value;
+
+            if (!dept) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกลุ่มสาระการเรียนรู้', 'warning'); return; }
+
+            let members = [];
+            for(let i=1; i<=4; i++) {
+                let m = document.getElementById(`oc-member-${i}`).value;
+                if(m) members.push(m);
+            }
+
+            let cycles = [];
+            let hasAtLeastOneCycle = false;
+
+            for(let i=1; i<=3; i++) {
+                let p_d = document.getElementById(`oc-c${i}-p-d`).value;
+                let p_mt = document.getElementById(`oc-c${i}-p-mt`).value;
+                
+                let d_d = document.getElementById(`oc-c${i}-d-d`).value;
+                let d_t = document.getElementById(`oc-c${i}-d-t`).value;
+                let d_r = document.getElementById(`oc-c${i}-d-r`).value;
+                let d_s = document.getElementById(`oc-c${i}-d-s`).value;
+                let d_mt = document.getElementById(`oc-c${i}-d-mt`).value;
+
+                let s_d = document.getElementById(`oc-c${i}-s-d`).value;
+                let s_mt = document.getElementById(`oc-c${i}-s-mt`).value;
+
+                if (p_d || d_d || s_d) { hasAtLeastOneCycle = true; }
+
+                cycles.push({
+                    cycle: i,
+                    plan: { dateRaw: p_d, dateThai: formatThaiDate(p_d), mt: p_mt },
+                    do:   { dateRaw: d_d, dateThai: formatThaiDate(d_d), time: d_t, room: d_r, subject: d_s, mt: d_mt },
+                    see:  { dateRaw: s_d, dateThai: formatThaiDate(s_d), mt: s_mt }
+                });
+            }
+
+            if (!hasAtLeastOneCycle) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกำหนดการกิจกรรมอย่างน้อย 1 วงรอบ', 'warning'); return; }
+
+            showLoading('กำลังบันทึกและสร้าง PDF...\nกรุณารอสักครู่ (อาจใช้เวลา 5-10 วินาที)');
+
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'savePLCPlanOpenClass',
+                    proposer: proposer,
+                    department: dept,
+                    members: members,
+                    cycles: cycles
+                })
+            }).then(r => r.json()).then(res => {
+                if (res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000
+                    }).then(async () => {
+                        showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
+                        await fetchPLCPlanOpenClass();
+                        closeOpenClassModal();
+                        Swal.close();
+                    });
+                } else { Swal.fire('เกิดข้อผิดพลาด', res.message, 'error'); }
+            }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
         }
     </script>
 </body>
