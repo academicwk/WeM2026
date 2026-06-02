@@ -66,6 +66,7 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <main class="flex-1 flex flex-col h-full relative w-full">
+        <!-- แถบด้านบนแสดงชื่อเมนู -->
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
@@ -85,28 +86,53 @@
 
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             
+            <!-- Dashboard สถานะรวม -->
+            <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-chart-pie text-gold-500 mr-2"></i>ภาพรวมการส่งแผนการสอนและบันทึกหลังสอน</h3>
+                    <span id="overall-text" class="text-sm font-bold text-gray-600">0/64 รายการ (0%)</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner">
+                    <div id="overall-bar" class="h-full bg-red-500 transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- ฟอร์มระบุรายวิชาและระดับชั้น -->
             <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     <div>
                         <label class="text-sm font-bold text-navy-900 mb-1 block">รายวิชา</label>
-                        <input type="text" id="subject-input" class="w-full border-b-2 border-slate-200 focus:border-gold-500 outline-none pb-1 text-gray-700" placeholder="เช่น สังคมศึกษา">
+                        <input type="text" id="subject-input" class="w-full border-b-2 border-slate-200 focus:border-gold-500 outline-none pb-1 text-gray-700 font-medium" placeholder="เช่น สังคมศึกษา">
                     </div>
                     <div>
                         <label class="text-sm font-bold text-navy-900 mb-1 block">ระดับชั้น</label>
-                        <input type="text" id="grade-input" class="w-full border-b-2 border-slate-200 focus:border-gold-500 outline-none pb-1 text-gray-700" placeholder="เช่น ป.5">
+                        <select id="grade-input" class="w-full border-b-2 border-slate-200 focus:border-gold-500 outline-none pb-1 text-gray-700 font-medium bg-transparent cursor-pointer">
+                            <option value="">-- เลือกระดับชั้น --</option>
+                            <option value="อ.1">อนุบาล 1 (อ.1)</option>
+                            <option value="อ.2">อนุบาล 2 (อ.2)</option>
+                            <option value="อ.3">อนุบาล 3 (อ.3)</option>
+                            <option value="ป.1">ประถมศึกษาปีที่ 1 (ป.1)</option>
+                            <option value="ป.2">ประถมศึกษาปีที่ 2 (ป.2)</option>
+                            <option value="ป.3">ประถมศึกษาปีที่ 3 (ป.3)</option>
+                            <option value="ป.4">ประถมศึกษาปีที่ 4 (ป.4)</option>
+                            <option value="ป.5">ประถมศึกษาปีที่ 5 (ป.5)</option>
+                            <option value="ป.6">ประถมศึกษาปีที่ 6 (ป.6)</option>
+                        </select>
                     </div>
                     <div>
                         <button onclick="saveHeaderData()" class="w-full bg-navy-900 hover:bg-navy-800 text-white py-2 rounded-lg font-bold shadow-sm transition-colors">
-                            <i class="fa-solid fa-save mr-2"></i>บันทึกข้อมูลวิชา
+                            <i class="fa-solid fa-save mr-2"></i>บันทึกข้อมูลหลัก
                         </button>
                     </div>
                 </div>
             </div>
 
+            <!-- Grid Layout แนวตั้ง 1 คอลัมน์ (Full width) -->
             <div class="grid grid-cols-1 gap-6 max-w-5xl mx-auto pb-10" id="unit-cards-container"></div>
         </div>
     </main>
 
+    <!-- Modal สำหรับอัปโหลดแผนการสอน (กรอกข้อมูล) -->
     <div id="planModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button onclick="closePlanModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -145,7 +171,7 @@
         let currentUser = null;
         let uploadedData = {}; 
         let tempBase64Plan = ""; 
-        let logUploadParams = null; // เก็บค่าเวลาอัปโหลด log
+        let logUploadParams = null; 
 
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
@@ -170,7 +196,7 @@
                 if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
             }, 1000);
 
-            // ดึงข้อมูลทั้งหมดเมื่อเข้าหน้า
+            // ใช้ชื่อ นามสกุลจริงในการบันทึกและเรียกข้อมูล
             fetchSubjectHeader();
             fetchLessonPlans();
         });
@@ -185,12 +211,9 @@
             window.location.href = "index.html";
         }
 
-        // ==========================================
-        // ระบบรายวิชา
-        // ==========================================
         async function fetchSubjectHeader() {
             try {
-                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSubjectHeader', username: currentUser.username }) }).then(r => r.json());
+                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSubjectHeader', name: currentUser.name }) }).then(r => r.json());
                 if(res.status === 'success') {
                     document.getElementById('subject-input').value = res.subject || '';
                     document.getElementById('grade-input').value = res.grade || '';
@@ -204,21 +227,20 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             fetch(GAS_API_URL, {
                 method: 'POST',
-                body: JSON.stringify({ action: 'saveSubjectHeader', username: currentUser.username, subject, grade })
+                // ส่ง name ไปจัดเก็บแทน username
+                body: JSON.stringify({ action: 'saveSubjectHeader', name: currentUser.name, subject, grade })
             }).then(r => r.json()).then(res => {
-                if(res.status === 'success') Swal.fire({ icon: 'success', title: 'บันทึกรายวิชาสำเร็จ', timer: 1500, showConfirmButton: false });
+                if(res.status === 'success') Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลหลักสำเร็จ', timer: 1500, showConfirmButton: false });
                 else Swal.fire('ผิดพลาด', res.message, 'error');
             });
         }
 
-        // ==========================================
-        // ระบบสร้าง Cards 
-        // ==========================================
         async function fetchLessonPlans() {
             const container = document.getElementById('unit-cards-container');
             container.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i></div>`;
             try {
-                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getLessonPlans', username: currentUser.username }) }).then(r => r.json());
+                // ส่ง name แทน username ในการดึงข้อมูล
+                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getLessonPlans', name: currentUser.name }) }).then(r => r.json());
                 if (res.status === 'success') uploadedData = res.data || {};
                 renderUnitCards();
             } catch (error) { renderUnitCards(); }
@@ -227,14 +249,16 @@
         function renderUnitCards() {
             const container = document.getElementById('unit-cards-container');
             container.innerHTML = '';
+            
+            let totalOverallCompleted = 0;
+            const totalOverallTarget = 64; // 8 units * 4 weeks * 2 files
 
             for (let unit = 1; unit <= 8; unit++) {
                 let completedItems = 0;
                 const totalItems = 8; 
                 let rowsHtml = '';
                 
-                // หาชื่อหน่วย (ยึดจากสัปดาห์ล่าสุดที่เคยกรอกไว้)
-                let displayUnitName = `ไม่ได้ระบุชื่อหน่วย`;
+                let displayUnitName = `<span class="text-gray-400 font-normal">ยังไม่ได้ระบุชื่อหน่วย</span>`;
                 for(let w=1; w<=4; w++) {
                     if(uploadedData[`unit_${unit}_week_${w}_unitName`]) {
                         displayUnitName = uploadedData[`unit_${unit}_week_${w}_unitName`];
@@ -251,84 +275,90 @@
                     if (logUrl) completedItems++;
 
                     const planBtn = planUrl 
-                        ? `<a href="${planUrl}" target="_blank" class="w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded flex items-center justify-center shadow"><i class="fa-solid fa-file-pdf text-xs"></i></a>`
-                        : `<button disabled class="w-7 h-7 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-xs"></i></button>`;
+                        ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
+                        : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
 
                     const logBtn = logUrl 
-                        ? `<a href="${logUrl}" target="_blank" class="w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded flex items-center justify-center shadow"><i class="fa-solid fa-file-pdf text-xs"></i></a>`
-                        : `<button disabled class="w-7 h-7 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-xs"></i></button>`;
+                        ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
+                        : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
 
-                    // แถวตารางแบบ Compact (py-1.5)
+                    // เปลี่ยนสีแถวเป็นสีเขียวอ่อน หากมีการส่งแผนหรือบันทึก
+                    const hasData = planUrl || logUrl;
+                    const rowClass = hasData ? "bg-green-50/70 border-green-100" : "hover:bg-slate-50 border-slate-100";
+
                     rowsHtml += `
-                        <div class="grid grid-cols-12 gap-2 items-center py-1.5 border-b border-slate-100 last:border-none hover:bg-slate-50 transition-colors">
-                            <div class="col-span-5 pl-2 overflow-hidden">
+                        <div class="grid grid-cols-12 gap-2 items-center py-2.5 border-b last:border-none transition-colors ${rowClass}">
+                            <div class="col-span-6 pl-4 overflow-hidden">
                                 <p class="text-sm font-bold text-gray-700 leading-tight">สัปดาห์ที่ ${week}</p>
                                 <p class="text-xs text-gray-500 truncate mt-0.5" title="${title}">${title || '<span class="text-gray-300 font-light">ยังไม่ระบุชื่อเรื่อง</span>'}</p>
                             </div>
                             
-                            <div class="col-span-3 flex items-center gap-2 justify-center border-r border-slate-100">
-                                <button onclick="openPlanModal(${unit}, ${week})" class="w-7 h-7 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-200" title="ส่งแผนการสอน"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                            <div class="col-span-3 flex items-center gap-3 justify-center border-r border-slate-200">
+                                <button onclick="openPlanModal(${unit}, ${week})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all" title="ส่งแผนการสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>
                                 ${planBtn}
                             </div>
                             
-                            <div class="col-span-4 flex items-center gap-2 justify-center">
-                                <button onclick="openLogUploader(${unit}, ${week})" class="w-7 h-7 bg-slate-100 hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-200" title="ส่งบันทึกหลังสอน"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                            <div class="col-span-3 flex items-center gap-3 justify-center">
+                                <button onclick="openLogUploader(${unit}, ${week})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all" title="ส่งบันทึกหลังสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>
                                 ${logBtn}
                             </div>
                         </div>
                     `;
                 }
 
+                totalOverallCompleted += completedItems;
                 const pct = Math.round((completedItems / totalItems) * 100);
                 const barColor = pct === 100 ? 'bg-green-500' : (pct >= 50 ? 'bg-blue-500' : (pct > 0 ? 'bg-amber-500' : 'bg-red-500'));
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col hover:shadow-md";
+                card.className = "bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col hover:shadow-md transition-shadow";
                 card.innerHTML = `
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
-                        <div class="flex items-center gap-3 overflow-hidden pr-4">
-                            <div class="w-10 h-10 bg-navy-900 text-gold-400 font-bold rounded-lg flex items-center justify-center shadow-sm text-lg shrink-0">${unit}</div>
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
+                        <div class="flex items-center gap-4 overflow-hidden pr-4">
+                            <div class="w-12 h-12 bg-navy-900 text-gold-400 font-bold rounded-xl flex items-center justify-center shadow-sm text-xl shrink-0">${unit}</div>
                             <div class="truncate">
-                                <p class="text-xs font-bold text-gray-500">หน่วยการเรียนรู้ที่ ${unit}</p>
-                                <h3 class="font-bold text-navy-900 text-base truncate" title="${displayUnitName}">${displayUnitName}</h3>
+                                <p class="text-xs font-bold text-gray-500 mb-0.5">หน่วยการเรียนรู้ที่ ${unit}</p>
+                                <h3 class="font-bold text-navy-900 text-lg truncate">${displayUnitName}</h3>
                             </div>
                         </div>
                         <div class="text-right shrink-0">
-                            <span class="text-[10px] font-bold text-gray-500">ความคืบหน้า</span>
-                            <p class="text-sm font-black text-navy-900">${pct}%</p>
+                            <span class="text-[11px] font-bold text-gray-500">ความคืบหน้า</span>
+                            <p class="text-base font-black text-navy-900">${pct}%</p>
                         </div>
                     </div>
                     <div class="w-full bg-slate-100 h-1.5 shadow-inner"><div class="h-full ${barColor} transition-all duration-500" style="width: ${pct}%"></div></div>
                     
-                    <div class="p-4 pt-2">
-                        <div class="grid grid-cols-12 gap-2 bg-slate-100 py-1.5 px-2 rounded text-center text-xs font-bold text-slate-600 mb-1 shadow-sm">
-                            <div class="col-span-5 text-left pl-2">สัปดาห์ / ชื่อเรื่อง</div>
+                    <div class="p-5 pt-3">
+                        <div class="grid grid-cols-12 gap-2 bg-slate-100 py-2 px-2 rounded-lg text-center text-xs font-bold text-slate-600 mb-2 shadow-sm">
+                            <div class="col-span-6 text-left pl-2">สัปดาห์ / ชื่อเรื่อง</div>
                             <div class="col-span-3">แผนการสอน</div>
-                            <div class="col-span-4">บันทึกหลังสอน</div>
+                            <div class="col-span-3">บันทึกหลังสอน</div>
                         </div>
-                        <div class="flex flex-col">${rowsHtml}</div>
+                        <div class="flex flex-col border border-slate-100 rounded-lg overflow-hidden">${rowsHtml}</div>
                     </div>
                 `;
                 container.appendChild(card);
             }
+
+            // อัปเดตแถบภาพรวม (Dashboard)
+            const overallPct = Math.round((totalOverallCompleted / totalOverallTarget) * 100);
+            const overallBarColor = overallPct === 100 ? 'bg-green-500' : (overallPct >= 50 ? 'bg-blue-500' : (overallPct > 0 ? 'bg-amber-500' : 'bg-red-500'));
+            
+            document.getElementById('overall-text').textContent = `${totalOverallCompleted}/${totalOverallTarget} รายการ (${overallPct}%)`;
+            document.getElementById('overall-bar').style.width = `${overallPct}%`;
+            document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${overallBarColor}`;
         }
 
-        // ==========================================
-        // อัปโหลด แผนการสอน (มี Modal)
-        // ==========================================
         function openPlanModal(unit, week) {
             document.getElementById('modal-unit').value = unit;
             document.getElementById('modal-week').value = week;
             document.getElementById('modal-subtitle').textContent = `สัปดาห์ที่ ${week} | หน่วยการเรียนรู้ที่ ${unit}`;
             
-            // ดึงชื่อหน่วยเก่ามาใส่กล่องให้ก่อน (ถ้ามี)
             let oldUnitName = "";
             for(let w=1; w<=4; w++) {
                 if(uploadedData[`unit_${unit}_week_${w}_unitName`]) { oldUnitName = uploadedData[`unit_${unit}_week_${w}_unitName`]; break; }
             }
             document.getElementById('modal-unitname').value = oldUnitName;
-            
-            // ดึงชื่อเรื่องเก่ามาใส่ (ถ้ามี)
             document.getElementById('modal-title').value = uploadedData[`unit_${unit}_week_${week}_title`] || "";
             
             document.getElementById('plan-filename').textContent = "คลิกเพื่อเลือกไฟล์ PDF";
@@ -364,13 +394,9 @@
                 Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อหน่วย, ชื่อเรื่อง และแนบไฟล์ PDF ให้ครบถ้วน', 'warning');
                 return;
             }
-
             executeUpload(unit, week, 'plan', tempBase64Plan, "plan.pdf", unitName, lessonTitle);
         }
 
-        // ==========================================
-        // อัปโหลด บันทึกหลังสอน (ไม่มี Modal)
-        // ==========================================
         function openLogUploader(unit, week) {
             logUploadParams = { unit, week };
             document.getElementById('logPdfUploader').click();
@@ -387,9 +413,6 @@
             e.target.value = ''; 
         }
 
-        // ==========================================
-        // ฟังก์ชันอัปโหลดหลัก (ใช้ร่วมกัน)
-        // ==========================================
         function executeUpload(unit, week, type, base64, filename, unitName, lessonTitle) {
             const typeLabel = type === 'plan' ? 'แผนการสอน' : 'บันทึกหลังสอน';
             Swal.fire({ title: 'กำลังบันทึกและอัปโหลด...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -398,7 +421,7 @@
                 method: 'POST',
                 body: JSON.stringify({
                     action: 'uploadLessonPlan',
-                    username: currentUser.username,
+                    name: currentUser.name, // อัปโหลดโดยใช้ชื่อสกุลแทน Username
                     unit: unit, week: week, fileType: type,
                     base64: base64, filename: filename,
                     unitName: unitName, lessonTitle: lessonTitle
@@ -408,7 +431,6 @@
                     Swal.fire({ icon: 'success', title: 'สำเร็จ', timer: 1500, showConfirmButton: false });
                     closePlanModal();
                     
-                    // อัปเดตข้อมูลในหน่วยความจำทันทีโดยไม่ต้องโหลดใหม่
                     uploadedData[`unit_${unit}_week_${week}_${type}`] = res.fileUrl;
                     if(type === 'plan') {
                         uploadedData[`unit_${unit}_week_${week}_unitName`] = unitName;
