@@ -72,7 +72,7 @@
                 </a>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
                     <h2 class="text-xl font-bold text-navy-900 leading-none">ชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC)</h2>
-                    <p class="text-xs font-medium text-gray-500 mt-1.5">โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (Professional Learning Community : PLC) โดย ครูวรรณธการ ศรประสิทธิ์</p>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบจัดการและบันทึกร่องรอยการดำเนินการ PLC</p>
                 </div>
             </div>
             <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
@@ -82,72 +82,85 @@
         </header>
 
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
-            <div class="max-w-5xl w-full mx-auto pb-10">
+            <div class="max-w-4xl w-full mx-auto pb-10">
+                
+                <div class="text-center mb-8 mt-4">
+                    <h1 class="text-2xl font-bold text-navy-900 mb-1">เลือกระบบงานย่อย PLC</h1>
+                    <p class="text-gray-500 font-medium text-sm">กรุณาเลือกเมนูที่ท่านต้องการดำเนินการ</p>
+                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6">
-                    <button onclick="toggleSetupOptions()" id="btn-plc-setup" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-blue-500 flex flex-col items-center text-center relative overflow-hidden focus:outline-none">
-                        <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner relative z-10">
-                            <i class="fa-solid fa-users-viewfinder"></i>
+                <div class="flex flex-col gap-4 mb-6">
+                    
+                    <button onclick="toggleSetupOptions()" id="btn-plc-setup" class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center justify-between w-full focus:outline-none relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div class="flex items-center gap-4 text-left relative z-10">
+                            <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                                <i class="fa-solid fa-users-viewfinder"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-navy-900 group-hover:text-blue-700 transition-colors">1. ขอจัดตั้งกลุ่ม / เสนอแผน PLC</h3>
+                                <p class="text-xs text-gray-500 font-medium mt-0.5">ยื่นแบบฟอร์มขออนุมัติจัดตั้งกลุ่ม และกำหนดการดำเนินงานรายภาคเรียน</p>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-navy-900 mb-3 relative z-10 group-hover:text-blue-700 transition-colors">ขอจัดตั้งกลุ่ม / เสนอแผน PLC</h3>
-                        <div class="mt-6 w-full bg-slate-100 text-gray-600 font-bold py-2 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors relative z-10 flex items-center justify-center gap-2">
+                        <div class="bg-slate-100 text-gray-600 font-bold py-2 px-4 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors relative z-10 flex items-center gap-2 text-sm shrink-0">
                             เลือกรูปแบบ <i id="icon-toggle" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
                         </div>
                     </button>
 
-                    <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบบันทึก Logbook จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" id="btn-plc-logbook" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-amber-500 flex flex-col items-center text-center relative overflow-hidden opacity-80 focus:outline-none">
-                        <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-inner relative z-10">
-                            <i class="fa-solid fa-book-journal-whills"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-navy-900 mb-3 relative z-10 group-hover:text-amber-600 transition-colors">บันทึก PLC Logbook</h3>
-                        <div class="mt-6 w-full bg-slate-100 text-gray-600 font-bold py-2 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors relative z-10 flex items-center justify-center gap-2">
-                            เร็วๆ นี้ <i class="fa-solid fa-clock"></i>
-                        </div>
-                    </button>
-                </div>
-
-                <div id="setup-options-container" class="hidden transform origin-top transition-all duration-300 ease-in-out">
-                    <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
-                        <h4 class="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-caret-right text-blue-500"></i> เลือกรูปแบบการจัดตั้งกลุ่ม PLC
-                        </h4>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- เปลี่ยนเป็น div เพื่อให้สามารถคลิกไอคอน PDF แยกจาก Modal ได้ -->
-                            <div onclick="openLunchModal()" class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center justify-between text-left cursor-pointer group">
-                                <div class="flex items-center overflow-hidden">
-                                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 mr-4 group-hover:scale-110 transition-transform shadow-inner">
+                    <div id="setup-options-container" class="hidden transform origin-top transition-all duration-300 ease-in-out pl-6 md:pl-16">
+                        <div class="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 flex flex-col gap-3">
+                            
+                            <div onclick="openLunchModal()" class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center justify-between w-full cursor-pointer group">
+                                <div class="flex items-center gap-3 overflow-hidden text-left">
+                                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition-transform shadow-inner">
                                         <i class="fa-solid fa-utensils"></i>
                                     </div>
                                     <div class="truncate">
-                                        <h3 class="text-base font-bold text-navy-900 group-hover:text-blue-700 truncate">1. รูปแบบสายชั้น (Lunch PLC)</h3>
-                                        <p class="text-xs text-gray-500 font-medium mt-1 truncate">เสนอขอจัดตั้งกลุ่มรูปแบบสายชั้น</p>
+                                        <h3 class="text-sm font-bold text-navy-900 group-hover:text-blue-700 truncate">1.1 รูปแบบสายชั้น (Lunch PLC)</h3>
+                                        <p class="text-[11px] text-gray-500 font-medium truncate mt-0.5">เสนอขอจัดตั้งกลุ่มรูปแบบสายชั้น</p>
                                     </div>
                                 </div>
-                                <!-- ไอคอน PDF ซ่อนไว้ตอนแรก จะโชว์เมื่อมีข้อมูล -->
-                                <a href="#" target="_blank" id="lunch-pdf-btn" onclick="event.stopPropagation()" class="hidden shrink-0 ml-2 w-10 h-10 bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="เปิดดูเอกสาร PDF">
-                                    <i class="fa-solid fa-file-pdf text-xl"></i>
+                                <a href="#" target="_blank" id="lunch-pdf-btn" onclick="event.stopPropagation()" class="hidden shrink-0 ml-2 px-3 py-1.5 bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm text-xs font-bold" title="เปิดดูเอกสาร PDF">
+                                    <i class="fa-solid fa-file-pdf mr-1"></i>ดูเอกสาร
                                 </a>
                             </div>
 
-                            <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบ Open Class PLC จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center text-left focus:outline-none group opacity-80">
-                                <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl shrink-0 mr-4 shadow-inner">
-                                    <i class="fa-solid fa-chalkboard-user"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-base font-bold text-navy-900 group-hover:text-amber-600">2. รูปแบบกลุ่มสาระฯ (Open Class)</h3>
-                                    <p class="text-xs text-gray-500 font-medium mt-1">เสนอขอจัดตั้งกลุ่มในรูปแบบกลุ่มสาระฯ</p>
+                            <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบ Open Class PLC จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center text-left focus:outline-none group opacity-70">
+                                <div class="flex items-center gap-3 overflow-hidden text-left w-full">
+                                    <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center text-lg shrink-0 shadow-inner">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                    </div>
+                                    <div class="truncate">
+                                        <h3 class="text-sm font-bold text-navy-900 group-hover:text-amber-600 truncate">1.2 รูปแบบกลุ่มสาระฯ (Open Class)</h3>
+                                        <p class="text-[11px] text-gray-500 font-medium truncate mt-0.5">เสนอขอจัดตั้งกลุ่มในรูปแบบกลุ่มสาระฯ</p>
+                                    </div>
                                 </div>
                             </button>
+
                         </div>
                     </div>
-                </div>
 
+                    <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบบันทึก Logbook จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" id="btn-plc-logbook" class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center justify-between w-full opacity-80 focus:outline-none relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-amber-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div class="flex items-center gap-4 text-left relative z-10">
+                            <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                                <i class="fa-solid fa-book-journal-whills"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-navy-900 group-hover:text-amber-600 transition-colors">2. บันทึก PLC Logbook</h3>
+                                <p class="text-xs text-gray-500 font-medium mt-0.5">บันทึกร่องรอยการประชุม สะท้อนผล และแนบหลักฐานการดำเนินงานรายสัปดาห์</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-100 text-gray-600 font-bold py-2 px-4 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors relative z-10 flex items-center gap-2 text-sm shrink-0">
+                            เร็วๆ นี้ <i class="fa-solid fa-clock"></i>
+                        </div>
+                    </button>
+
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Modal Form: Lunch PLC -->
     <div id="lunchModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
         <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
             
@@ -158,68 +171,65 @@
             
             <div class="p-6 overflow-y-auto max-h-[75vh]">
                 
-                <!-- แถบแจ้งเตือนโหมดดูข้อมูล -->
                 <div id="lunch-readonly-notice" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 mb-4 rounded-r-lg text-sm font-bold shadow-sm">
                     <i class="fa-solid fa-circle-info mr-1"></i> โหมดดูข้อมูล: คุณไม่มีสิทธิ์แก้ไขคำขอนี้ (สงวนสิทธิ์เฉพาะหัวหน้าสายชั้น)
                 </div>
 
-                <h4 class="font-bold text-navy-900 text-lg mb-3 border-l-4 border-blue-500 pl-3">ส่วนที่ 1: ข้อมูลจัดตั้งกลุ่ม</h4>
+                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-blue-500 pl-3">ส่วนที่ 1: ข้อมูลจัดตั้งกลุ่ม</h4>
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-bold text-gray-700">ชื่อผู้เสนอคำขอ (หัวหน้าสายชั้น)</label>
-                            <input type="text" id="lunch-proposer" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none" disabled>
+                            <label class="text-xs font-bold text-gray-700">ชื่อผู้เสนอคำขอ (หัวหน้าสายชั้น)</label>
+                            <input type="text" id="lunch-proposer" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
                         </div>
                         <div>
-                            <label class="text-sm font-bold text-gray-700">สายชั้น</label>
-                            <input type="text" id="lunch-grade" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none" disabled>
+                            <label class="text-xs font-bold text-gray-700">สายชั้น</label>
+                            <input type="text" id="lunch-grade" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
                         </div>
                     </div>
 
-                    <hr class="border-gray-200 my-2">
+                    <hr class="border-gray-200 my-1">
                     
-                    <label class="text-sm font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-12)</label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="lunch-members-container">
-                        <!-- JS จะสร้าง Dropdown -->
-                    </div>
+                    <label class="text-xs font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-12)</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2" id="lunch-members-container">
+                        </div>
 
-                    <hr class="border-gray-200 my-2">
+                    <hr class="border-gray-200 my-1">
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-bold text-gray-700">ผู้บริหารสถานศึกษา</label>
-                            <select id="lunch-admin" class="w-full border p-2 rounded-lg focus:border-blue-500 outline-none bg-white">
+                            <label class="text-xs font-bold text-gray-700">ผู้บริหารสถานศึกษา</label>
+                            <select id="lunch-admin" class="w-full border p-2 rounded-lg focus:border-blue-500 outline-none bg-white text-sm">
                                 <option value="">-- เลือกผู้บริหาร --</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-sm font-bold text-gray-700">ผู้เชี่ยวชาญ (Expert)</label>
-                            <input type="text" id="lunch-expert" class="w-full border p-2 rounded-lg bg-gray-200 text-blue-700 font-bold outline-none" value="ดร.ปารณีย์ เมืองสุข ศึกษานิเทศก์" disabled>
+                            <label class="text-xs font-bold text-gray-700">ผู้เชี่ยวชาญ (Expert)</label>
+                            <input type="text" id="lunch-expert" class="w-full border p-2 rounded-lg bg-gray-200 text-blue-700 font-bold outline-none text-sm" value="ดร.ปารณีย์ เมืองสุข ศึกษานิเทศก์" disabled>
                         </div>
                     </div>
                 </div>
 
-                <h4 class="font-bold text-navy-900 text-lg mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (15 สัปดาห์)</h4>
+                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (15 สัปดาห์)</h4>
                 <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-slate-100 text-gray-600 font-bold">
                             <tr>
-                                <th class="py-3 px-4 w-20 text-center">ครั้งที่</th>
-                                <th class="py-3 px-4 w-48">วัน เดือน ปี (ภาษาไทยจะแปลงอัตโนมัติ)</th>
-                                <th class="py-3 px-4">ชื่อ Model Teacher</th>
+                                <th class="py-2 px-4 w-16 text-center text-xs">ครั้งที่</th>
+                                <th class="py-2 px-4 w-48 text-xs">วัน เดือน ปี (ภาษาไทยจะแปลงอัตโนมัติ)</th>
+                                <th class="py-2 px-4 text-xs">ชื่อ Model Teacher</th>
                             </tr>
                         </thead>
                         <tbody id="lunch-plan-tbody" class="divide-y divide-slate-100">
-                            <!-- JS จะสร้างแถว 15 แถวที่นี่ -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
 
             </div>
 
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
-                <button onclick="closeLunchModal()" class="px-6 py-2.5 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors">ปิดหน้าต่าง</button>
-                <button id="lunch-submit-btn" onclick="submitLunchPLC()" class="px-6 py-2.5 bg-gold-500 text-navy-900 font-bold rounded-lg hover:bg-gold-400 shadow-md transition-colors">
+                <button onclick="closeLunchModal()" class="px-5 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors text-sm">ปิดหน้าต่าง</button>
+                <button id="lunch-submit-btn" onclick="submitLunchPLC()" class="px-5 py-2 bg-gold-500 text-navy-900 font-bold rounded-lg hover:bg-gold-400 shadow-md transition-colors text-sm">
                     <i class="fa-solid fa-paper-plane mr-2"></i>ส่งคำขอและสร้าง PDF
                 </button>
             </div>
@@ -231,7 +241,7 @@
         
         let currentUser = null;
         let allUsers = [];
-        let currentPLCPlan = null; // ตัวแปรเก็บข้อมูลที่ดึงมาจากฐานข้อมูล
+        let currentPLCPlan = null;
         let userGradePrefix = "";
 
         const allowedLunchPLCUsers = [
@@ -291,6 +301,7 @@
             if (container.classList.contains('hidden')) {
                 container.classList.remove('hidden');
                 icon.classList.add('rotate-180');
+                // ไหลลงมาให้เห็นชัดๆ
                 setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
             } else {
                 container.classList.add('hidden');
@@ -314,7 +325,6 @@
 
                 if (res.status === 'success' && res.data) {
                     currentPLCPlan = res.data;
-                    // โชว์ปุ่ม PDF ถ้าเคยเซฟเอกสารไว้แล้ว
                     if (currentPLCPlan.pdfUrl) {
                         const pdfBtn = document.getElementById('lunch-pdf-btn');
                         pdfBtn.href = currentPLCPlan.pdfUrl;
@@ -324,8 +334,12 @@
             } catch (e) { console.error(e); }
         }
 
+        function checkLunchPLCPermission() {
+            // ไม่กันการเปิด Modal แต่เดี๋ยวไปคุมปุ่ม Submit แทนเพื่อให้ดูข้อมูลได้
+            openLunchModal();
+        }
+
         function openLunchModal() {
-            // เช็คว่าเป็นโหมด Read-Only หรือไม่
             const isReadOnly = !allowedLunchPLCUsers.includes(currentUser.name);
             const submitBtn = document.getElementById('lunch-submit-btn');
             const readonlyNotice = document.getElementById('lunch-readonly-notice');
@@ -338,7 +352,6 @@
                 readonlyNotice.classList.add('hidden');
             }
 
-            // ถ้ามีแผนอยู่แล้ว ให้ยึดชื่อหัวหน้าสายชั้นจากฐานข้อมูล ถ้ายังไม่มีให้ใช้ชื่อคนล็อกอิน
             document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : currentUser.name;
             document.getElementById('lunch-grade').value = currentPLCPlan ? currentPLCPlan.grade : (userGradePrefix || "ไม่ระบุสายชั้น");
 
@@ -348,7 +361,6 @@
             });
             const adminMembers = allUsers.filter(u => u.Room === "-");
 
-            // วาด Dropdown เลือกผู้บริหาร
             const adminSelect = document.getElementById('lunch-admin');
             adminSelect.innerHTML = `<option value="">-- เลือกผู้บริหาร --</option>`;
             adminMembers.forEach(u => {
@@ -358,13 +370,11 @@
             adminSelect.disabled = isReadOnly;
             if(isReadOnly) adminSelect.classList.add('bg-gray-100');
 
-            // วาด Dropdown เลือกสมาชิก
             let memberHtml = '';
             for(let i=1; i<=12; i++) {
                 let savedMember = currentPLCPlan && currentPLCPlan.members[i-1] ? currentPLCPlan.members[i-1] : "";
-                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
+                let options = `<option value="">-- เลือกสมาชิก --</option>`;
                 gradeMembers.forEach(u => {
-                    // ซ่อนชื่อตัวเองเฉพาะเวลาสร้างแผนใหม่ ถ้าโหลดแผนเก่ามาโชว์ ให้แสดงหมดเผื่อเค้าเลือกตัวเองไปแล้ว
                     if (!currentPLCPlan && u.Name === currentUser.name) return; 
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
                     options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
@@ -374,7 +384,7 @@
                 let bgClass = isReadOnly ? "bg-gray-100" : "bg-white";
                 memberHtml += `
                     <div>
-                        <select id="lunch-member-${i}" class="w-full border border-gray-300 p-2 rounded-lg text-sm focus:border-blue-500 outline-none ${bgClass}" ${disabledAttr}>
+                        <select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-blue-500 outline-none ${bgClass}" ${disabledAttr}>
                             ${options}
                         </select>
                     </div>
@@ -382,7 +392,6 @@
             }
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
-            // วาดตารางแผนกิจกรรม 15 สัปดาห์
             let tbodyHtml = '';
             for(let i=1; i<=15; i++) {
                 let savedDate = "";
@@ -406,12 +415,12 @@
 
                 tbodyHtml += `
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
-                        <td class="py-2 px-4 text-center font-bold text-gray-500">${i}</td>
+                        <td class="py-2 px-4 text-center font-bold text-gray-500 text-xs">${i}</td>
                         <td class="py-2 px-4">
-                            <input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-sm outline-none focus:border-amber-500 ${bgClass}" ${disabledAttr}>
+                            <input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 ${bgClass}" ${disabledAttr}>
                         </td>
                         <td class="py-2 px-4">
-                            <select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-sm outline-none focus:border-amber-500 ${bgClass}" ${disabledAttr}>
+                            <select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 ${bgClass}" ${disabledAttr}>
                                 ${mtOptions}
                             </select>
                         </td>
@@ -497,7 +506,6 @@
                         confirmButtonText: 'รับทราบ'
                     });
                     
-                    // รีโหลดข้อมูลให้ปุ่ม PDF หน้าหลักโผล่ขึ้นมาทันที
                     fetchPLCPlanData();
                     closeLunchModal();
                 } else {
