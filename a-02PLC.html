@@ -84,7 +84,7 @@
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             <div class="max-w-4xl w-full mx-auto pb-10">
 
-                <div class="flex flex-col gap-4 mb-6">
+                <div class="flex flex-col gap-4 mb-6 mt-4">
                     
                     <button onclick="toggleSetupOptions()" id="btn-plc-setup" class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center justify-between w-full focus:outline-none relative overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -187,8 +187,6 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2" id="lunch-members-container">
                         </div>
 
-                    <hr class="border-gray-200 my-1">
-
                 </div>
 
                 <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (15 สัปดาห์)</h4>
@@ -235,7 +233,6 @@
             "นางสาวรำไพ นิ่มขยัน"
         ];
 
-        // ฟังก์ชันสำหรับแสดง Loading Spinner (ปิดตัวเองอัตโนมัติเมื่อสั่ง Swal.close())
         function showLoading(text = 'กำลังโหลดข้อมูล...') {
             Swal.fire({
                 title: text,
@@ -271,11 +268,10 @@
             const userRoom = String(currentUser.room || "").trim();
             userGradePrefix = userRoom.split('/')[0].trim(); 
 
-            // แสดง Spinner ตอนเริ่มโหลดหน้า
             showLoading('กำลังเตรียมข้อมูล...');
             await fetchAllUsersForDropdown();
             await fetchPLCPlanData();
-            Swal.close(); // ปิด Spinner ทันทีที่โหลดเสร็จ
+            Swal.close(); 
         });
 
         function toggleSidebar() {
@@ -347,16 +343,6 @@
                 if (!u.Room || u.Room === "-") return false;
                 return String(u.Room).split('/')[0].trim() === userGradePrefix;
             });
-            const adminMembers = allUsers.filter(u => u.Room === "-");
-
-            const adminSelect = document.getElementById('lunch-admin');
-            adminSelect.innerHTML = `<option value="">-- เลือกผู้บริหาร --</option>`;
-            adminMembers.forEach(u => {
-                let isSelected = (currentPLCPlan && currentPLCPlan.admin === u.Name) ? "selected" : "";
-                adminSelect.innerHTML += `<option value="${u.Name}" ${isSelected}>${u.Name} (${u.Position})</option>`;
-            });
-            adminSelect.disabled = isReadOnly;
-            if(isReadOnly) adminSelect.classList.add('bg-gray-100');
 
             let memberHtml = '';
             for(let i=1; i<=12; i++) {
@@ -435,13 +421,6 @@
         function submitLunchPLC() {
             const proposer = document.getElementById('lunch-proposer').value;
             const grade = document.getElementById('lunch-grade').value;
-            const admin = document.getElementById('lunch-admin').value;
-            const expert = document.getElementById('lunch-expert').value;
-
-            if (!admin) {
-                Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาเลือกผู้บริหารสถานศึกษา', 'warning');
-                return;
-            }
 
             let members = [];
             for(let i=1; i<=12; i++) {
@@ -480,13 +459,10 @@
                     proposer: proposer,
                     grade: grade,
                     members: members,
-                    admin: admin,
-                    expert: expert,
                     plans: plans
                 })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
-                    // แสดงแจ้งเตือนสำเร็จแบบไม่มีปุ่ม และตั้งเวลาปิด
                     Swal.fire({ 
                         icon: 'success', 
                         title: 'ส่งคำขอสำเร็จ', 
@@ -494,7 +470,6 @@
                         showConfirmButton: false,
                         timer: 2000
                     }).then(async () => {
-                        // เมื่อแจ้งเตือนปิดลง ให้โชว์ Spin เพื่อดึงข้อมูลอัปเดต
                         showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
                         await fetchPLCPlanData();
                         closeLunchModal();
