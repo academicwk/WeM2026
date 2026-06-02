@@ -14,6 +14,7 @@
 </head>
 <body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
 
+    <!-- Sidebar -->
     <aside id="sidebar" class="bg-navy-900 w-64 h-full flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-20 shadow-2xl shrink-0">
         <div class="flex items-center justify-center py-4 border-b border-navy-800">
             <div class="bg-white px-10 py-2 rounded-xl shadow-md flex items-center justify-center">
@@ -64,6 +65,7 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <main class="flex-1 flex flex-col h-full relative w-full">
+        <!-- แถบด้านบนแสดงชื่อเมนู -->
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
@@ -81,17 +83,19 @@
             </div>
         </header>
 
-        <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative flex items-center justify-center">
-            
-            <div class="max-w-4xl w-full mx-auto -mt-10">
-                <div class="text-center mb-8">
+        <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
+            <div class="max-w-5xl w-full mx-auto pb-10">
+                
+                <div class="text-center mb-8 mt-4">
                     <h1 class="text-2xl md:text-3xl font-bold text-navy-900 mb-2">เลือกระบบงานย่อย PLC</h1>
                     <p class="text-gray-500 font-medium">กรุณาเลือกเมนูที่ท่านต้องการดำเนินการ</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <!-- การ์ดเมนูหลัก 2 ใบ -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6">
                     
-                    <a href="a-02PLC-Plan.html" id="btn-plc-setup" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-blue-500 flex flex-col items-center text-center relative overflow-hidden">
+                    <!-- เมนูที่ 1: ขอจัดตั้งกลุ่ม (กดแล้วโชว์เมนูย่อย) -->
+                    <button onclick="toggleSetupOptions()" id="btn-plc-setup" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-blue-500 flex flex-col items-center text-center relative overflow-hidden focus:outline-none">
                         <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner relative z-10">
                             <i class="fa-solid fa-users-viewfinder"></i>
@@ -99,11 +103,12 @@
                         <h3 class="text-xl font-bold text-navy-900 mb-3 relative z-10 group-hover:text-blue-700 transition-colors">ขอจัดตั้งกลุ่ม / เสนอแผน PLC</h3>
                         <p class="text-sm text-gray-500 font-medium relative z-10">ยื่นแบบฟอร์มขออนุมัติจัดตั้งกลุ่ม PLC และกำหนดการดำเนินงานรายภาคเรียน</p>
                         <div class="mt-6 w-full bg-slate-100 text-gray-600 font-bold py-2 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors relative z-10 flex items-center justify-center gap-2">
-                            เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i>
+                            เลือกรูปแบบ <i id="icon-toggle" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
                         </div>
-                    </a>
+                    </button>
 
-                    <a href="#" id="btn-plc-logbook" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-amber-500 flex flex-col items-center text-center relative overflow-hidden">
+                    <!-- เมนูที่ 2: บันทึก Logbook -->
+                    <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบบันทึก Logbook จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" id="btn-plc-logbook" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-amber-500 flex flex-col items-center text-center relative overflow-hidden opacity-80 focus:outline-none">
                         <div class="absolute inset-0 bg-gradient-to-br from-amber-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner relative z-10">
                             <i class="fa-solid fa-book-journal-whills"></i>
@@ -113,22 +118,148 @@
                         <div class="mt-6 w-full bg-slate-100 text-gray-600 font-bold py-2 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors relative z-10 flex items-center justify-center gap-2">
                             เร็วๆ นี้ <i class="fa-solid fa-clock"></i>
                         </div>
-                    </a>
-
+                    </button>
                 </div>
-            </div>
 
+                <!-- ส่วนแสดงเมนูย่อย (รูปแบบสายชั้น / รูปแบบกลุ่มสาระฯ) ซ่อนไว้ตอนเริ่มต้น -->
+                <div id="setup-options-container" class="hidden transform origin-top transition-all duration-300 ease-in-out">
+                    <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
+                        <h4 class="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-caret-right text-blue-500"></i> เลือกรูปแบบการจัดตั้งกลุ่ม PLC
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- การ์ด Lunch PLC -->
+                            <button onclick="checkLunchPLCPermission()" class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center text-left focus:outline-none group">
+                                <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 mr-4 group-hover:scale-110 transition-transform shadow-inner">
+                                    <i class="fa-solid fa-utensils"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-navy-900 group-hover:text-blue-700">1. รูปแบบสายชั้น (Lunch PLC)</h3>
+                                    <p class="text-xs text-gray-500 font-medium mt-1">เสนอขอจัดตั้งกลุ่มเฉพาะหัวหน้าสายชั้น</p>
+                                </div>
+                            </button>
+
+                            <!-- การ์ด Open Class PLC -->
+                            <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบ Open Class PLC จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center text-left focus:outline-none group opacity-80">
+                                <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl shrink-0 mr-4 shadow-inner">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-navy-900 group-hover:text-amber-600">2. รูปแบบกลุ่มสาระฯ (Open Class)</h3>
+                                    <p class="text-xs text-gray-500 font-medium mt-1">เสนอขอจัดตั้งกลุ่มในรูปแบบกลุ่มสาระการเรียนรู้</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </main>
 
+    <!-- Modal Form: Lunch PLC (ยกมาจาก a-02PLC-Plan.html) -->
+    <div id="lunchModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
+        <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
+                <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-signature text-gold-400 mr-2"></i>แบบฟอร์มขอจัดตั้งกลุ่ม/เสนอแผน Lunch PLC</h3>
+                <button onclick="closeLunchModal()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto max-h-[75vh]">
+                
+                <!-- ส่วนที่ 1 จัดตั้งกลุ่ม -->
+                <h4 class="font-bold text-navy-900 text-lg mb-3 border-l-4 border-blue-500 pl-3">ส่วนที่ 1: ข้อมูลจัดตั้งกลุ่ม</h4>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-bold text-gray-700">ชื่อผู้เสนอคำขอ (หัวหน้าสายชั้น)</label>
+                            <input type="text" id="lunch-proposer" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none" disabled>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-gray-700">สายชั้น</label>
+                            <input type="text" id="lunch-grade" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none" disabled>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-200 my-2">
+                    
+                    <label class="text-sm font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-12)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="lunch-members-container">
+                        <!-- JS จะสร้าง Dropdown 12 ช่องที่นี่ -->
+                    </div>
+
+                    <hr class="border-gray-200 my-2">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-bold text-gray-700">ผู้บริหารสถานศึกษา</label>
+                            <select id="lunch-admin" class="w-full border p-2 rounded-lg focus:border-blue-500 outline-none bg-white">
+                                <option value="">-- เลือกผู้บริหาร --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-gray-700">ผู้เชี่ยวชาญ (Expert)</label>
+                            <input type="text" id="lunch-expert" class="w-full border p-2 rounded-lg bg-gray-200 text-blue-700 font-bold outline-none" value="ดร.ปารณีย์ เมืองสุข ศึกษานิเทศก์" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ส่วนที่ 2 แผนกิจกรรม -->
+                <h4 class="font-bold text-navy-900 text-lg mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (15 สัปดาห์)</h4>
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-100 text-gray-600 font-bold">
+                            <tr>
+                                <th class="py-3 px-4 w-20 text-center">ครั้งที่</th>
+                                <th class="py-3 px-4 w-48">วัน เดือน ปี (ภาษาไทยจะแปลงอัตโนมัติ)</th>
+                                <th class="py-3 px-4">ชื่อ Model Teacher</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lunch-plan-tbody" class="divide-y divide-slate-100">
+                            <!-- JS จะสร้างแถว 15 แถวที่นี่ -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+                <button onclick="closeLunchModal()" class="px-6 py-2.5 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors">ยกเลิก</button>
+                <button onclick="submitLunchPLC()" class="px-6 py-2.5 bg-gold-500 text-navy-900 font-bold rounded-lg hover:bg-gold-400 shadow-md transition-colors">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>ส่งคำขอจัดตั้งกลุ่ม
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        
+        let currentUser = null;
+        let allUsers = [];
+
+        // รายชื่อผู้มีสิทธิ์ (หัวหน้าสายชั้น)
+        const allowedLunchPLCUsers = [
+            "นางสาวสมสุข สุทธิธาทิพย์",
+            "นางสาวเจนจิรา สุธาศรี",
+            "นางสาวศศิธร พรหมประเสริฐ",
+            "นางสาวพัชริยา แย้มวัฒนะ",
+            "นางรัชดาภรณ์ คงทัน",
+            "นางสาววรรณธการ ศรประสิทธิ์",
+            "นางสาวรำไพ นิ่มขยัน"
+        ];
+
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('wem_user');
             if (!userData) { window.location.href = "index.html"; return; }
-
-            const currentUser = JSON.parse(userData);
-            const nameParts = (currentUser.name || "").split(" ");
+            currentUser = JSON.parse(userData);
             
+            const nameParts = (currentUser.name || "").split(" ");
             document.getElementById('display-firstname').textContent = nameParts[0] || "ไม่ระบุชื่อ";
             document.getElementById('display-lastname').textContent = nameParts.slice(1).join(" ") || ""; 
             document.getElementById('display-position').textContent = currentUser.position || "-";
@@ -144,6 +275,9 @@
                 const clockElement = document.getElementById('current-date');
                 if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
             }, 1000);
+
+            // โหลดผู้ใช้ทั้งหมดมาเตรียมรอไว้เลย
+            fetchAllUsersForDropdown();
         });
 
         function toggleSidebar() {
@@ -154,6 +288,184 @@
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
+        }
+
+        // ---------------------------------------------------
+        // ฟังก์ชันเปิด-ปิด แผงเมนูย่อย PLC Options
+        // ---------------------------------------------------
+        function toggleSetupOptions() {
+            const container = document.getElementById('setup-options-container');
+            const icon = document.getElementById('icon-toggle');
+            
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                // หมุนไอคอนลูกศร
+                icon.classList.add('rotate-180');
+                // เลื่อนหน้าจอลงมานิดนึงให้เห็นเมนู
+                setTimeout(() => {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                container.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // ---------------------------------------------------
+        // ระบบ Lunch PLC
+        // ---------------------------------------------------
+        async function fetchAllUsersForDropdown() {
+            try {
+                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllUsers' }) }).then(r => r.json());
+                if(res.status === 'success') { allUsers = res.users; }
+            } catch (err) { console.error(err); }
+        }
+
+        function checkLunchPLCPermission() {
+            if (!allowedLunchPLCUsers.includes(currentUser.name)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ไม่มีสิทธิ์เข้าถึง',
+                    text: 'ขออภัย เฉพาะหัวหน้าสายชั้นที่กำหนดเท่านั้น จึงจะมีสิทธิ์เสนอคำขอจัดตั้งกลุ่ม Lunch PLC ได้ครับ',
+                    confirmButtonColor: '#1e3a8a'
+                });
+                return;
+            }
+            openLunchModal();
+        }
+
+        function openLunchModal() {
+            const userRoom = currentUser.room || "";
+            const gradePrefix = userRoom.split('/')[0] || userRoom; 
+
+            document.getElementById('lunch-proposer').value = currentUser.name;
+            document.getElementById('lunch-grade').value = gradePrefix || "ไม่ระบุสายชั้น";
+
+            const gradeMembers = allUsers.filter(u => u.Room && String(u.Room).startsWith(gradePrefix));
+            const adminMembers = allUsers.filter(u => u.Room === "-");
+
+            let memberHtml = '';
+            for(let i=1; i<=12; i++) {
+                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
+                gradeMembers.forEach(u => {
+                    if(u.Name !== currentUser.name) {
+                        options += `<option value="${u.Name}">${u.Name}</option>`;
+                    }
+                });
+                memberHtml += `
+                    <div>
+                        <select id="lunch-member-${i}" class="w-full border border-gray-300 p-2 rounded-lg text-sm focus:border-blue-500 outline-none bg-white">
+                            ${options}
+                        </select>
+                    </div>
+                `;
+            }
+            document.getElementById('lunch-members-container').innerHTML = memberHtml;
+
+            const adminSelect = document.getElementById('lunch-admin');
+            adminSelect.innerHTML = `<option value="">-- เลือกผู้บริหาร --</option>`;
+            adminMembers.forEach(u => {
+                adminSelect.innerHTML += `<option value="${u.Name}">${u.Name} (${u.Position})</option>`;
+            });
+
+            let tbodyHtml = '';
+            for(let i=1; i<=15; i++) {
+                tbodyHtml += `
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                        <td class="py-2 px-4 text-center font-bold text-gray-500">${i}</td>
+                        <td class="py-2 px-4">
+                            <input type="date" id="lunch-date-${i}" class="border border-gray-300 p-1.5 rounded w-full text-sm outline-none focus:border-amber-500 text-gray-600">
+                        </td>
+                        <td class="py-2 px-4">
+                            <input type="text" id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-sm outline-none focus:border-amber-500" placeholder="ระบุชื่อ Model Teacher">
+                        </td>
+                    </tr>
+                `;
+            }
+            document.getElementById('lunch-plan-tbody').innerHTML = tbodyHtml;
+
+            document.getElementById('lunchModal').classList.remove('hidden');
+        }
+
+        function closeLunchModal() {
+            document.getElementById('lunchModal').classList.add('hidden');
+        }
+
+        function formatThaiDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const thaiYear = parseInt(y) + 543;
+            return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${thaiYear}`;
+        }
+
+        function submitLunchPLC() {
+            const proposer = document.getElementById('lunch-proposer').value;
+            const grade = document.getElementById('lunch-grade').value;
+            const admin = document.getElementById('lunch-admin').value;
+            const expert = document.getElementById('lunch-expert').value;
+
+            if (!admin) {
+                Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาเลือกผู้บริหารสถานศึกษา', 'warning');
+                return;
+            }
+
+            let members = [];
+            for(let i=1; i<=12; i++) {
+                let m = document.getElementById(`lunch-member-${i}`).value;
+                if(m) members.push(m);
+            }
+
+            let plans = [];
+            let hasAtLeastOnePlan = false;
+            for(let i=1; i<=15; i++) {
+                let rawDate = document.getElementById(`lunch-date-${i}`).value;
+                let mt = document.getElementById(`lunch-mt-${i}`).value;
+                
+                if (rawDate || mt) {
+                    hasAtLeastOnePlan = true;
+                    plans.push({
+                        week: i,
+                        dateThai: formatThaiDate(rawDate),
+                        dateRaw: rawDate,
+                        modelTeacher: mt
+                    });
+                }
+            }
+
+            if (!hasAtLeastOnePlan) {
+                Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกำหนดการกิจกรรมอย่างน้อย 1 สัปดาห์', 'warning');
+                return;
+            }
+
+            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'savePLCPlanLunch',
+                    proposer: proposer,
+                    grade: grade,
+                    members: members,
+                    admin: admin,
+                    expert: expert,
+                    plans: plans
+                })
+            }).then(r => r.json()).then(res => {
+                if (res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'ระบบได้บันทึกคำขอจัดตั้งกลุ่ม Lunch PLC เรียบร้อยแล้ว', confirmButtonColor: '#1e3a8a' });
+                    closeLunchModal();
+                    
+                    // ปิดเมนูย่อยด้วยหลังส่งเสร็จ
+                    if (!document.getElementById('setup-options-container').classList.contains('hidden')) {
+                        toggleSetupOptions();
+                    }
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
+                }
+            }).catch(e => {
+                Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error');
+            });
         }
     </script>
 </body>
