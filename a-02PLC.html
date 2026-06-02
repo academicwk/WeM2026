@@ -14,7 +14,6 @@
 </head>
 <body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
 
-    <!-- Sidebar -->
     <aside id="sidebar" class="bg-navy-900 w-64 h-full flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-20 shadow-2xl shrink-0">
         <div class="flex items-center justify-center py-4 border-b border-navy-800">
             <div class="bg-white px-10 py-2 rounded-xl shadow-md flex items-center justify-center">
@@ -65,7 +64,6 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <main class="flex-1 flex flex-col h-full relative w-full">
-        <!-- แถบด้านบนแสดงชื่อเมนู -->
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
@@ -91,10 +89,7 @@
                     <p class="text-gray-500 font-medium">กรุณาเลือกเมนูที่ท่านต้องการดำเนินการ</p>
                 </div>
 
-                <!-- การ์ดเมนูหลัก 2 ใบ -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6">
-                    
-                    <!-- เมนูที่ 1: ขอจัดตั้งกลุ่ม -->
                     <button onclick="toggleSetupOptions()" id="btn-plc-setup" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-blue-500 flex flex-col items-center text-center relative overflow-hidden focus:outline-none">
                         <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner relative z-10">
@@ -107,7 +102,6 @@
                         </div>
                     </button>
 
-                    <!-- เมนูที่ 2: บันทึก Logbook -->
                     <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบบันทึก Logbook จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" id="btn-plc-logbook" class="group bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-amber-500 flex flex-col items-center text-center relative overflow-hidden opacity-80 focus:outline-none">
                         <div class="absolute inset-0 bg-gradient-to-br from-amber-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner relative z-10">
@@ -121,7 +115,6 @@
                     </button>
                 </div>
 
-                <!-- ส่วนแสดงเมนูย่อย (รูปแบบสายชั้น / รูปแบบกลุ่มสาระฯ) ซ่อนไว้ตอนเริ่มต้น -->
                 <div id="setup-options-container" class="hidden transform origin-top transition-all duration-300 ease-in-out">
                     <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
                         <h4 class="text-lg font-bold text-navy-900 mb-4 flex items-center gap-2">
@@ -129,7 +122,6 @@
                         </h4>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- การ์ด Lunch PLC -->
                             <button onclick="checkLunchPLCPermission()" class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-blue-500 flex items-center text-left focus:outline-none group">
                                 <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 mr-4 group-hover:scale-110 transition-transform shadow-inner">
                                     <i class="fa-solid fa-utensils"></i>
@@ -140,7 +132,6 @@
                                 </div>
                             </button>
 
-                            <!-- การ์ด Open Class PLC -->
                             <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบ Open Class PLC จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center text-left focus:outline-none group opacity-80">
                                 <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl shrink-0 mr-4 shadow-inner">
                                     <i class="fa-solid fa-chalkboard-user"></i>
@@ -158,7 +149,6 @@
         </div>
     </main>
 
-    <!-- Modal Form: Lunch PLC -->
     <div id="lunchModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
         <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
             
@@ -186,8 +176,7 @@
                     
                     <label class="text-sm font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-12)</label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="lunch-members-container">
-                        <!-- JS จะสร้าง Dropdown 12 ช่องที่นี่ -->
-                    </div>
+                        </div>
 
                     <hr class="border-gray-200 my-2">
 
@@ -216,8 +205,7 @@
                             </tr>
                         </thead>
                         <tbody id="lunch-plan-tbody" class="divide-y divide-slate-100">
-                            <!-- JS จะสร้างแถว 15 แถวที่นี่ -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
 
@@ -272,7 +260,6 @@
                 if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
             }, 1000);
 
-            // โหลดข้อมูลรายชื่อไว้รอเลย
             fetchAllUsersForDropdown();
         });
 
@@ -321,14 +308,12 @@
         }
 
         function openLunchModal() {
-            // ตัดคำให้เหลือแค่สายชั้นหลัก เช่น "ป.6/1" -> "ป.6", "ป.6" -> "ป.6"
             const userRoom = String(currentUser.room || "").trim();
             const gradePrefix = userRoom.split('/')[0].trim(); 
 
             document.getElementById('lunch-proposer').value = currentUser.name;
             document.getElementById('lunch-grade').value = gradePrefix || "ไม่ระบุสายชั้น";
 
-            // กรองครูที่มีสายชั้นเดียวกัน (ตัด / ออกเพื่อเทียบให้ตรงกันเป๊ะ 100%)
             const gradeMembers = allUsers.filter(u => {
                 if (!u.Room || u.Room === "-") return false;
                 const memberGrade = String(u.Room).split('/')[0].trim();
@@ -336,7 +321,6 @@
             });
             const adminMembers = allUsers.filter(u => u.Room === "-");
 
-            // วาด Dropdown เลือกสมาชิก
             let memberHtml = '';
             for(let i=1; i<=12; i++) {
                 let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
@@ -355,20 +339,17 @@
             }
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
-            // วาด Dropdown เลือกผู้บริหาร
             const adminSelect = document.getElementById('lunch-admin');
             adminSelect.innerHTML = `<option value="">-- เลือกผู้บริหาร --</option>`;
             adminMembers.forEach(u => {
                 adminSelect.innerHTML += `<option value="${u.Name}">${u.Name} (${u.Position})</option>`;
             });
 
-            // สร้าง Dropdown สำหรับ Model Teacher
             let mtOptions = `<option value="">-- เลือก Model Teacher --</option>`;
             gradeMembers.forEach(u => {
                 mtOptions += `<option value="${u.Name}">${u.Name}</option>`;
             });
 
-            // วาดตารางแผนกิจกรรม 15 สัปดาห์
             let tbodyHtml = '';
             for(let i=1; i<=15; i++) {
                 tbodyHtml += `
@@ -378,7 +359,6 @@
                             <input type="date" id="lunch-date-${i}" class="border border-gray-300 p-1.5 rounded w-full text-sm outline-none focus:border-amber-500 text-gray-600">
                         </td>
                         <td class="py-2 px-4">
-                            <!-- Dropdown ให้ดึงครูในสายชั้นมาแสดง -->
                             <select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-sm outline-none focus:border-amber-500 bg-white">
                                 ${mtOptions}
                             </select>
@@ -442,7 +422,7 @@
                 return;
             }
 
-            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            Swal.fire({ title: 'กำลังบันทึกและสร้าง PDF...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             fetch(GAS_API_URL, {
                 method: 'POST',
@@ -457,7 +437,15 @@
                 })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'ระบบได้บันทึกคำขอจัดตั้งกลุ่ม Lunch PLC เรียบร้อยแล้ว', confirmButtonColor: '#1e3a8a' });
+                    // เด้ง Alert พร้อมปุ่มดู PDF
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: 'ส่งคำขอสำเร็จ', 
+                        html: `ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว<br><br><a href="${res.pdfUrl}" target="_blank" class="inline-block px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors shadow-md mt-2"><i class="fa-solid fa-file-pdf mr-2"></i>คลิกเพื่อเปิดดูไฟล์ PDF</a>`,
+                        confirmButtonColor: '#1e3a8a',
+                        confirmButtonText: 'ปิดหน้าต่าง'
+                    });
+                    
                     closeLunchModal();
                     if (!document.getElementById('setup-options-container').classList.contains('hidden')) {
                         toggleSetupOptions();
