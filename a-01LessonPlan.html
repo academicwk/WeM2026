@@ -66,7 +66,6 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <main class="flex-1 flex flex-col h-full relative w-full">
-        <!-- แถบด้านบนแสดงชื่อเมนู -->
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
@@ -86,7 +85,6 @@
 
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             
-            <!-- Dashboard สถานะรวม -->
             <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-chart-pie text-gold-500 mr-2"></i>ภาพรวมการส่งแผนการสอนและบันทึกหลังสอน</h3>
@@ -97,7 +95,6 @@
                 </div>
             </div>
 
-            <!-- ฟอร์มระบุรายวิชาและระดับชั้น -->
             <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     <div>
@@ -127,12 +124,10 @@
                 </div>
             </div>
 
-            <!-- Grid Layout แนวตั้ง 1 คอลัมน์ (Full width) -->
             <div class="grid grid-cols-1 gap-6 max-w-5xl mx-auto pb-10" id="unit-cards-container"></div>
         </div>
     </main>
 
-    <!-- Modal สำหรับอัปโหลดแผนการสอน (กรอกข้อมูล) -->
     <div id="planModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button onclick="closePlanModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -196,7 +191,6 @@
                 if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
             }, 1000);
 
-            // ใช้ชื่อ นามสกุลจริงในการบันทึกและเรียกข้อมูล
             fetchSubjectHeader();
             fetchLessonPlans();
         });
@@ -227,7 +221,6 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             fetch(GAS_API_URL, {
                 method: 'POST',
-                // ส่ง name ไปจัดเก็บแทน username
                 body: JSON.stringify({ action: 'saveSubjectHeader', name: currentUser.name, subject, grade })
             }).then(r => r.json()).then(res => {
                 if(res.status === 'success') Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลหลักสำเร็จ', timer: 1500, showConfirmButton: false });
@@ -239,7 +232,6 @@
             const container = document.getElementById('unit-cards-container');
             container.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i></div>`;
             try {
-                // ส่ง name แทน username ในการดึงข้อมูล
                 const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getLessonPlans', name: currentUser.name }) }).then(r => r.json());
                 if (res.status === 'success') uploadedData = res.data || {};
                 renderUnitCards();
@@ -251,7 +243,7 @@
             container.innerHTML = '';
             
             let totalOverallCompleted = 0;
-            const totalOverallTarget = 64; // 8 units * 4 weeks * 2 files
+            const totalOverallTarget = 64; 
 
             for (let unit = 1; unit <= 8; unit++) {
                 let completedItems = 0;
@@ -282,7 +274,6 @@
                         ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
                         : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
 
-                    // เปลี่ยนสีแถวเป็นสีเขียวอ่อน หากมีการส่งแผนหรือบันทึก
                     const hasData = planUrl || logUrl;
                     const rowClass = hasData ? "bg-green-50/70 border-green-100" : "hover:bg-slate-50 border-slate-100";
 
@@ -340,7 +331,6 @@
                 container.appendChild(card);
             }
 
-            // อัปเดตแถบภาพรวม (Dashboard)
             const overallPct = Math.round((totalOverallCompleted / totalOverallTarget) * 100);
             const overallBarColor = overallPct === 100 ? 'bg-green-500' : (overallPct >= 50 ? 'bg-blue-500' : (overallPct > 0 ? 'bg-amber-500' : 'bg-red-500'));
             
@@ -414,6 +404,16 @@
         }
 
         function executeUpload(unit, week, type, base64, filename, unitName, lessonTitle) {
+            const subject = document.getElementById('subject-input').value;
+            const grade = document.getElementById('grade-input').value;
+
+            // ตรวจสอบว่าคุณครูระบุวิชาและชั้นหรือยัง (บังคับให้กรอก)
+            if (!subject || !grade) {
+                Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุ "รายวิชา" และ "ระดับชั้น" ในกล่องด้านบนก่อนอัปโหลดไฟล์ครับ', 'warning');
+                if (type === 'plan') closePlanModal();
+                return;
+            }
+
             const typeLabel = type === 'plan' ? 'แผนการสอน' : 'บันทึกหลังสอน';
             Swal.fire({ title: 'กำลังบันทึกและอัปโหลด...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
@@ -421,7 +421,9 @@
                 method: 'POST',
                 body: JSON.stringify({
                     action: 'uploadLessonPlan',
-                    name: currentUser.name, // อัปโหลดโดยใช้ชื่อสกุลแทน Username
+                    name: currentUser.name,
+                    subject: subject,
+                    grade: grade,
                     unit: unit, week: week, fileType: type,
                     base64: base64, filename: filename,
                     unitName: unitName, lessonTitle: lessonTitle
@@ -429,7 +431,7 @@
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'สำเร็จ', timer: 1500, showConfirmButton: false });
-                    closePlanModal();
+                    if (type === 'plan') closePlanModal();
                     
                     uploadedData[`unit_${unit}_week_${week}_${type}`] = res.fileUrl;
                     if(type === 'plan') {
