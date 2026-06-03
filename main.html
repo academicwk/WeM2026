@@ -360,9 +360,25 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
             `;
             container.appendChild(versionDiv);
 
-            // 2. ตั้งค่าหัวหน้าสายชั้น (ดึงสายชั้นที่มีอยู่อัตโนมัติ)
-            let uniqueGrades = [...new Set(allUsersList.map(u => (u.Room && u.Room !== "-") ? u.Room.split('/')[0].trim() : null))].filter(g => g).sort((a,b) => a.localeCompare(b, 'th'));
-            if(uniqueGrades.length === 0) uniqueGrades = ["อ.1", "อ.2", "อ.3", "ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"]; 
+// 2. ตั้งค่าหัวหน้าสายชั้น (รวบอนุบาล และตัดบุคลากรทางการศึกษาออก)
+            let rawGrades = allUsersList.map(u => {
+                if (!u.Room || u.Room === "-") return null;
+                let prefix = u.Room.split('/')[0].trim();
+                // ถ้าระดับชั้นขึ้นต้นด้วย อ. ให้เปลี่ยนคำเป็น "อนุบาล"
+                if (prefix.startsWith("อ.")) return "อนุบาล"; 
+                return prefix;
+            });
+            
+            // กรองเอาค่าซ้ำและ "บุคลากรทางการศึกษา" ออก
+            let uniqueGrades = [...new Set(rawGrades)].filter(g => g && g !== "บุคลากรทางการศึกษา").sort((a, b) => {
+                // จัดเรียงให้ "อนุบาล" ขึ้นก่อน ป.1 - ป.6
+                if (a === "อนุบาล") return -1;
+                if (b === "อนุบาล") return 1;
+                return a.localeCompare(b, 'th');
+            });
+            
+            // กรณีไม่มีข้อมูลในฐานข้อมูลเลย ให้แสดงค่าเริ่มต้น
+            if(uniqueGrades.length === 0) uniqueGrades = ["อนุบาล", "ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"]; 
             
             const gradeDiv = document.createElement('div');
             gradeDiv.className = 'mb-6 p-4 bg-purple-50 rounded-xl border border-purple-200 shadow-sm';
@@ -371,14 +387,21 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
                 const key = `head_grade_${g}`;
                 const savedVal = savedSettings[key] || "";
                 let opts = teacherOptions.replace(`value="${savedVal}"`, `value="${savedVal}" selected`);
-                gradeHtml += `<div class="flex items-center gap-2"><span class="w-10 text-xs font-bold text-gray-700">${g}</span><select class="flex-1 border border-gray-300 p-1.5 rounded-lg text-xs outline-none focus:border-purple-500 bg-white" onchange="saveRoleSetting('${key}', this.value)">${opts}</select></div>`;
+                // ปรับความกว้าง span เป็น w-14 เพื่อให้คำว่า "อนุบาล" แสดงผลได้พอดี
+                gradeHtml += `<div class="flex items-center gap-2"><span class="w-14 text-xs font-bold text-gray-700">${g}</span><select class="flex-1 border border-gray-300 p-1.5 rounded-lg text-xs outline-none focus:border-purple-500 bg-white" onchange="saveRoleSetting('${key}', this.value)">${opts}</select></div>`;
             });
             gradeHtml += '</div>';
             gradeDiv.innerHTML = gradeHtml;
             container.appendChild(gradeDiv);
 
-            // 3. ตั้งค่าหัวหน้ากลุ่มสาระฯ (ดึงกลุ่มสาระฯที่มีอยู่อัตโนมัติ)
-            const uniqueDepts = [...new Set(allUsersList.map(u => u.Group))].filter(d => d && d !== "-" && d !== "ไม่ระบุกลุ่มสาระฯ");
+            // 3. ตั้งค่าหัวหน้ากลุ่มสาระฯ (ตัด บริหารสถานศึกษา และ บุคลากรทางการศึกษา ออก)
+            const uniqueDepts = [...new Set(allUsersList.map(u => u.Group))].filter(d => 
+                d && d !== "-" && 
+                d !== "ไม่ระบุกลุ่มสาระฯ" && 
+                d !== "บริหารสถานศึกษา" && 
+                d !== "บุคลากรทางการศึกษา"
+            );
+            
             if (uniqueDepts.length > 0) {
                 const deptDiv = document.createElement('div');
                 deptDiv.className = 'mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200 shadow-sm';
@@ -394,7 +417,6 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
                 deptDiv.innerHTML = deptHtml;
                 container.appendChild(deptDiv);
             }
-
             // 4. รายการเมนูเปิด-ปิด
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
             const groupedMenus = {};
