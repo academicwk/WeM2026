@@ -19,15 +19,13 @@
     <main class="flex-1 flex flex-col h-full relative w-full">
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
                     <h2 class="text-xl font-bold text-navy-900 leading-none">ระบบบริหารจัดการทางการศึกษา Watkhod e-Management : WeM</h2>
                     <p class="text-xs font-medium text-gray-500 mt-1.5">โรงเรียนเทศบาลวัดโขดทิมทาราม | กองการศึกษา เทศบาลนครระยอง</p>
                 </div>
             </div>
-            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2">
+            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
                 <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="Icon" border="0" class="h-12 w-auto object-contain">
                 <span id="current-date"></span>
             </div>
@@ -250,7 +248,6 @@
                 sidebarIcon.classList.add('hidden');
             }
 
-            // ถ้าเป็น Admin ให้เปิดปุ่มการตั้งค่า
             if (fullName === "นายพีระศิน ไชยศร") {
                 document.getElementById('btn-settings').classList.replace('hidden', 'flex');
                 document.getElementById('btn-user-settings').classList.replace('hidden', 'flex');
@@ -270,13 +267,11 @@
             applyMenuStates();
         });
 
-        // ----------------------------------------------------
-        // ฟังก์ชันควบคุม Sidebar
-        // ----------------------------------------------------
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
             document.getElementById('sidebarOverlay').classList.toggle('hidden');
         }
+        
         function closeSidebarMobile() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -285,14 +280,12 @@
                 if(overlay) overlay.classList.add('hidden');
             }
         }
+        
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
         }
 
-        // ----------------------------------------------------
-        // ระบบตั้งค่าเปิด-ปิดเมนู
-        // ----------------------------------------------------
         async function fetchSettingsFromDatabase() {
             try {
                 const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) });
@@ -372,9 +365,6 @@
 
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
 
-        // ----------------------------------------------------
-        // ระบบจัดการ User
-        // ----------------------------------------------------
         async function openUserSettingsModal() {
             document.getElementById('userSettingsModal').classList.remove('hidden');
             const container = document.getElementById('user-cards-container');
@@ -465,6 +455,7 @@
                     if (myUser && String(data.name) === String(myUser.name)) {
                         myUser.position = data.position; myUser.group = data.group; myUser.room = data.room;
                         localStorage.setItem('wem_user', JSON.stringify(myUser));
+                        
                         document.getElementById('display-position').textContent = data.position || "-";
                         document.getElementById('display-group').textContent = data.group || "-";
                         document.getElementById('display-room').textContent = data.room || "-";
@@ -517,7 +508,9 @@
                     if (myUser && myUser.name === targetName) {
                         myUser.image = res.imageUrl;
                         localStorage.setItem('wem_user', JSON.stringify(myUser)); 
-                        document.getElementById('sidebar-user-img').src = res.imageUrl; 
+                        
+                        const sidebarImg = document.getElementById('sidebar-user-img');
+                        if(sidebarImg) sidebarImg.src = res.imageUrl; 
                     }
                 } else { imgElement.src = oldSrc; Swal.fire('ข้อผิดพลาด', res.message, 'error'); }
             }).catch(err => { imgElement.src = oldSrc; Swal.fire('ข้อผิดพลาด', 'อัปโหลดรูปภาพล้มเหลว', 'error'); });
