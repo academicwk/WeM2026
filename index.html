@@ -146,5 +146,34 @@
             }
         }
     </script>
+<script>
+        // ใส่ API ของคุณครูตรงนี้ให้ตรงกัน
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            // ดึงค่าพื้นหลังจากเครื่องก่อนเพื่อความรวดเร็ว
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            if(savedSettings['login_bg']) {
+                document.body.style.backgroundImage = `url('${savedSettings['login_bg']}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+            }
+
+            // โหลดเช็คการอัปเดตจากฐานข้อมูลใหม่ทุกครั้ง
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' && res.settings) {
+                    localStorage.setItem('wem_sys_settings', JSON.stringify(res.settings));
+                    if(res.settings['login_bg'] && res.settings['login_bg'] !== savedSettings['login_bg']) {
+                        document.body.style.backgroundImage = `url('${res.settings['login_bg']}')`;
+                        document.body.style.backgroundSize = 'cover';
+                        document.body.style.backgroundPosition = 'center';
+                    }
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>
