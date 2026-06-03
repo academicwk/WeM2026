@@ -464,7 +464,6 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
         }
 
         function toggleMenuState(id, state) {
-        function toggleMenuState(id, state) {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             savedSettings[id] = state;
             localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
