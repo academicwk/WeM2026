@@ -9,9 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Sarabun', 'sans-serif'] }, colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } } } }
-        }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Sarabun', 'sans-serif'] }, colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } } } } }
     </script>
 </head>
 <body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
@@ -22,7 +20,7 @@
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
-                <a href="main.html" class="w-10 h-10 bg-slate-100 hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm border border-gray-200 shrink-0" title="กลับหน้าหลัก">
+                <a href="main.html#zone-academic" class="w-10 h-10 bg-slate-100 hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm border border-gray-200 shrink-0" title="กลับหน้าวิชาการ">
                     <i class="fa-solid fa-arrow-left text-lg"></i>
                 </a>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
@@ -185,10 +183,21 @@
         document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
+            applyMenuStates(); // โหลดเวอร์ชันและสีปุ่มเมนูมาแปะ
             
             fetchSubjectHeader();
             fetchLessonPlans();
         });
+
+        // ----------------------------------------------------
+        // ฟังก์ชันอัปเดตเวอร์ชันบน Sidebar
+        // ----------------------------------------------------
+        function applyMenuStates() {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const version = savedSettings['sys_version'] || '2.0.1';
+            const versionDisplay = document.getElementById('sidebar-version-display');
+            if(versionDisplay) versionDisplay.textContent = `WeM System Version ${version}`;
+        }
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
