@@ -194,11 +194,10 @@
             }
         }
 
-        function renderResearchCards() {
+function renderResearchCards() {
             const container = document.getElementById('research-cards-container');
             container.innerHTML = '';
             
-            // จัดเรียงข้อมูล: ปี ล่าสุดอยู่บน -> ภาคเรียน ล่าสุดอยู่บน -> วันที่สร้าง
             researchDataList.sort((a, b) => {
                 if(b.year !== a.year) return b.year - a.year;
                 if(b.semester !== a.semester) return b.semester - a.semester;
@@ -214,9 +213,7 @@
             } else {
                 researchDataList.forEach(item => {
                     const card = document.createElement('div');
-                    // ปรับดีไซน์ให้แคบลง กระชับขึ้น
                     card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-3 flex flex-col sm:flex-row items-center gap-3 hover:shadow-md transition-shadow relative overflow-hidden";
-                    // ส่งแค่ item.id ไป เพื่อป้องกันบั๊กเครื่องหมายคำพูดพัง
                     card.innerHTML = `
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
                         <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xl shrink-0 shadow-inner ml-2">
@@ -233,13 +230,15 @@
                             <a href="${item.pdfUrl}" target="_blank" class="w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors" title="เปิดไฟล์ PDF">
                                 <i class="fa-solid fa-file-pdf text-xs"></i>
                             </a>
+                            <button onclick="deleteResearchData('${item.id}')" class="w-9 h-9 bg-white hover:bg-red-500 hover:text-white text-red-400 border border-red-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="ลบข้อมูล">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
                         </div>
                     `;
                     container.appendChild(card);
                 });
             }
 
-            // คำนวณหลอด Progress Bar
             let completedInCurrentYear = researchDataList.filter(item => parseInt(item.year) === defaultYear).length;
             if (completedInCurrentYear > 2) completedInCurrentYear = 2; 
             
@@ -251,7 +250,6 @@
             document.getElementById('overall-bar').style.width = `${pct}%`;
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
         }
-
         // จัดการ Modal
         function openResearchModal(id = null) {
             tempBase64File = "";
