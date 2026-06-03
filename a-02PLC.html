@@ -451,7 +451,7 @@
             } catch (e) { console.error(e); }
         }
 
-function openOpenClassModal() {
+        function openOpenClassModal() {
             const myUserObj = allUsers.find(u => u.Name === currentUser.name);
             const myGroup = myUserObj && myUserObj.Group ? myUserObj.Group : "ไม่ระบุกลุ่มสาระฯ";
 
@@ -483,7 +483,6 @@ function openOpenClassModal() {
             const adminList = ["นายธนพงศ์ สุขะ", "นางสาวจิณณานิจ ไพโรจน์ณรงค์"];
             let cyclesHtml = '';
 
-            // 🌟 กำหนดชื่อเดือนและขอบเขตวันที่ที่อนุญาตให้เลือกได้ (ปี 2026 = พ.ศ. 2569)
             const cycleMonths = [
                 { name: "มิถุนายน 2569", min: "2026-06-01", max: "2026-06-30" },
                 { name: "กรกฎาคม 2569", min: "2026-07-01", max: "2026-07-31" },
@@ -514,27 +513,31 @@ function openOpenClassModal() {
                         <div class="bg-indigo-100 text-indigo-900 font-bold px-4 py-2 text-sm border-b border-indigo-200">
                             <i class="fa-solid fa-arrows-spin mr-1"></i> วงรอบที่ ${i} (${cycleInfo.name})
                         </div>
-                        <div class="p-3 bg-white space-y-3">
-                            <div class="flex flex-col md:flex-row gap-2 items-center">
-                                <span class="w-full md:w-24 font-bold text-xs text-blue-700 bg-blue-50 px-2 py-2 rounded text-center shrink-0">ขั้น Plan</span>
-                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-40 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600 shrink-0 cursor-pointer">
-                                <select id="oc-c${i}-p-admin" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptP}</select>
+                        <div class="p-3 bg-white space-y-2">
+                            
+                            <div class="flex flex-col md:flex-row gap-2 items-center px-2 py-1">
+                                <span class="w-full md:w-20 font-bold text-xs text-blue-700 bg-blue-50 px-2 py-2 rounded text-center shrink-0">ขั้น Plan</span>
+                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-36 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600 shrink-0 cursor-pointer">
+                                <select id="oc-c${i}-p-admin" class="flex-1 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptP}</select>
                             </div>
-                            <div class="flex flex-col md:flex-row gap-2 items-center bg-slate-50 p-2 rounded border border-slate-100">
-                                <span class="w-full md:w-24 font-bold text-xs text-amber-700 bg-amber-100 px-2 py-2 rounded text-center shrink-0">ขั้น Do</span>
-                                <div class="grid grid-cols-2 md:flex gap-2 w-full">
-                                    <input type="date" id="oc-c${i}-d-d" value="${d_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-40 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 shrink-0 cursor-pointer">
-                                    <select id="oc-c${i}-d-period" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${currentPeriodOpts}</select>
-                                    <select id="oc-c${i}-d-r" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${currentRoomOpts}</select>
-                                    <input type="text" id="oc-c${i}-d-s" value="${d_subject}" placeholder="รายวิชา" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
-                                    <select id="oc-c${i}-d-admin" class="w-full col-span-2 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${admOptD}</select>
+
+                            <div class="flex flex-col md:flex-row gap-2 items-center bg-slate-50 px-2 py-2 rounded border border-slate-100">
+                                <span class="w-full md:w-20 font-bold text-xs text-amber-700 bg-amber-100 px-2 py-2 rounded text-center shrink-0">ขั้น Do</span>
+                                <input type="date" id="oc-c${i}-d-d" value="${d_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-36 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 shrink-0 cursor-pointer">
+                                <div class="flex-1 flex flex-wrap lg:flex-nowrap gap-2 w-full">
+                                    <select id="oc-c${i}-d-period" class="w-full lg:w-24 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 shrink-0">${currentPeriodOpts}</select>
+                                    <select id="oc-c${i}-d-r" class="w-full lg:w-24 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 shrink-0">${currentRoomOpts}</select>
+                                    <input type="text" id="oc-c${i}-d-s" value="${d_subject}" placeholder="รายวิชา" class="w-full lg:w-32 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 shrink-0">
+                                    <select id="oc-c${i}-d-admin" class="flex-1 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 min-w-[120px]">${admOptD}</select>
                                 </div>
                             </div>
-                            <div class="flex flex-col md:flex-row gap-2 items-center">
-                                <span class="w-full md:w-24 font-bold text-xs text-green-700 bg-green-50 px-2 py-2 rounded text-center shrink-0">ขั้น See</span>
-                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-40 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600 shrink-0 cursor-pointer">
-                                <select id="oc-c${i}-s-admin" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptS}</select>
+
+                            <div class="flex flex-col md:flex-row gap-2 items-center px-2 py-1">
+                                <span class="w-full md:w-20 font-bold text-xs text-green-700 bg-green-50 px-2 py-2 rounded text-center shrink-0">ขั้น See</span>
+                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-36 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600 shrink-0 cursor-pointer">
+                                <select id="oc-c${i}-s-admin" class="flex-1 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptS}</select>
                             </div>
+
                         </div>
                     </div>
                 `;
@@ -542,7 +545,6 @@ function openOpenClassModal() {
             document.getElementById('oc-cycles-container').innerHTML = cyclesHtml;
             document.getElementById('openClassModal').classList.remove('hidden');
         }
-
         function closeOpenClassModal() { document.getElementById('openClassModal').classList.add('hidden'); }
 
         function submitOpenClassPLC() {
