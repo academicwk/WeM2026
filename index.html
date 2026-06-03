@@ -12,10 +12,7 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Sarabun', 'sans-serif'] },
-                    colors: {
-                        navy: { 800: '#1e3a8a', 900: '#0f172a' },
-                        gold: { 400: '#fbbf24', 500: '#f59e0b' }
-                    }
+                    colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } }
                 }
             }
         }
@@ -24,12 +21,18 @@
     
     <style>
         body {
-            background-color: #0f172a; /* สีพื้นหลังเริ่มต้น (navy-900) */
-            transition: background-image 0.5s ease-in-out;
+            /* 🌟 นำลิงก์รูปภาพที่ฝากไฟล์ไว้ มาวางในวงเล็บนี้ได้เลยครับ 🌟 */
+            background-image: url('https://img2.pic.in.th/pic/your-background-image.jpg'); 
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a; 
         }
         .glass-effect {
-            background-color: rgba(255, 255, 255, 0.95); /* สีขาวโปร่งแสง */
-            backdrop-filter: blur(12px); /* เอฟเฟกต์เบลอพื้นหลัง */
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -47,24 +50,16 @@
         <div class="p-8 pt-0">
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                        ชื่อผู้ใช้งาน
-                    </label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">ชื่อผู้ใช้งาน</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-user text-gray-400"></i>
-                        </div>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-400"></i></div>
                         <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white/90" id="username" type="text" placeholder="Username" required>
                     </div>
                 </div>
                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        รหัสผ่าน
-                    </label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">รหัสผ่าน</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-lock text-gray-400"></i>
-                        </div>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
                         <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white/90" id="password" type="password" placeholder="Password" required>
                     </div>
                 </div>
@@ -80,125 +75,41 @@
                         ระดับดีเยี่ยม จากเทศบาลนครระยอง ปีการศึกษา 2568
                     </div>
                 </div>
-                
             </form>
         </div>
     </div>
 
     <script>
-        // ประกาศตัวแปร GAS API เพียงครั้งเดียว
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
 
         document.addEventListener("DOMContentLoaded", () => {
             const savedUser = localStorage.getItem('wem_user');
-            
-            // 1. จัดการเรื่อง Login
-            if (savedUser) {
-                window.location.href = "main.html";
-                return; // หยุดการทำงานถ้าเคยล็อกอินแล้ว
-            } else {
-                document.getElementById('loginCard').classList.remove('hidden');
-            }
-
-            // 2. จัดการเรื่องภาพพื้นหลัง
-            applyBackground();
+            if (savedUser) { window.location.href = "main.html"; } 
+            else { document.getElementById('loginCard').classList.remove('hidden'); }
         });
 
-        function applyBackground() {
-            // ดึงจาก Local Storage ก่อนเพื่อให้แสดงผลเร็ว
-            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            if(savedSettings['login_bg']) {
-                setBackgroundImage(savedSettings['login_bg']);
-            }
-
-            // โหลดตรวจสอบจากฐานข้อมูลเผื่อมีการเปลี่ยนแปลง
-            fetch(GAS_API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ action: 'getSettings' }) 
-            })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' && res.settings) {
-                    localStorage.setItem('wem_sys_settings', JSON.stringify(res.settings));
-                    
-                    // ถ้าภาพในฐานข้อมูลไม่ตรงกับที่มีในเครื่อง ให้เปลี่ยน
-                    if(res.settings['login_bg'] && res.settings['login_bg'] !== savedSettings['login_bg']) {
-                        setBackgroundImage(res.settings['login_bg']);
-                    }
-                }
-            })
-            .catch(err => console.error("Error fetching background:", err));
-        }
-
-        // ฟังก์ชันช่วยในการตั้งค่า CSS พื้นหลัง
-        function setBackgroundImage(url) {
-            // สร้าง element img ลอยๆ เพื่อบังคับให้โหลดภาพให้เสร็จก่อน ถึงจะเปลี่ยนพื้นหลัง (ป้องกันภาพกระตุก)
-            const img = new Image();
-            img.onload = function() {
-                document.body.style.backgroundImage = `url('${url}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundPosition = 'center';
-                document.body.style.backgroundRepeat = 'no-repeat';
-                document.body.style.backgroundAttachment = 'fixed';
-            }
-            img.src = url;
-        }
-
         function showLoading(text) {
-            Swal.fire({
-                title: text,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+            Swal.fire({ title: text, allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
         }
 
         async function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
-
             showLoading("กำลังตรวจสอบข้อมูล...");
 
             try {
                 const response = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'login',
-                        username: user,
-                        password: pass
-                    })
+                    method: 'POST', body: JSON.stringify({ action: 'login', username: user, password: pass })
                 });
-                
                 const result = await response.json();
-
                 if (result.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'เข้าสู่ระบบสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
+                    Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', showConfirmButton: false, timer: 1500 }).then(() => {
                         localStorage.setItem('wem_user', JSON.stringify(result.userData));
                         window.location.href = "main.html";
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'เข้าสู่ระบบไม่สำเร็จ',
-                        text: result.message,
-                        confirmButtonColor: '#1e3a8a'
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เกิดข้อผิดพลาด',
-                    text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
-                    confirmButtonColor: '#1e3a8a'
-                });
-            }
+                } else { Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: result.message, confirmButtonColor: '#1e3a8a' }); }
+            } catch (error) { Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', confirmButtonColor: '#1e3a8a' }); }
         }
     </script>
 </body>
