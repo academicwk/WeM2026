@@ -124,17 +124,9 @@
                             <label class="text-xs font-bold text-gray-700">ชื่อผู้เสนอคำขอ (หัวหน้าสายชั้น)</label>
                             <input type="text" id="lunch-proposer" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
                         </div>
-                    <div>
-                            <label class="text-xs font-bold text-gray-700">สายชั้น (เลือกเพื่อเรียกดูข้อมูล)</label>
-                            <select id="lunch-grade" class="w-full border p-2 rounded-lg bg-white text-blue-700 font-bold outline-none text-sm cursor-pointer border-blue-300 focus:border-blue-500 shadow-sm" onchange="handleGradeChange()">
-                                <option value="อนุบาล">อนุบาล (อ.1 - อ.3)</option>
-                                <option value="ป.1">ป.1</option>
-                                <option value="ป.2">ป.2</option>
-                                <option value="ป.3">ป.3</option>
-                                <option value="ป.4">ป.4</option>
-                                <option value="ป.5">ป.5</option>
-                                <option value="ป.6">ป.6</option>
-                            </select>
+    <div>
+                            <label class="text-xs font-bold text-gray-700">สายชั้น</label>
+                            <input type="text" id="lunch-grade" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold text-blue-700" disabled>
                         </div>
                     </div>
                     <hr class="border-gray-200 my-1">
@@ -244,14 +236,21 @@
             }, 1000);
         }
 
-        document.addEventListener("DOMContentLoaded", async () => {
+            document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
-            applyMenuStates(); 
+            applyMenuStates(); // โหลดเวอร์ชันของระบบ
+
+            // คำนวณสายชั้นของผู้ใช้ (รวบอนุบาล)
+            const userRoom = String(currentUser.room || "").trim();
+            let rawPrefix = userRoom.split('/')[0].trim(); 
+            userGradePrefix = rawPrefix.startsWith("อ.") ? "อนุบาล" : rawPrefix; 
+            if(!userGradePrefix || userGradePrefix === "-") userGradePrefix = "ไม่ระบุสายชั้น";
 
             showLoading('กำลังเตรียมข้อมูลระบบ...');
             await fetchAllUsersForDropdown();
-            await fetchPLCPlanOpenClass(); // ของ Open Class ยังดึงมาเผื่อไว้เหมือนเดิม
+            await fetchPLCPlanData(); 
+            await fetchPLCPlanOpenClass(); 
             Swal.close(); 
         });
 
@@ -307,19 +306,80 @@
 
         // ================= LUNCH PLC (อัปเดตระบบสิทธิ์และเลือกสายชั้น) =================
         
-        async function openLunchModal() {
-            // คำนวณสายชั้นตั้งต้นของตัวเอง
-            const userRoom = String(currentUser.room || "").trim();
-            let rawPrefix = userRoom.split('/')[0].trim();
-            let defaultGrade = rawPrefix.startsWith("อ.") ? "อนุบาล" : rawPrefix; // รวบ อ.1 - อ.3
-            
-            const validGrades = ["อนุบาล", "ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"];
-            if (!validGrades.includes(defaultGrade)) defaultGrade = "ป.1"; // กรณีคนไม่มีสายชั้นให้ไปเริ่มที่ ป.1
+            function openLunchModal() {
+            // 1. ตรวจสอบสิทธิ์ว่าใช่หัวหน้าสายชั้นของตัวเองหรือไม่
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const headName = savedSettings[`head_grade_${userGradePrefix}`] || "";
+            const isHead = (currentUser.name === headName);
 
-            document.getElementById('lunch-grade').value = defaultGrade;
+            // แจ้งเตือนสิทธิ์ด้านบน
+            let alertBox = document.getElementById('lunch-role-alert');
+            if(!alertBox) {
+                alertBox = document.createElement('div');
+                alertBox.id = 'lunch-role-alert';
+                const parentDiv = document.getElementById('lunch-proposer').closest('.bg-slate-50');
+                parentDiv.parentNode.insertBefore(alertBox, parentDiv);
+            }
+
+            if (!isHead) {
+                alertBox.innerHTML = `<div class="bg-red-50 text-red-600 border border-red-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-eye"></i> สถานะ: ผู้ร่วมสายชั้น (เรียกดูข้อมูลได้เท่านั้น | สงวนสิทธิ์แก้ไขสำหรับหัวหน้า: ${headName || 'ยังไม่ระบุ'})</div>`;
+                document.getElementById('lunch-submit-btn').classList.add('hidden');
+            } else {
+                alertBox.innerHTML = `<div class="bg-green-50 text-green-600 border border-green-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-pen-to-square"></i> สถานะ: หัวหน้าสายชั้น (คุณมีสิทธิ์แก้ไขและส่งแผน PLC ของสายชั้นนี้)</div>`;
+                document.getElementById('lunch-submit-btn').classList.remove('hidden');
+            }
+
+            // 2. แสดงข้อมูลทั่วไป
+            document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : (headName || currentUser.name);
+            document.getElementById('lunch-grade').value = currentPLCPlan ? currentPLCPlan.grade : userGradePrefix;
+
+            // ดึงเฉพาะคนในสายชั้นตัวเอง
+            const gradeMembers = allUsers.filter(u => {
+                if (!u.Room || u.Room === "-") return false;
+                let uPrefix = String(u.Room).split('/')[0].trim();
+                let uGroup = uPrefix.startsWith("อ.") ? "อนุบาล" : uPrefix;
+                return uGroup === userGradePrefix;
+            });
+
+            // สร้าง Dropdown สมาชิก และตั้งค่าล็อค (ถ้าไม่ใช่หัวหน้า)
+            let memberHtml = '';
+            let disableAttr = !isHead ? "disabled" : "";
+            let bgClass = !isHead ? "bg-gray-100 text-gray-500 cursor-not-allowed opacity-80" : "bg-white text-gray-700 focus:border-blue-500";
+
+            for(let i=1; i<=12; i++) {
+                let savedMember = currentPLCPlan && currentPLCPlan.members && currentPLCPlan.members[i-1] ? currentPLCPlan.members[i-1] : "";
+                let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
+                gradeMembers.forEach(u => {
+                    let isSelected = (u.Name === savedMember) ? "selected" : "";
+                    options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
+                });
+                memberHtml += `<div><select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none transition-colors ${bgClass}" ${disableAttr}>${options}</select></div>`;
+            }
+            document.getElementById('lunch-members-container').innerHTML = memberHtml;
+
+            // สร้างตารางกำหนดการ
+            let tbodyHtml = '';
+            for(let i=1; i<=15; i++) {
+                let savedDate = "", savedMT = "";
+                if (currentPLCPlan && currentPLCPlan.plans) {
+                    let p = currentPLCPlan.plans.find(x => parseInt(x.week) === i);
+                    if (p) { savedDate = p.dateRaw || ""; savedMT = p.modelTeacher || ""; }
+                }
+                let mtOptions = `<option value="">-- เลือก Model Teacher --</option>`;
+                gradeMembers.forEach(u => {
+                    mtOptions += `<option value="${u.Name}" ${u.Name === savedMT ? "selected" : ""}>${u.Name}</option>`;
+                });
+                
+                tbodyHtml += `
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                        <td class="py-2 px-4 text-center font-bold text-gray-500 text-xs">${i}</td>
+                        <td class="py-2 px-4"><input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 transition-colors ${bgClass}" ${disableAttr}></td>
+                        <td class="py-2 px-4"><select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 transition-colors ${bgClass}" ${disableAttr}>${mtOptions}</select></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('lunch-plan-tbody').innerHTML = tbodyHtml;
             document.getElementById('lunchModal').classList.remove('hidden');
-            
-            await handleGradeChange(); // สั่งดึงและวาดข้อมูลทันที
         }
 
         function closeLunchModal() { document.getElementById('lunchModal').classList.add('hidden'); }
