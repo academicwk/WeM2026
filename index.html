@@ -21,53 +21,47 @@
     
     <style>
         body {
-            /* 🌟 นำลิงก์รูปภาพที่ฝากไฟล์ไว้ มาวางในวงเล็บนี้ได้เลยครับ 🌟 */
+            /* ใส่ลิงก์ภาพพื้นหลังที่คุณครูเตรียมไว้ */
             background-image: url('https://img2.pic.in.th/WeMBG.jpg'); 
-            
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-color: #0f172a; 
         }
-        .glass-effect {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex items-center justify-center p-4">
 
-    <div id="loginCard" class="glass-effect rounded-3xl shadow-2xl w-full max-w-md overflow-hidden hidden relative z-10">
-        <div class="text-center py-4 px-4 bg-transparent">
+    <!-- เปลี่ยนกล่องกลับเป็นสีขาวทึบ (bg-white) -->
+    <div id="loginCard" class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden hidden relative z-10">
+        <div class="text-center py-4 px-4 bg-white">
             <div class="mx-auto mb-2 flex justify-center">
                 <img src="https://img1.pic.in.th/images/WeM.png" alt="WeM" border="0" class="h-48 w-auto object-contain">
             </div>
         </div>
         
-        <div class="p-8 pt-0">
+        <div class="p-8 pt-0 bg-white">
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">ชื่อผู้ใช้งาน</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-400"></i></div>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white/90" id="username" type="text" placeholder="Username" required>
+                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white" id="username" type="text" placeholder="Username" required>
                     </div>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="password">รหัสผ่าน</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white/90" id="password" type="password" placeholder="Password" required>
+                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white" id="password" type="password" placeholder="Password" required>
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
                     <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
                 </button>
 
-                <div class="text-center mt-6 pt-6 border-t border-gray-200/50">
+                <div class="text-center mt-6 pt-6 border-t border-gray-200">
                     <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="4" border="0" class="h-12 w-auto mx-auto mb-2 object-contain">
                     <div class="text-red-800 text-[11px] font-bold leading-relaxed">
                         นวัตกรรมด้านการบริหารและบริการทางการศึกษา<br>
