@@ -103,7 +103,7 @@
 
     <input type="file" id="pdfUploader" accept="application/pdf" class="hidden" onchange="handleFileSelect(event)">
 
-    <script>
+<script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
         let currentUser = null;
@@ -131,7 +131,10 @@
             document.getElementById('display-position').textContent = currentUser.position || "-";
             document.getElementById('display-group').textContent = currentUser.group || "-";
             document.getElementById('display-room').textContent = currentUser.room || "-";
+            
+            // ปรับข้อความตามที่คุณครูต้องการ
             document.getElementById('header-subtitle').textContent = `โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC) โดย ${currentUser.name}`;
+
             if (currentUser.image && currentUser.image.trim() !== "") {
                 document.getElementById('sidebar-user-img').src = currentUser.image;
                 document.getElementById('sidebar-user-img').classList.remove('hidden');
@@ -156,7 +159,6 @@
             await loadSidebarComponent();
             setupUserData();
             applyMenuStates();
-            
             fetchResearchData();
         });
 
@@ -177,7 +179,7 @@
             window.location.href = "index.html";
         }
 
-        // ดึงข้อมูลวิจัย
+        // 1. ดึงข้อมูลวิจัย
         async function fetchResearchData() {
             const container = document.getElementById('research-cards-container');
             container.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i></div>`;
@@ -194,7 +196,8 @@
             }
         }
 
-function renderResearchCards() {
+        // 2. สร้างการ์ดแสดงผล
+        function renderResearchCards() {
             const container = document.getElementById('research-cards-container');
             container.innerHTML = '';
             
@@ -250,14 +253,14 @@ function renderResearchCards() {
             document.getElementById('overall-bar').style.width = `${pct}%`;
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
         }
-        // จัดการ Modal
+
+        // 3. จัดการ Modal
         function openResearchModal(id = null) {
             tempBase64File = "";
-            document.getElementById('file-filename').textContent = "คลิกเพื่อแนบไฟล์ PDF";
+            document.getElementById('file-filename').innerHTML = 'คลิกเพื่อแนบไฟล์ PDF <span class="text-red-500">*</span>';
             document.getElementById('file-filename').classList.remove('text-green-600');
 
             if (id) {
-                // โหมดแก้ไข: เอา ID ไปค้นหาข้อมูลที่โหลดมาเก็บไว้แล้ว (แก้ปัญหา String Error 100%)
                 const data = researchDataList.find(r => String(r.id) === String(id));
                 if(data) {
                     document.getElementById('modal-title-text').textContent = "แก้ไขรายงานการวิจัย";
@@ -268,7 +271,6 @@ function renderResearchCards() {
                     document.getElementById('modal-existing-pdf').value = data.pdfUrl;
                 }
             } else {
-                // โหมดเพิ่มใหม่
                 document.getElementById('modal-title-text').textContent = "เพิ่มรายงานการวิจัย";
                 document.getElementById('modal-id').value = "";
                 document.getElementById('modal-semester').value = "1";
@@ -298,7 +300,8 @@ function renderResearchCards() {
             e.target.value = ''; 
         }
 
-function submitResearchData() {
+        // 4. บันทึกข้อมูล
+        function submitResearchData() {
             const id = document.getElementById('modal-id').value;
             const semester = document.getElementById('modal-semester').value;
             const year = document.getElementById('modal-year').value;
@@ -316,7 +319,6 @@ function submitResearchData() {
 
             Swal.fire({ title: 'กำลังบันทึกและอัปโหลดไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-            // 🌟 ตั้งชื่อไฟล์ใหม่ตามรูปแบบ: วิจัย_ภาคเรียน_ปีการศึกษา_ชื่อผู้ใช้งาน.pdf
             const customFilename = `วิจัย_${semester}_${year}_${currentUser.name}.pdf`;
 
             fetch(GAS_API_URL, {
@@ -329,7 +331,7 @@ function submitResearchData() {
                     year: year,
                     title: title,
                     base64: tempBase64File,
-                    filename: customFilename, // ใช้งานชื่อไฟล์ที่ตั้งใหม่
+                    filename: customFilename, 
                     existingPdfUrl: existingPdf
                 })
             }).then(r => r.json()).then(res => {
@@ -340,16 +342,18 @@ function submitResearchData() {
                 } else {
                     Swal.fire('ผิดพลาด', res.message, 'error');
                 }
+            }).catch(e => Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error'));
+        }
 
-                // ฟังก์ชันลบข้อมูลวิจัย
+        // 5. ลบข้อมูล
         function deleteResearchData(id) {
             Swal.fire({
                 title: 'ยืนยันการลบข้อมูล?',
                 text: "หากลบแล้วจะไม่สามารถกู้คืนได้!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444', // สีแดง
-                cancelButtonColor: '#94a3b8', // สีเทา
+                confirmButtonColor: '#ef4444', 
+                cancelButtonColor: '#94a3b8', 
                 confirmButtonText: 'ใช่, ลบเลย!',
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
@@ -361,7 +365,7 @@ function submitResearchData() {
                     }).then(r => r.json()).then(res => {
                         if (res.status === 'success') {
                             Swal.fire({ icon: 'success', title: 'ลบสำเร็จ', timer: 1500, showConfirmButton: false });
-                            fetchResearchData(); // รีเฟรชตารางใหม่
+                            fetchResearchData(); 
                         } else {
                             Swal.fire('ผิดพลาด', res.message, 'error');
                         }
@@ -369,8 +373,5 @@ function submitResearchData() {
                 }
             });
         }
-            }).catch(e => Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error'));
-        }
-    </script>
-</body>
+    </script></body>
 </html>
