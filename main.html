@@ -146,6 +146,7 @@
         </div>
     </main>
 
+    <!-- Modal: Settings -->
     <div id="settingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
@@ -159,6 +160,7 @@
         </div>
     </div>
 
+    <!-- Modal: User Settings -->
     <div id="userSettingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
@@ -169,6 +171,7 @@
         </div>
     </div>
 
+    <!-- Modal: Edit User -->
     <div id="editUserModal" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-center justify-center backdrop-blur-sm px-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
             <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl"><h3 class="text-lg font-bold text-white">แก้ไขข้อมูลผู้ใช้งาน</h3></div>
@@ -212,7 +215,9 @@
         </div>
     </div>
 
+    <!-- Hidden Uploaders -->
     <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+    <input type="file" id="bgUploader" accept="image/jpeg, image/png" class="hidden" onchange="handleBgUpload(event)">
     
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
@@ -273,7 +278,6 @@
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
             document.getElementById('sidebarOverlay').classList.toggle('hidden');
         }
-        
         function closeSidebarMobile() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -282,15 +286,11 @@
                 if(overlay) overlay.classList.add('hidden');
             }
         }
-        
         function handleLogout() {
             localStorage.removeItem('wem_user');
             window.location.href = "index.html";
         }
 
-        // ----------------------------------------------------
-        // ระบบตั้งค่าเปิด-ปิดเมนู และ ตั้งค่าเวอร์ชัน
-        // ----------------------------------------------------
         async function fetchSettingsFromDatabase() {
             try {
                 const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) });
@@ -305,7 +305,6 @@
         function applyMenuStates() {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             
-            // จัดการสีปุ่มเมนู
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
             menuLinks.forEach(link => {
                 const id = link.id;
@@ -317,7 +316,6 @@
                 }
             });
 
-            // อัปเดตเลขเวอร์ชันใน Sidebar
             const version = savedSettings['sys_version'] || '2.0.1';
             const versionDisplay = document.getElementById('sidebar-version-display');
             if(versionDisplay) versionDisplay.textContent = `WeM System Version ${version}`;
@@ -330,7 +328,7 @@
 
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             
-            // 1. เพิ่มช่องระบุเวอร์ชันระบบ
+            // 1. ช่องระบุเวอร์ชันระบบ
             const currentVersion = savedSettings['sys_version'] || '2.0.1';
             const versionDiv = document.createElement('div');
             versionDiv.className = 'mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-sm';
@@ -343,7 +341,24 @@
             `;
             container.appendChild(versionDiv);
 
-            // 2. เพิ่มรายการปุ่มเปิด-ปิดเมนู
+            // 2. ช่องอัปโหลดภาพพื้นหลัง Login
+            const currentBg = savedSettings['login_bg'] || '';
+            const bgDiv = document.createElement('div');
+            bgDiv.className = 'mb-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200 shadow-sm';
+            bgDiv.innerHTML = `
+                <label class="block text-sm font-bold text-navy-900 mb-2"><i class="fa-solid fa-image text-indigo-600 mr-2"></i>ภาพพื้นหลังหน้าเข้าสู่ระบบ (Login Background)</label>
+                <div class="flex flex-col gap-3">
+                    <div class="w-full h-40 bg-gray-200 rounded-lg border border-gray-300 flex items-center justify-center overflow-hidden relative shadow-inner">
+                        ${currentBg ? `<img src="${currentBg}" class="w-full h-full object-cover">` : `<span class="text-gray-400 text-sm font-medium">ยังไม่มีภาพพื้นหลัง</span>`}
+                    </div>
+                    <button onclick="document.getElementById('bgUploader').click()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors">
+                        <i class="fa-solid fa-upload mr-2"></i>อัปโหลดภาพพื้นหลังใหม่
+                    </button>
+                </div>
+            `;
+            container.appendChild(bgDiv);
+
+            // 3. รายการเมนูเปิด-ปิด
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
             const groupedMenus = {};
 
@@ -379,15 +394,47 @@
             modal.classList.remove('hidden');
         }
 
-        function toggleMenuState(id, state) {
-            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            savedSettings[id] = state;
-            localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
-            applyMenuStates(); 
-
-            fetch(GAS_API_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: id, isEnabled: state })
-            }).catch(err => console.error(err));
+        function handleBgUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            Swal.fire({ title: 'กำลังอัปโหลดภาพพื้นหลัง...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1920; 
+                    let w = img.width, h = img.height;
+                    if (w > MAX_WIDTH) { h *= MAX_WIDTH / w; w = MAX_WIDTH; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    fetch(GAS_API_URL, { 
+                        method: 'POST', 
+                        body: JSON.stringify({ action: 'uploadBackground', base64: base64, filename: 'background.jpg' }) 
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.status === 'success') {
+                            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+                            savedSettings['login_bg'] = res.imageUrl;
+                            localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
+                            
+                            fetch(GAS_API_URL, {
+                                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: 'login_bg', isEnabled: res.imageUrl })
+                            }).then(() => {
+                                Swal.fire({ icon: 'success', title: 'เปลี่ยนพื้นหลังสำเร็จ', timer: 1500, showConfirmButton: false });
+                                setTimeout(openSettingsModal, 1500); 
+                            });
+                        } else { Swal.fire('ข้อผิดพลาด', res.message, 'error'); }
+                    }).catch(err => Swal.fire('ข้อผิดพลาด', 'อัปโหลดล้มเหลว', 'error'));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            event.target.value = ''; 
         }
 
         function saveSystemVersion() {
@@ -408,11 +455,19 @@
             }).catch(err => console.error(err));
         }
 
+        function toggleMenuState(id, state) {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            savedSettings[id] = state;
+            localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
+            applyMenuStates(); 
+
+            fetch(GAS_API_URL, {
+                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: id, isEnabled: state })
+            }).catch(err => console.error(err));
+        }
+
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
 
-        // ----------------------------------------------------
-        // ระบบจัดการ User
-        // ----------------------------------------------------
         async function openUserSettingsModal() {
             document.getElementById('userSettingsModal').classList.remove('hidden');
             const container = document.getElementById('user-cards-container');
