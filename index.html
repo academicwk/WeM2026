@@ -21,51 +21,64 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        body {
+            background-color: #0f172a; /* สีพื้นหลังเริ่มต้น (navy-900) */
+            transition: background-image 0.5s ease-in-out;
+        }
+        .glass-effect {
+            background-color: rgba(255, 255, 255, 0.95); /* สีขาวโปร่งแสง */
+            backdrop-filter: blur(12px); /* เอฟเฟกต์เบลอพื้นหลัง */
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </head>
-<body class="bg-navy-900 font-sans antialiased min-h-screen flex items-center justify-center p-4">
+<body class="font-sans antialiased min-h-screen flex items-center justify-center p-4">
 
-    <div id="loginCard" class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden hidden">
-        <div class="bg-white text-center py-4 px-4">
+    <div id="loginCard" class="glass-effect rounded-3xl shadow-2xl w-full max-w-md overflow-hidden hidden relative z-10">
+        <div class="text-center py-4 px-4 bg-transparent">
             <div class="mx-auto mb-2 flex justify-center">
                 <img src="https://img1.pic.in.th/images/WeM.png" alt="WeM" border="0" class="h-48 w-auto object-contain">
             </div>
         </div>
         
-        <div class="p-8">
+        <div class="p-8 pt-0">
             <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="mb-2">
-                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="username">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         ชื่อผู้ใช้งาน
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-user text-gray-400"></i>
                         </div>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all" id="username" type="text" placeholder="Username" required>
+                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white/90" id="username" type="text" placeholder="Username" required>
                     </div>
                 </div>
                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="password">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
                         รหัสผ่าน
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-lock text-gray-400"></i>
                         </div>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all" id="password" type="password" placeholder="Password" required>
+                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white/90" id="password" type="password" placeholder="Password" required>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                <button type="submit" class="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
                     <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
                 </button>
 
-                <div class="text-center mt-4">
+                <div class="text-center mt-6 pt-6 border-t border-gray-200/50">
                     <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="4" border="0" class="h-12 w-auto mx-auto mb-2 object-contain">
-                        <div class="text-red-800 text-xs font-bold leading-relaxed">
-                            นวัตกรรมด้านการบริหารและบริการทางการศึกษา<br>
-                            ได้รับการรับรองให้เป็นการปฏิบัติที่เป็นเลิศของสถานศึกษา (Best Practice)<br>
-                            ระดับดีเยี่ยม จากเทศบาลนครระยอง ปีการศึกษา 2568
-                        </div>
+                    <div class="text-red-800 text-[11px] font-bold leading-relaxed">
+                        นวัตกรรมด้านการบริหารและบริการทางการศึกษา<br>
+                        ได้รับการรับรองให้เป็นการปฏิบัติที่เป็นเลิศของสถานศึกษา (Best Practice)<br>
+                        ระดับดีเยี่ยม จากเทศบาลนครระยอง ปีการศึกษา 2568
+                    </div>
                 </div>
                 
             </form>
@@ -73,20 +86,63 @@
     </div>
 
     <script>
+        // ประกาศตัวแปร GAS API เพียงครั้งเดียว
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
 
-        // ตรวจสอบเมื่อโหลดหน้าเว็บ
         document.addEventListener("DOMContentLoaded", () => {
             const savedUser = localStorage.getItem('wem_user');
             
-            // ถ้าเคยล็อกอินไว้แล้ว ให้ข้ามไปหน้า main เลย
+            // 1. จัดการเรื่อง Login
             if (savedUser) {
                 window.location.href = "main.html";
+                return; // หยุดการทำงานถ้าเคยล็อกอินแล้ว
             } else {
-                // ถ้ายังไม่เคยล็อกอิน ให้แสดงแบบฟอร์ม
                 document.getElementById('loginCard').classList.remove('hidden');
             }
+
+            // 2. จัดการเรื่องภาพพื้นหลัง
+            applyBackground();
         });
+
+        function applyBackground() {
+            // ดึงจาก Local Storage ก่อนเพื่อให้แสดงผลเร็ว
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            if(savedSettings['login_bg']) {
+                setBackgroundImage(savedSettings['login_bg']);
+            }
+
+            // โหลดตรวจสอบจากฐานข้อมูลเผื่อมีการเปลี่ยนแปลง
+            fetch(GAS_API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: 'getSettings' }) 
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' && res.settings) {
+                    localStorage.setItem('wem_sys_settings', JSON.stringify(res.settings));
+                    
+                    // ถ้าภาพในฐานข้อมูลไม่ตรงกับที่มีในเครื่อง ให้เปลี่ยน
+                    if(res.settings['login_bg'] && res.settings['login_bg'] !== savedSettings['login_bg']) {
+                        setBackgroundImage(res.settings['login_bg']);
+                    }
+                }
+            })
+            .catch(err => console.error("Error fetching background:", err));
+        }
+
+        // ฟังก์ชันช่วยในการตั้งค่า CSS พื้นหลัง
+        function setBackgroundImage(url) {
+            // สร้าง element img ลอยๆ เพื่อบังคับให้โหลดภาพให้เสร็จก่อน ถึงจะเปลี่ยนพื้นหลัง (ป้องกันภาพกระตุก)
+            const img = new Image();
+            img.onload = function() {
+                document.body.style.backgroundImage = `url('${url}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundRepeat = 'no-repeat';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+            img.src = url;
+        }
 
         function showLoading(text) {
             Swal.fire({
@@ -124,7 +180,6 @@
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        // บันทึกข้อมูลลง LocalStorage 
                         localStorage.setItem('wem_user', JSON.stringify(result.userData));
                         window.location.href = "main.html";
                     });
@@ -146,34 +201,5 @@
             }
         }
     </script>
-<script>
-        // ใส่ API ของคุณครูตรงนี้ให้ตรงกัน
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
-        
-        document.addEventListener("DOMContentLoaded", () => {
-            // ดึงค่าพื้นหลังจากเครื่องก่อนเพื่อความรวดเร็ว
-            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            if(savedSettings['login_bg']) {
-                document.body.style.backgroundImage = `url('${savedSettings['login_bg']}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundPosition = 'center';
-            }
-
-            // โหลดเช็คการอัปเดตจากฐานข้อมูลใหม่ทุกครั้ง
-            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' && res.settings) {
-                    localStorage.setItem('wem_sys_settings', JSON.stringify(res.settings));
-                    if(res.settings['login_bg'] && res.settings['login_bg'] !== savedSettings['login_bg']) {
-                        document.body.style.backgroundImage = `url('${res.settings['login_bg']}')`;
-                        document.body.style.backgroundSize = 'cover';
-                        document.body.style.backgroundPosition = 'center';
-                    }
-                }
-            });
-        });
-    </script>
-    
 </body>
 </html>
