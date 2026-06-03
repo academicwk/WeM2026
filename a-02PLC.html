@@ -169,7 +169,6 @@
             </div>
             
             <div class="p-6 overflow-y-auto max-h-[75vh]">
-                
                 <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-blue-500 pl-3">ส่วนที่ 1: ข้อมูลจัดตั้งกลุ่ม</h4>
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -182,14 +181,9 @@
                             <input type="text" id="lunch-grade" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
                         </div>
                     </div>
-
                     <hr class="border-gray-200 my-1">
-                    
                     <label class="text-xs font-bold text-gray-700">สมาชิกในกลุ่ม (คนที่ 1-12)</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2" id="lunch-members-container">
-                        <!-- JS จะสร้าง Dropdown -->
-                    </div>
-
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2" id="lunch-members-container"></div>
                 </div>
 
                 <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (15 สัปดาห์)</h4>
@@ -198,16 +192,13 @@
                         <thead class="bg-slate-100 text-gray-600 font-bold">
                             <tr>
                                 <th class="py-2 px-4 w-16 text-center text-xs">ครั้งที่</th>
-                                <th class="py-2 px-4 w-48 text-xs">วัน เดือน ปี (ภาษาไทยจะแปลงอัตโนมัติ)</th>
+                                <th class="py-2 px-4 w-48 text-xs">วัน เดือน ปี</th>
                                 <th class="py-2 px-4 text-xs">ชื่อ Model Teacher</th>
                             </tr>
                         </thead>
-                        <tbody id="lunch-plan-tbody" class="divide-y divide-slate-100">
-                            <!-- JS จะสร้างแถว 15 แถวที่นี่ -->
-                        </tbody>
+                        <tbody id="lunch-plan-tbody" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
-
             </div>
 
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
@@ -239,7 +230,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-700">กลุ่มสาระการเรียนรู้</label>
-                            <input type="text" id="oc-dept" placeholder="เช่น สังคมศึกษาฯ, คณิตศาสตร์" class="w-full border p-2 rounded-lg bg-white text-gray-600 outline-none text-sm focus:border-indigo-500">
+                            <input type="text" id="oc-dept" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold text-indigo-700" disabled>
                         </div>
                     </div>
 
@@ -317,8 +308,8 @@
 
             showLoading('กำลังเตรียมข้อมูล...');
             await fetchAllUsersForDropdown();
-            await fetchPLCPlanData(); // Lunch
-            await fetchPLCPlanOpenClass(); // Open Class
+            await fetchPLCPlanData(); 
+            await fetchPLCPlanOpenClass(); 
             Swal.close(); 
         });
 
@@ -335,7 +326,6 @@
         function toggleSetupOptions() {
             const container = document.getElementById('setup-options-container');
             const icon = document.getElementById('icon-toggle');
-            
             if (container.classList.contains('hidden')) {
                 container.classList.remove('hidden');
                 icon.classList.add('rotate-180');
@@ -359,10 +349,8 @@
         async function fetchPLCPlanData() {
             try {
                 const res = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getPLCPlanLunch', grade: userGradePrefix })
+                    method: 'POST', body: JSON.stringify({ action: 'getPLCPlanLunch', grade: userGradePrefix })
                 }).then(r => r.json());
-
                 if (res.status === 'success' && res.data) {
                     currentPLCPlan = res.data;
                     if (currentPLCPlan.pdfUrl) {
@@ -392,46 +380,26 @@
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
                     options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
                 });
-                
-                memberHtml += `
-                    <div>
-                        <select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-blue-500 outline-none bg-white">
-                            ${options}
-                        </select>
-                    </div>
-                `;
+                memberHtml += `<div><select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-blue-500 outline-none bg-white">${options}</select></div>`;
             }
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
             let tbodyHtml = '';
             for(let i=1; i<=15; i++) {
-                let savedDate = "";
-                let savedMT = "";
+                let savedDate = "", savedMT = "";
                 if (currentPLCPlan) {
                     let p = currentPLCPlan.plans.find(x => parseInt(x.week) === i);
-                    if (p) {
-                        savedDate = p.dateRaw || "";
-                        savedMT = p.modelTeacher || "";
-                    }
+                    if (p) { savedDate = p.dateRaw || ""; savedMT = p.modelTeacher || ""; }
                 }
-
                 let mtOptions = `<option value="">-- เลือก Model Teacher --</option>`;
                 gradeMembers.forEach(u => {
-                    let isSelected = (u.Name === savedMT) ? "selected" : "";
-                    mtOptions += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
+                    mtOptions += `<option value="${u.Name}" ${u.Name === savedMT ? "selected" : ""}>${u.Name}</option>`;
                 });
-
                 tbodyHtml += `
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
                         <td class="py-2 px-4 text-center font-bold text-gray-500 text-xs">${i}</td>
-                        <td class="py-2 px-4">
-                            <input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600">
-                        </td>
-                        <td class="py-2 px-4">
-                            <select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600">
-                                ${mtOptions}
-                            </select>
-                        </td>
+                        <td class="py-2 px-4"><input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600"></td>
+                        <td class="py-2 px-4"><select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600">${mtOptions}</select></td>
                     </tr>
                 `;
             }
@@ -445,42 +413,29 @@
             if(!dateStr) return "";
             const [y, m, d] = dateStr.split('-');
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            const thaiYear = parseInt(y) + 543;
-            return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${thaiYear}`;
+            return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${parseInt(y) + 543}`;
         }
 
         function submitLunchPLC() {
             const proposer = document.getElementById('lunch-proposer').value;
             const grade = document.getElementById('lunch-grade').value;
-
             let members = [];
-            for(let i=1; i<=12; i++) {
-                let m = document.getElementById(`lunch-member-${i}`).value;
-                if(m) members.push(m);
-            }
+            for(let i=1; i<=12; i++) { let m = document.getElementById(`lunch-member-${i}`).value; if(m) members.push(m); }
 
-            let plans = [];
-            let hasAtLeastOnePlan = false;
+            let plans = [], hasAtLeastOnePlan = false;
             for(let i=1; i<=15; i++) {
                 let rawDate = document.getElementById(`lunch-date-${i}`).value;
                 let mt = document.getElementById(`lunch-mt-${i}`).value;
-                if (rawDate || mt) {
-                    hasAtLeastOnePlan = true;
-                    plans.push({ week: i, dateThai: formatThaiDate(rawDate), dateRaw: rawDate, modelTeacher: mt });
-                }
+                if (rawDate || mt) { hasAtLeastOnePlan = true; plans.push({ week: i, dateThai: formatThaiDate(rawDate), dateRaw: rawDate, modelTeacher: mt }); }
             }
 
             if (!hasAtLeastOnePlan) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกำหนดการกิจกรรมอย่างน้อย 1 สัปดาห์', 'warning'); return; }
 
             showLoading('กำลังบันทึกและสร้าง PDF...\nกรุณารอสักครู่ (อาจใช้เวลา 5-10 วินาที)');
-
-            fetch(GAS_API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'savePLCPlanLunch', proposer: proposer, grade: grade, members: members, plans: plans })
-            }).then(r => r.json()).then(res => {
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'savePLCPlanLunch', proposer: proposer, grade: grade, members: members, plans: plans }) })
+            .then(r => r.json()).then(res => {
                 if (res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000
-                    }).then(async () => {
+                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'บันทึกและสร้าง PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000 }).then(async () => {
                         showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
                         await fetchPLCPlanData();
                         closeLunchModal();
@@ -497,10 +452,8 @@
         async function fetchPLCPlanOpenClass() {
             try {
                 const res = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getPLCPlanOpenClass', proposer: currentUser.name })
+                    method: 'POST', body: JSON.stringify({ action: 'getPLCPlanOpenClass', proposer: currentUser.name })
                 }).then(r => r.json());
-
                 if (res.status === 'success' && res.data) {
                     currentPLCOpenClass = res.data;
                     if (currentPLCOpenClass.pdfUrl) {
@@ -513,55 +466,68 @@
         }
 
         function openOpenClassModal() {
+            // ดึงข้อมูล Group ของ user ปัจจุบันจาก allUsers
+            const myUserObj = allUsers.find(u => u.Name === currentUser.name);
+            const myGroup = myUserObj && myUserObj.Group ? myUserObj.Group : "ไม่ระบุกลุ่มสาระฯ";
+
             document.getElementById('oc-proposer').value = currentPLCOpenClass ? currentPLCOpenClass.proposer : currentUser.name;
-            document.getElementById('oc-dept').value = currentPLCOpenClass ? currentPLCOpenClass.department : "";
+            document.getElementById('oc-dept').value = currentPLCOpenClass ? currentPLCOpenClass.department : myGroup;
 
-            const validTeachers = allUsers.filter(u => u.Room !== "-"); // ตัดผู้บริหารออก
+            // กรองสมาชิกให้อยู่ในกลุ่มสาระฯ (Group) เดียวกัน
+            const deptMembers = allUsers.filter(u => u.Group === myGroup && u.Room !== "-");
 
-            // สมาชิก 4 คน
+            // สร้าง Dropdown สมาชิก 4 คน
             let memberHtml = '';
             for(let i=1; i<=4; i++) {
                 let savedMember = currentPLCOpenClass && currentPLCOpenClass.members[i-1] ? currentPLCOpenClass.members[i-1] : "";
                 let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
-                validTeachers.forEach(u => {
+                deptMembers.forEach(u => {
                     if (!currentPLCOpenClass && u.Name === currentUser.name) return; 
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
                     options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
                 });
-                memberHtml += `
-                    <div>
-                        <select id="oc-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-indigo-500 outline-none bg-white">
-                            ${options}
-                        </select>
-                    </div>
-                `;
+                memberHtml += `<div><select id="oc-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-indigo-500 outline-none bg-white">${options}</select></div>`;
             }
             document.getElementById('oc-members-container').innerHTML = memberHtml;
 
-            // วงรอบ 3 รอบ (Plan, Do, See)
+            // เตรียมตัวเลือกห้องเรียน (อ.1/1 - ป.6/5)
+            let roomOptions = '<option value="">-- ห้อง --</option>';
+            for(let g=1; g<=3; g++) for(let r=1; r<=4; r++) roomOptions += `<option value="อ.${g}/${r}">อ.${g}/${r}</option>`;
+            for(let g=1; g<=6; g++) for(let r=1; r<=5; r++) roomOptions += `<option value="ป.${g}/${r}">ป.${g}/${r}</option>`;
+
+            // เตรียมตัวเลือกคาบเรียน (1-6)
+            let periodOptions = '<option value="">-- คาบ --</option>';
+            for(let p=1; p<=6; p++) periodOptions += `<option value="คาบที่ ${p}">คาบที่ ${p}</option>`;
+
+            // ตัวเลือกผู้บริหาร
+            const adminList = ["นายธนพงศ์ สุขะ", "นางสาวจิณณานิจ ไพโรจน์ณรงค์"];
+
+            // สร้าง 3 วงรอบ
             let cyclesHtml = '';
             for(let i=1; i<=3; i++) {
                 let p = currentPLCOpenClass && currentPLCOpenClass.cycles ? currentPLCOpenClass.cycles.find(x => x.cycle === i) : null;
                 
                 let p_date = p && p.plan ? p.plan.dateRaw : "";
-                let p_mt = p && p.plan ? p.plan.mt : "";
+                let p_admin = p && p.plan ? p.plan.admin : "";
                 let d_date = p && p.do ? p.do.dateRaw : "";
-                let d_time = p && p.do ? p.do.time : "";
+                let d_period = p && p.do ? p.do.period : "";
                 let d_room = p && p.do ? p.do.room : "";
                 let d_subject = p && p.do ? p.do.subject : "";
-                let d_mt = p && p.do ? p.do.mt : "";
+                let d_admin = p && p.do ? p.do.admin : "";
                 let s_date = p && p.see ? p.see.dateRaw : "";
-                let s_mt = p && p.see ? p.see.mt : "";
+                let s_admin = p && p.see ? p.see.admin : "";
 
-                let mtOptionsP = `<option value="">-- เลือก Model Teacher --</option>`;
-                let mtOptionsD = `<option value="">-- เลือก Model Teacher --</option>`;
-                let mtOptionsS = `<option value="">-- เลือก Model Teacher --</option>`;
-                
-                validTeachers.forEach(u => {
-                    mtOptionsP += `<option value="${u.Name}" ${u.Name === p_mt ? "selected" : ""}>${u.Name}</option>`;
-                    mtOptionsD += `<option value="${u.Name}" ${u.Name === d_mt ? "selected" : ""}>${u.Name}</option>`;
-                    mtOptionsS += `<option value="${u.Name}" ${u.Name === s_mt ? "selected" : ""}>${u.Name}</option>`;
+                let admOptP = '<option value="">-- ผู้บริหาร --</option>';
+                let admOptD = '<option value="">-- ผู้บริหาร --</option>';
+                let admOptS = '<option value="">-- ผู้บริหาร --</option>';
+                adminList.forEach(a => {
+                    admOptP += `<option value="${a}" ${a === p_admin ? "selected" : ""}>${a}</option>`;
+                    admOptD += `<option value="${a}" ${a === d_admin ? "selected" : ""}>${a}</option>`;
+                    admOptS += `<option value="${a}" ${a === s_admin ? "selected" : ""}>${a}</option>`;
                 });
+
+                let currentRoomOpts = roomOptions.replace(`value="${d_room}"`, `value="${d_room}" selected`);
+                let currentPeriodOpts = periodOptions.replace(`value="${d_period}"`, `value="${d_period}" selected`);
 
                 cyclesHtml += `
                     <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -569,39 +535,26 @@
                             <i class="fa-solid fa-arrows-spin mr-1"></i> วงรอบที่ ${i}
                         </div>
                         <div class="p-3 bg-white space-y-3">
-                            
-                            <!-- ขั้น Plan -->
                             <div class="flex flex-col sm:flex-row gap-2 items-center">
                                 <span class="w-full sm:w-20 font-bold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded text-center shrink-0">ขั้น Plan</span>
-                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600" title="วันที่">
-                                <select id="oc-c${i}-p-mt" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
-                                    ${mtOptionsP}
-                                </select>
+                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
+                                <select id="oc-c${i}-p-admin" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptP}</select>
                             </div>
-
-                            <!-- ขั้น Do -->
                             <div class="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded border border-slate-100">
                                 <span class="w-full sm:w-20 font-bold text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded text-center shrink-0">ขั้น Do</span>
                                 <div class="grid grid-cols-2 md:flex gap-2 w-full">
-                                    <input type="date" id="oc-c${i}-d-d" value="${d_date}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600" title="วันที่">
-                                    <input type="time" id="oc-c${i}-d-t" value="${d_time}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600" title="เวลา">
-                                    <input type="text" id="oc-c${i}-d-r" value="${d_room}" placeholder="ห้องเรียน" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
+                                    <input type="date" id="oc-c${i}-d-d" value="${d_date}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
+                                    <select id="oc-c${i}-d-period" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${currentPeriodOpts}</select>
+                                    <select id="oc-c${i}-d-r" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${currentRoomOpts}</select>
                                     <input type="text" id="oc-c${i}-d-s" value="${d_subject}" placeholder="รายวิชา" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
-                                    <select id="oc-c${i}-d-mt" class="w-full col-span-2 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
-                                        ${mtOptionsD}
-                                    </select>
+                                    <select id="oc-c${i}-d-admin" class="w-full col-span-2 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${admOptD}</select>
                                 </div>
                             </div>
-
-                            <!-- ขั้น See -->
                             <div class="flex flex-col sm:flex-row gap-2 items-center">
                                 <span class="w-full sm:w-20 font-bold text-xs text-green-700 bg-green-50 px-2 py-1 rounded text-center shrink-0">ขั้น See</span>
-                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600" title="วันที่">
-                                <select id="oc-c${i}-s-mt" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
-                                    ${mtOptionsS}
-                                </select>
+                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
+                                <select id="oc-c${i}-s-admin" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptS}</select>
                             </div>
-
                         </div>
                     </div>
                 `;
@@ -616,7 +569,7 @@
             const proposer = document.getElementById('oc-proposer').value;
             const dept = document.getElementById('oc-dept').value;
 
-            if (!dept) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุกลุ่มสาระการเรียนรู้', 'warning'); return; }
+            if (!dept || dept === "ไม่ระบุกลุ่มสาระฯ") { Swal.fire('ข้อมูลไม่ครบถ้วน', 'ไม่พบข้อมูลกลุ่มสาระฯ ของคุณ', 'warning'); return; }
 
             let members = [];
             for(let i=1; i<=4; i++) {
@@ -624,29 +577,27 @@
                 if(m) members.push(m);
             }
 
-            let cycles = [];
-            let hasAtLeastOneCycle = false;
-
+            let cycles = [], hasAtLeastOneCycle = false;
             for(let i=1; i<=3; i++) {
                 let p_d = document.getElementById(`oc-c${i}-p-d`).value;
-                let p_mt = document.getElementById(`oc-c${i}-p-mt`).value;
+                let p_admin = document.getElementById(`oc-c${i}-p-admin`).value;
                 
                 let d_d = document.getElementById(`oc-c${i}-d-d`).value;
-                let d_t = document.getElementById(`oc-c${i}-d-t`).value;
+                let d_p = document.getElementById(`oc-c${i}-d-period`).value;
                 let d_r = document.getElementById(`oc-c${i}-d-r`).value;
                 let d_s = document.getElementById(`oc-c${i}-d-s`).value;
-                let d_mt = document.getElementById(`oc-c${i}-d-mt`).value;
+                let d_admin = document.getElementById(`oc-c${i}-d-admin`).value;
 
                 let s_d = document.getElementById(`oc-c${i}-s-d`).value;
-                let s_mt = document.getElementById(`oc-c${i}-s-mt`).value;
+                let s_admin = document.getElementById(`oc-c${i}-s-admin`).value;
 
                 if (p_d || d_d || s_d) { hasAtLeastOneCycle = true; }
 
                 cycles.push({
                     cycle: i,
-                    plan: { dateRaw: p_d, dateThai: formatThaiDate(p_d), mt: p_mt },
-                    do:   { dateRaw: d_d, dateThai: formatThaiDate(d_d), time: d_t, room: d_r, subject: d_s, mt: d_mt },
-                    see:  { dateRaw: s_d, dateThai: formatThaiDate(s_d), mt: s_mt }
+                    plan: { dateRaw: p_d, dateThai: formatThaiDate(p_d), admin: p_admin },
+                    do:   { dateRaw: d_d, dateThai: formatThaiDate(d_d), period: d_p, room: d_r, subject: d_s, admin: d_admin },
+                    see:  { dateRaw: s_d, dateThai: formatThaiDate(s_d), admin: s_admin }
                 });
             }
 
@@ -656,17 +607,10 @@
 
             fetch(GAS_API_URL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    action: 'savePLCPlanOpenClass',
-                    proposer: proposer,
-                    department: dept,
-                    members: members,
-                    cycles: cycles
-                })
+                body: JSON.stringify({ action: 'savePLCPlanOpenClass', proposer: proposer, department: dept, members: members, cycles: cycles })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'ระบบได้บันทึกคำขอและสร้างเอกสาร PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000
-                    }).then(async () => {
+                    Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'บันทึกและสร้าง PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000 }).then(async () => {
                         showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
                         await fetchPLCPlanOpenClass();
                         closeOpenClassModal();
