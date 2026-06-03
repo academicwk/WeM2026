@@ -451,7 +451,7 @@
             } catch (e) { console.error(e); }
         }
 
-        function openOpenClassModal() {
+function openOpenClassModal() {
             const myUserObj = allUsers.find(u => u.Name === currentUser.name);
             const myGroup = myUserObj && myUserObj.Group ? myUserObj.Group : "ไม่ระบุกลุ่มสาระฯ";
 
@@ -482,7 +482,16 @@
 
             const adminList = ["นายธนพงศ์ สุขะ", "นางสาวจิณณานิจ ไพโรจน์ณรงค์"];
             let cyclesHtml = '';
+
+            // 🌟 กำหนดชื่อเดือนและขอบเขตวันที่ที่อนุญาตให้เลือกได้ (ปี 2026 = พ.ศ. 2569)
+            const cycleMonths = [
+                { name: "มิถุนายน 2569", min: "2026-06-01", max: "2026-06-30" },
+                { name: "กรกฎาคม 2569", min: "2026-07-01", max: "2026-07-31" },
+                { name: "สิงหาคม 2569", min: "2026-08-01", max: "2026-08-31" }
+            ];
+
             for(let i=1; i<=3; i++) {
+                let cycleInfo = cycleMonths[i-1];
                 let p = currentPLCOpenClass && currentPLCOpenClass.cycles ? currentPLCOpenClass.cycles.find(x => x.cycle === i) : null;
                 let p_date = p && p.plan ? p.plan.dateRaw : ""; let p_admin = p && p.plan ? p.plan.admin : "";
                 let d_date = p && p.do ? p.do.dateRaw : ""; let d_period = p && p.do ? p.do.period : ""; let d_room = p && p.do ? p.do.room : ""; let d_subject = p && p.do ? p.do.subject : ""; let d_admin = p && p.do ? p.do.admin : "";
@@ -502,26 +511,28 @@
 
                 cyclesHtml += `
                     <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                        <div class="bg-indigo-100 text-indigo-900 font-bold px-4 py-2 text-sm border-b border-indigo-200"><i class="fa-solid fa-arrows-spin mr-1"></i> วงรอบที่ ${i}</div>
+                        <div class="bg-indigo-100 text-indigo-900 font-bold px-4 py-2 text-sm border-b border-indigo-200">
+                            <i class="fa-solid fa-arrows-spin mr-1"></i> วงรอบที่ ${i} (${cycleInfo.name})
+                        </div>
                         <div class="p-3 bg-white space-y-3">
-                            <div class="flex flex-col sm:flex-row gap-2 items-center">
-                                <span class="w-full sm:w-20 font-bold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded text-center shrink-0">ขั้น Plan</span>
-                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
+                            <div class="flex flex-col md:flex-row gap-2 items-center">
+                                <span class="w-full md:w-24 font-bold text-xs text-blue-700 bg-blue-50 px-2 py-2 rounded text-center shrink-0">ขั้น Plan</span>
+                                <input type="date" id="oc-c${i}-p-d" value="${p_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-40 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600 shrink-0 cursor-pointer">
                                 <select id="oc-c${i}-p-admin" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptP}</select>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded border border-slate-100">
-                                <span class="w-full sm:w-20 font-bold text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded text-center shrink-0">ขั้น Do</span>
+                            <div class="flex flex-col md:flex-row gap-2 items-center bg-slate-50 p-2 rounded border border-slate-100">
+                                <span class="w-full md:w-24 font-bold text-xs text-amber-700 bg-amber-100 px-2 py-2 rounded text-center shrink-0">ขั้น Do</span>
                                 <div class="grid grid-cols-2 md:flex gap-2 w-full">
-                                    <input type="date" id="oc-c${i}-d-d" value="${d_date}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
+                                    <input type="date" id="oc-c${i}-d-d" value="${d_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-40 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600 shrink-0 cursor-pointer">
                                     <select id="oc-c${i}-d-period" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${currentPeriodOpts}</select>
                                     <select id="oc-c${i}-d-r" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${currentRoomOpts}</select>
                                     <input type="text" id="oc-c${i}-d-s" value="${d_subject}" placeholder="รายวิชา" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">
                                     <select id="oc-c${i}-d-admin" class="w-full col-span-2 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-amber-500 text-gray-600">${admOptD}</select>
                                 </div>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-2 items-center">
-                                <span class="w-full sm:w-20 font-bold text-xs text-green-700 bg-green-50 px-2 py-1 rounded text-center shrink-0">ขั้น See</span>
-                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" class="w-full sm:w-auto border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">
+                            <div class="flex flex-col md:flex-row gap-2 items-center">
+                                <span class="w-full md:w-24 font-bold text-xs text-green-700 bg-green-50 px-2 py-2 rounded text-center shrink-0">ขั้น See</span>
+                                <input type="date" id="oc-c${i}-s-d" value="${s_date}" min="${cycleInfo.min}" max="${cycleInfo.max}" class="w-full md:w-40 border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600 shrink-0 cursor-pointer">
                                 <select id="oc-c${i}-s-admin" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none focus:border-indigo-500 text-gray-600">${admOptS}</select>
                             </div>
                         </div>
