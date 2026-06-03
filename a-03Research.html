@@ -134,8 +134,7 @@
             document.getElementById('display-position').textContent = currentUser.position || "-";
             document.getElementById('display-group').textContent = currentUser.group || "-";
             document.getElementById('display-room').textContent = currentUser.room || "-";
-            document.getElementById('header-subtitle').textContent = `ผู้วิจัย: ${currentUser.name} | กลุ่มสาระฯ: ${currentUser.group || "-"}`;
-
+            document.getElementById('header-subtitle').textContent = `โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC) โดย ${currentUser.name}`;
             if (currentUser.image && currentUser.image.trim() !== "") {
                 document.getElementById('sidebar-user-img').src = currentUser.image;
                 document.getElementById('sidebar-user-img').classList.remove('hidden');
@@ -198,7 +197,7 @@
             }
         }
 
-        function renderResearchCards() {
+function renderResearchCards() {
             const container = document.getElementById('research-cards-container');
             container.innerHTML = '';
             
@@ -217,27 +216,25 @@
                     </div>`;
             } else {
                 researchDataList.forEach(item => {
-                    const encodedData = encodeURIComponent(JSON.stringify(item));
                     const card = document.createElement('div');
-                    card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col sm:flex-row items-center gap-4 hover:shadow-md transition-shadow relative overflow-hidden";
-                    // แถบสีตกแต่งด้านซ้าย
+                    // ปรับดีไซน์ให้แคบลง กระชับขึ้น
+                    card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-3 flex flex-col sm:flex-row items-center gap-3 hover:shadow-md transition-shadow relative overflow-hidden";
+                    // ส่งแค่ item.id ไป เพื่อป้องกันบั๊กเครื่องหมายคำพูดพัง
                     card.innerHTML = `
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
-                        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-inner ml-2">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xl shrink-0 shadow-inner ml-2">
                             <i class="fa-solid fa-flask"></i>
                         </div>
-                        <div class="flex-1 text-center sm:text-left w-full">
-                            <div class="inline-block bg-slate-100 px-3 py-1 rounded-full text-[11px] font-bold text-gray-600 mb-2">
-                                ภาคเรียนที่ ${item.semester} / ${item.year}
-                            </div>
-                            <h4 class="font-bold text-navy-900 text-base leading-tight">${item.title}</h4>
+                        <div class="flex-1 text-left w-full flex items-center gap-2 overflow-hidden">
+                            <span class="bg-slate-100 px-2 py-1 rounded text-[11px] font-bold text-gray-600 shrink-0 border border-slate-200">${item.semester}/${item.year}</span>
+                            <h4 class="font-bold text-navy-900 text-sm md:text-base leading-tight truncate" title="${item.title}">${item.title}</h4>
                         </div>
-                        <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-center sm:justify-end mt-3 sm:mt-0">
-                            <button onclick="openResearchModal('${encodedData}')" class="w-10 h-10 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 border border-gray-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="แก้ไขข้อมูล">
-                                <i class="fa-solid fa-pen"></i>
+                        <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-2 sm:mt-0">
+                            <button onclick="openResearchModal('${item.id}')" class="w-9 h-9 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 border border-gray-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="แก้ไขข้อมูล">
+                                <i class="fa-solid fa-pen text-xs"></i>
                             </button>
-                            <a href="${item.pdfUrl}" target="_blank" class="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors" title="เปิดไฟล์ PDF">
-                                <i class="fa-solid fa-file-pdf"></i>
+                            <a href="${item.pdfUrl}" target="_blank" class="w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors" title="เปิดไฟล์ PDF">
+                                <i class="fa-solid fa-file-pdf text-xs"></i>
                             </a>
                         </div>
                     `;
@@ -245,9 +242,9 @@
                 });
             }
 
-            // คำนวณหลอด Progress Bar เฉพาะปีปัจจุบัน (defaultYear = 2569)
+            // คำนวณหลอด Progress Bar
             let completedInCurrentYear = researchDataList.filter(item => parseInt(item.year) === defaultYear).length;
-            if (completedInCurrentYear > 2) completedInCurrentYear = 2; // เต็มที่ 2 เรื่อง
+            if (completedInCurrentYear > 2) completedInCurrentYear = 2; 
             
             const pct = Math.round((completedInCurrentYear / 2) * 100);
             const barColor = pct === 100 ? 'bg-green-500' : (pct > 0 ? 'bg-blue-500' : 'bg-red-500');
@@ -259,20 +256,22 @@
         }
 
         // จัดการ Modal
-        function openResearchModal(encodedData = null) {
+function openResearchModal(id = null) {
             tempBase64File = "";
             document.getElementById('file-filename').textContent = "คลิกเพื่อแนบไฟล์ PDF";
             document.getElementById('file-filename').classList.remove('text-green-600');
 
-            if (encodedData) {
-                // โหมดแก้ไข
-                const data = JSON.parse(decodeURIComponent(encodedData));
-                document.getElementById('modal-title-text').textContent = "แก้ไขรายงานการวิจัย";
-                document.getElementById('modal-id').value = data.id;
-                document.getElementById('modal-semester').value = data.semester;
-                document.getElementById('modal-year').value = data.year;
-                document.getElementById('modal-title').value = data.title;
-                document.getElementById('modal-existing-pdf').value = data.pdfUrl;
+            if (id) {
+                // โหมดแก้ไข: เอา ID ไปค้นหาข้อมูลที่โหลดมาเก็บไว้แล้ว (แก้ปัญหา String Error 100%)
+                const data = researchDataList.find(r => String(r.id) === String(id));
+                if(data) {
+                    document.getElementById('modal-title-text').textContent = "แก้ไขรายงานการวิจัย";
+                    document.getElementById('modal-id').value = data.id;
+                    document.getElementById('modal-semester').value = data.semester;
+                    document.getElementById('modal-year').value = data.year;
+                    document.getElementById('modal-title').value = data.title;
+                    document.getElementById('modal-existing-pdf').value = data.pdfUrl;
+                }
             } else {
                 // โหมดเพิ่มใหม่
                 document.getElementById('modal-title-text').textContent = "เพิ่มรายงานการวิจัย";
