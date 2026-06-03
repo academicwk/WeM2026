@@ -124,9 +124,17 @@
                             <label class="text-xs font-bold text-gray-700">ชื่อผู้เสนอคำขอ (หัวหน้าสายชั้น)</label>
                             <input type="text" id="lunch-proposer" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
                         </div>
-                        <div>
-                            <label class="text-xs font-bold text-gray-700">สายชั้น</label>
-                            <input type="text" id="lunch-grade" class="w-full border p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm" disabled>
+                    <div>
+                            <label class="text-xs font-bold text-gray-700">สายชั้น (เลือกเพื่อเรียกดูข้อมูล)</label>
+                            <select id="lunch-grade" class="w-full border p-2 rounded-lg bg-white text-blue-700 font-bold outline-none text-sm cursor-pointer border-blue-300 focus:border-blue-500 shadow-sm" onchange="handleGradeChange()">
+                                <option value="อนุบาล">อนุบาล (อ.1 - อ.3)</option>
+                                <option value="ป.1">ป.1</option>
+                                <option value="ป.2">ป.2</option>
+                                <option value="ป.3">ป.3</option>
+                                <option value="ป.4">ป.4</option>
+                                <option value="ป.5">ป.5</option>
+                                <option value="ป.6">ป.6</option>
+                            </select>
                         </div>
                     </div>
                     <hr class="border-gray-200 my-1">
@@ -193,18 +201,13 @@
         </div>
     </div>
 
-    <script>
+<script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
         let currentUser = null;
         let allUsers = [];
-        let currentPLCPlan = null; 
         let currentPLCOpenClass = null; 
-        let userGradePrefix = "";
-
-        function showLoading(text = 'กำลังโหลดข้อมูล...') {
-            Swal.fire({ title: text, allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
-        }
+        let cachedPLCPlans = {}; // ระบบแคช เพื่อไม่ให้โหลดข้อมูลซ้ำเวลาเปลี่ยนสายชั้นไปมา
 
         async function loadSidebarComponent() {
             try {
@@ -241,26 +244,17 @@
             }, 1000);
         }
 
-document.addEventListener("DOMContentLoaded", async () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
-            applyMenuStates(); // โหลดเวอร์ชันของระบบ
+            applyMenuStates(); 
 
-            const userRoom = String(currentUser.room || "").trim();
-            let rawPrefix = userRoom.split('/')[0].trim(); 
-            // รวบ อ.1 - อ.3 เป็นกลุ่ม "อนุบาล"
-            userGradePrefix = rawPrefix.startsWith("อ.") ? "อนุบาล" : rawPrefix; 
-
-            showLoading('กำลังเตรียมข้อมูล...');
+            showLoading('กำลังเตรียมข้อมูลระบบ...');
             await fetchAllUsersForDropdown();
-            await fetchPLCPlanData(); 
-            await fetchPLCPlanOpenClass(); 
+            await fetchPLCPlanOpenClass(); // ของ Open Class ยังดึงมาเผื่อไว้เหมือนเดิม
             Swal.close(); 
         });
 
-        // ----------------------------------------------------
-        // ฟังก์ชันอัปเดตเวอร์ชันบน Sidebar
-        // ----------------------------------------------------
         function applyMenuStates() {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             const version = savedSettings['sys_version'] || '2.0.1';
@@ -304,30 +298,65 @@ document.addEventListener("DOMContentLoaded", async () => {
             } catch (err) { console.error(err); }
         }
 
-        // ================= LUNCH PLC =================
-        async function fetchPLCPlanData() {
-            try {
-                const res = await fetch(GAS_API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: 'getPLCPlanLunch', grade: userGradePrefix })
-                }).then(r => r.json());
-                if (res.status === 'success' && res.data) {
-                    currentPLCPlan = res.data;
-                    if (currentPLCPlan.pdfUrl) {
-                        const pdfBtn = document.getElementById('lunch-pdf-btn');
-                        pdfBtn.href = currentPLCPlan.pdfUrl;
-                        pdfBtn.classList.remove('hidden');
-                    }
-                }
-            } catch (e) { console.error(e); }
+        function formatThaiDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${parseInt(y) + 543}`;
         }
 
-function openLunchModal() {
-            // 1. ตรวจสอบสิทธิ์หัวหน้าสายชั้น
-            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            const headName = savedSettings[`head_grade_${userGradePrefix}`] || "";
-            const isHead = (currentUser.name === headName); // เป็นหัวหน้าหรือไม่?
+        // ================= LUNCH PLC (อัปเดตระบบสิทธิ์และเลือกสายชั้น) =================
+        
+        async function openLunchModal() {
+            // คำนวณสายชั้นตั้งต้นของตัวเอง
+            const userRoom = String(currentUser.room || "").trim();
+            let rawPrefix = userRoom.split('/')[0].trim();
+            let defaultGrade = rawPrefix.startsWith("อ.") ? "อนุบาล" : rawPrefix; // รวบ อ.1 - อ.3
+            
+            const validGrades = ["อนุบาล", "ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"];
+            if (!validGrades.includes(defaultGrade)) defaultGrade = "ป.1"; // กรณีคนไม่มีสายชั้นให้ไปเริ่มที่ ป.1
 
-            // แจ้งเตือนสถานะด้านบน
+            document.getElementById('lunch-grade').value = defaultGrade;
+            document.getElementById('lunchModal').classList.remove('hidden');
+            
+            await handleGradeChange(); // สั่งดึงและวาดข้อมูลทันที
+        }
+
+        function closeLunchModal() { document.getElementById('lunchModal').classList.add('hidden'); }
+
+        async function handleGradeChange() {
+            const selectedGrade = document.getElementById('lunch-grade').value;
+            
+            Swal.fire({ title: `กำลังโหลดข้อมูลสายชั้น ${selectedGrade}...`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            // ถ้ายังไม่เคยโหลดข้อมูลสายชั้นนี้ ให้ไปดึงจากเซิร์ฟเวอร์
+            if (cachedPLCPlans[selectedGrade] === undefined) {
+                try {
+                    const res = await fetch(GAS_API_URL, {
+                        method: 'POST', body: JSON.stringify({ action: 'getPLCPlanLunch', grade: selectedGrade })
+                    }).then(r => r.json());
+                    if (res.status === 'success' && res.data) {
+                        cachedPLCPlans[selectedGrade] = res.data;
+                    } else {
+                        cachedPLCPlans[selectedGrade] = null; 
+                    }
+                } catch (e) { 
+                    console.error(e); 
+                    cachedPLCPlans[selectedGrade] = null;
+                }
+            }
+            
+            Swal.close();
+            renderLunchModalData(selectedGrade);
+        }
+
+        function renderLunchModalData(grade) {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const headName = savedSettings[`head_grade_${grade}`] || "";
+            const isHead = (currentUser.name === headName); // เช็คว่าเป็นหัวหน้าของสายชั้นที่กำลังดูอยู่หรือไม่?
+            const planData = cachedPLCPlans[grade];
+
+            // จัดการกล่องแจ้งเตือนสถานะ
             let alertBox = document.getElementById('lunch-role-alert');
             if(!alertBox) {
                 alertBox = document.createElement('div');
@@ -336,33 +365,32 @@ function openLunchModal() {
                 parentDiv.parentNode.insertBefore(alertBox, parentDiv);
             }
 
+            // ถอด/ใส่ สิทธิ์การแก้ไข
             if (!isHead) {
-                alertBox.innerHTML = `<div class="bg-red-50 text-red-600 border border-red-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-lock"></i> สถานะ: ผู้ร่วมสายชั้น (คุณสามารถเรียกดูข้อมูลได้เท่านั้น | สงวนสิทธิ์การแก้ไขสำหรับ: ${headName || 'ยังไม่ระบุหัวหน้า'})</div>`;
-                document.getElementById('lunch-submit-btn').classList.add('hidden'); // ซ่อนปุ่มกดส่ง
+                alertBox.innerHTML = `<div class="bg-red-50 text-red-600 border border-red-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-eye"></i> สถานะ: ผู้ร่วมสายชั้น (เรียกดูข้อมูลได้เท่านั้น | สงวนสิทธิ์แก้ไขสำหรับหัวหน้า: ${headName || 'ยังไม่ระบุ'})</div>`;
+                document.getElementById('lunch-submit-btn').classList.add('hidden');
             } else {
-                alertBox.innerHTML = `<div class="bg-green-50 text-green-600 border border-green-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-unlock"></i> สถานะ: หัวหน้าสายชั้น (คุณมีสิทธิ์ในการจัดการและส่งแผน PLC)</div>`;
-                document.getElementById('lunch-submit-btn').classList.remove('hidden'); // แสดงปุ่มกดส่ง
+                alertBox.innerHTML = `<div class="bg-green-50 text-green-600 border border-green-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-pen-to-square"></i> สถานะ: หัวหน้าสายชั้น (คุณมีสิทธิ์แก้ไขและส่งแผน PLC ของสายชั้นนี้)</div>`;
+                document.getElementById('lunch-submit-btn').classList.remove('hidden');
             }
 
-            // 2. แสดงข้อมูลทั่วไป
-            document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : (headName || currentUser.name);
-            document.getElementById('lunch-grade').value = currentPLCPlan ? currentPLCPlan.grade : (userGradePrefix || "ไม่ระบุสายชั้น");
+            document.getElementById('lunch-proposer').value = planData ? planData.proposer : (headName || "");
 
-            // ดึงเฉพาะคนในสายชั้นเดียวกัน
+            // ดึงครูเฉพาะที่อยู่สายชั้นนี้
             const gradeMembers = allUsers.filter(u => {
                 if (!u.Room || u.Room === "-") return false;
                 let uPrefix = String(u.Room).split('/')[0].trim();
                 let uGroup = uPrefix.startsWith("อ.") ? "อนุบาล" : uPrefix;
-                return uGroup === userGradePrefix;
+                return uGroup === grade;
             });
 
-            // สร้าง Dropdown สมาชิก
+            // สร้าง Dropdown สมาชิก พร้อมเช็คการล็อกสีเทา
             let memberHtml = '';
             let disableAttr = !isHead ? "disabled" : "";
             let bgClass = !isHead ? "bg-gray-100 text-gray-500 cursor-not-allowed opacity-80" : "bg-white text-gray-700 focus:border-blue-500";
 
             for(let i=1; i<=12; i++) {
-                let savedMember = currentPLCPlan && currentPLCPlan.members[i-1] ? currentPLCPlan.members[i-1] : "";
+                let savedMember = planData && planData.members && planData.members[i-1] ? planData.members[i-1] : "";
                 let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
                 gradeMembers.forEach(u => {
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
@@ -376,8 +404,8 @@ function openLunchModal() {
             let tbodyHtml = '';
             for(let i=1; i<=15; i++) {
                 let savedDate = "", savedMT = "";
-                if (currentPLCPlan) {
-                    let p = currentPLCPlan.plans.find(x => parseInt(x.week) === i);
+                if (planData && planData.plans) {
+                    let p = planData.plans.find(x => parseInt(x.week) === i);
                     if (p) { savedDate = p.dateRaw || ""; savedMT = p.modelTeacher || ""; }
                 }
                 let mtOptions = `<option value="">-- เลือก Model Teacher --</option>`;
@@ -394,21 +422,21 @@ function openLunchModal() {
                 `;
             }
             document.getElementById('lunch-plan-tbody').innerHTML = tbodyHtml;
-            document.getElementById('lunchModal').classList.remove('hidden');
-        }
-
-        function closeLunchModal() { document.getElementById('lunchModal').classList.add('hidden'); }
-
-        function formatThaiDate(dateStr) {
-            if(!dateStr) return "";
-            const [y, m, d] = dateStr.split('-');
-            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${parseInt(y) + 543}`;
+            
+            // ปุ่มเปิด PDF
+            const pdfBtn = document.getElementById('lunch-pdf-btn');
+            if (planData && planData.pdfUrl) {
+                pdfBtn.href = planData.pdfUrl;
+                pdfBtn.classList.remove('hidden');
+            } else {
+                pdfBtn.href = "#";
+                pdfBtn.classList.add('hidden');
+            }
         }
 
         function submitLunchPLC() {
             const proposer = document.getElementById('lunch-proposer').value;
-            const grade = document.getElementById('lunch-grade').value;
+            const grade = document.getElementById('lunch-grade').value; // ดึงสายชั้นจาก dropdown
             let members = [];
             for(let i=1; i<=12; i++) { let m = document.getElementById(`lunch-member-${i}`).value; if(m) members.push(m); }
 
@@ -425,16 +453,15 @@ function openLunchModal() {
             .then(r => r.json()).then(res => {
                 if (res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'ส่งคำขอสำเร็จ', text: 'บันทึกและสร้าง PDF เรียบร้อยแล้ว', showConfirmButton: false, timer: 2000 }).then(async () => {
-                        showLoading('กำลังอัปเดตข้อมูลล่าสุด...');
-                        await fetchPLCPlanData();
+                        cachedPLCPlans[grade] = undefined; // รีเซ็ตแคชเพื่อบังคับให้โหลดใหม่ครั้งหน้า
                         closeLunchModal();
-                        Swal.close();
                     });
                 } else { Swal.fire('เกิดข้อผิดพลาด', res.message, 'error'); }
             }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
         }
 
-        // ================= OPEN CLASS PLC =================
+
+        // ================= OPEN CLASS PLC (รักษาระบบเดิมไว้) =================
         async function fetchPLCPlanOpenClass() {
             try {
                 const res = await fetch(GAS_API_URL, {
@@ -574,5 +601,4 @@ function openLunchModal() {
             }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
         }
     </script>
-</body>
 </html>
