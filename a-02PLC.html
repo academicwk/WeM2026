@@ -241,13 +241,15 @@
             }, 1000);
         }
 
-        document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
             applyMenuStates(); // โหลดเวอร์ชันของระบบ
 
             const userRoom = String(currentUser.room || "").trim();
-            userGradePrefix = userRoom.split('/')[0].trim(); 
+            let rawPrefix = userRoom.split('/')[0].trim(); 
+            // รวบ อ.1 - อ.3 เป็นกลุ่ม "อนุบาล"
+            userGradePrefix = rawPrefix.startsWith("อ.") ? "อนุบาล" : rawPrefix; 
 
             showLoading('กำลังเตรียมข้อมูล...');
             await fetchAllUsersForDropdown();
@@ -319,28 +321,58 @@
             } catch (e) { console.error(e); }
         }
 
-        function openLunchModal() {
-            document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : currentUser.name;
+function openLunchModal() {
+            // 1. ตรวจสอบสิทธิ์หัวหน้าสายชั้น
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const headName = savedSettings[`head_grade_${userGradePrefix}`] || "";
+            const isHead = (currentUser.name === headName); // เป็นหัวหน้าหรือไม่?
+
+            // แจ้งเตือนสถานะด้านบน
+            let alertBox = document.getElementById('lunch-role-alert');
+            if(!alertBox) {
+                alertBox = document.createElement('div');
+                alertBox.id = 'lunch-role-alert';
+                const parentDiv = document.getElementById('lunch-proposer').closest('.bg-slate-50');
+                parentDiv.parentNode.insertBefore(alertBox, parentDiv);
+            }
+
+            if (!isHead) {
+                alertBox.innerHTML = `<div class="bg-red-50 text-red-600 border border-red-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-lock"></i> สถานะ: ผู้ร่วมสายชั้น (คุณสามารถเรียกดูข้อมูลได้เท่านั้น | สงวนสิทธิ์การแก้ไขสำหรับ: ${headName || 'ยังไม่ระบุหัวหน้า'})</div>`;
+                document.getElementById('lunch-submit-btn').classList.add('hidden'); // ซ่อนปุ่มกดส่ง
+            } else {
+                alertBox.innerHTML = `<div class="bg-green-50 text-green-600 border border-green-200 p-3 rounded-lg mb-4 text-sm font-bold flex items-center gap-2 shadow-sm"><i class="fa-solid fa-unlock"></i> สถานะ: หัวหน้าสายชั้น (คุณมีสิทธิ์ในการจัดการและส่งแผน PLC)</div>`;
+                document.getElementById('lunch-submit-btn').classList.remove('hidden'); // แสดงปุ่มกดส่ง
+            }
+
+            // 2. แสดงข้อมูลทั่วไป
+            document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : (headName || currentUser.name);
             document.getElementById('lunch-grade').value = currentPLCPlan ? currentPLCPlan.grade : (userGradePrefix || "ไม่ระบุสายชั้น");
 
+            // ดึงเฉพาะคนในสายชั้นเดียวกัน
             const gradeMembers = allUsers.filter(u => {
                 if (!u.Room || u.Room === "-") return false;
-                return String(u.Room).split('/')[0].trim() === userGradePrefix;
+                let uPrefix = String(u.Room).split('/')[0].trim();
+                let uGroup = uPrefix.startsWith("อ.") ? "อนุบาล" : uPrefix;
+                return uGroup === userGradePrefix;
             });
 
+            // สร้าง Dropdown สมาชิก
             let memberHtml = '';
+            let disableAttr = !isHead ? "disabled" : "";
+            let bgClass = !isHead ? "bg-gray-100 text-gray-500 cursor-not-allowed opacity-80" : "bg-white text-gray-700 focus:border-blue-500";
+
             for(let i=1; i<=12; i++) {
                 let savedMember = currentPLCPlan && currentPLCPlan.members[i-1] ? currentPLCPlan.members[i-1] : "";
                 let options = `<option value="">-- เลือกสมาชิกคนที่ ${i} --</option>`;
                 gradeMembers.forEach(u => {
-                    if (!currentPLCPlan && u.Name === currentUser.name) return; 
                     let isSelected = (u.Name === savedMember) ? "selected" : "";
                     options += `<option value="${u.Name}" ${isSelected}>${u.Name}</option>`;
                 });
-                memberHtml += `<div><select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-blue-500 outline-none bg-white">${options}</select></div>`;
+                memberHtml += `<div><select id="lunch-member-${i}" class="w-full border border-gray-300 p-1.5 rounded text-xs outline-none transition-colors ${bgClass}" ${disableAttr}>${options}</select></div>`;
             }
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
+            // สร้างตารางกำหนดการ
             let tbodyHtml = '';
             for(let i=1; i<=15; i++) {
                 let savedDate = "", savedMT = "";
@@ -352,11 +384,12 @@
                 gradeMembers.forEach(u => {
                     mtOptions += `<option value="${u.Name}" ${u.Name === savedMT ? "selected" : ""}>${u.Name}</option>`;
                 });
+                
                 tbodyHtml += `
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
                         <td class="py-2 px-4 text-center font-bold text-gray-500 text-xs">${i}</td>
-                        <td class="py-2 px-4"><input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600"></td>
-                        <td class="py-2 px-4"><select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 bg-white text-gray-600">${mtOptions}</select></td>
+                        <td class="py-2 px-4"><input type="date" id="lunch-date-${i}" value="${savedDate}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 transition-colors ${bgClass}" ${disableAttr}></td>
+                        <td class="py-2 px-4"><select id="lunch-mt-${i}" class="border border-gray-300 p-1.5 rounded w-full text-xs outline-none focus:border-amber-500 transition-colors ${bgClass}" ${disableAttr}>${mtOptions}</select></td>
                     </tr>
                 `;
             }
