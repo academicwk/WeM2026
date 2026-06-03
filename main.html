@@ -327,13 +327,26 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
             if(versionDisplay) versionDisplay.textContent = `WeM System Version ${version}`;
         }
 
-        function openSettingsModal() {
+       async function openSettingsModal() {
             const modal = document.getElementById('settingsModal');
             const container = document.getElementById('settings-container');
+            
+            // แสดงสถานะกำลังโหลด
+            container.innerHTML = '<div class="flex flex-col items-center justify-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i><p class="mt-4 font-medium text-gray-600">กำลังโหลดข้อมูลการตั้งค่า...</p></div>'; 
+            modal.classList.remove('hidden');
+
+            await fetchAllUsersForSettings(); // โหลดรายชื่อครูทุกคนมาเก็บไว้
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             container.innerHTML = ''; 
 
-            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            
+            // สร้างตัวเลือก (Options) รายชื่อครูทุกคน
+            let teacherOptions = `<option value="">-- เลือกครู --</option>`;
+            allUsersList.forEach(u => {
+                if(u.Name && u.Name !== "-") {
+                    teacherOptions += `<option value="${u.Name}">${u.Name}</option>`;
+                }
+            });
+
             // 1. ช่องระบุเวอร์ชันระบบ
             const currentVersion = savedSettings['sys_version'] || '2.0.1';
             const versionDiv = document.createElement('div');
@@ -347,7 +360,42 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
             `;
             container.appendChild(versionDiv);
 
-            // 2. รายการเมนูเปิด-ปิด
+            // 2. ตั้งค่าหัวหน้าสายชั้น (ดึงสายชั้นที่มีอยู่อัตโนมัติ)
+            let uniqueGrades = [...new Set(allUsersList.map(u => (u.Room && u.Room !== "-") ? u.Room.split('/')[0].trim() : null))].filter(g => g).sort((a,b) => a.localeCompare(b, 'th'));
+            if(uniqueGrades.length === 0) uniqueGrades = ["อ.1", "อ.2", "อ.3", "ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"]; 
+            
+            const gradeDiv = document.createElement('div');
+            gradeDiv.className = 'mb-6 p-4 bg-purple-50 rounded-xl border border-purple-200 shadow-sm';
+            let gradeHtml = '<label class="block text-sm font-bold text-navy-900 mb-3"><i class="fa-solid fa-chalkboard-user text-purple-600 mr-2"></i>ตั้งค่าหัวหน้าสายชั้น</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+            uniqueGrades.forEach(g => {
+                const key = `head_grade_${g}`;
+                const savedVal = savedSettings[key] || "";
+                let opts = teacherOptions.replace(`value="${savedVal}"`, `value="${savedVal}" selected`);
+                gradeHtml += `<div class="flex items-center gap-2"><span class="w-10 text-xs font-bold text-gray-700">${g}</span><select class="flex-1 border border-gray-300 p-1.5 rounded-lg text-xs outline-none focus:border-purple-500 bg-white" onchange="saveRoleSetting('${key}', this.value)">${opts}</select></div>`;
+            });
+            gradeHtml += '</div>';
+            gradeDiv.innerHTML = gradeHtml;
+            container.appendChild(gradeDiv);
+
+            // 3. ตั้งค่าหัวหน้ากลุ่มสาระฯ (ดึงกลุ่มสาระฯที่มีอยู่อัตโนมัติ)
+            const uniqueDepts = [...new Set(allUsersList.map(u => u.Group))].filter(d => d && d !== "-" && d !== "ไม่ระบุกลุ่มสาระฯ");
+            if (uniqueDepts.length > 0) {
+                const deptDiv = document.createElement('div');
+                deptDiv.className = 'mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200 shadow-sm';
+                let deptHtml = '<label class="block text-sm font-bold text-navy-900 mb-3"><i class="fa-solid fa-layer-group text-rose-600 mr-2"></i>ตั้งค่าหัวหน้ากลุ่มสาระการเรียนรู้</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+                uniqueDepts.forEach(d => {
+                    const key = `head_dept_${d}`;
+                    const savedVal = savedSettings[key] || "";
+                    let opts = teacherOptions.replace(`value="${savedVal}"`, `value="${savedVal}" selected`);
+                    let shortD = d.length > 20 ? d.substring(0, 20) + '...' : d;
+                    deptHtml += `<div class="flex flex-col gap-1"><span class="text-[11px] font-bold text-gray-700 truncate" title="${d}">${shortD}</span><select class="w-full border border-gray-300 p-1.5 rounded-lg text-xs outline-none focus:border-rose-500 bg-white" onchange="saveRoleSetting('${key}', this.value)">${opts}</select></div>`;
+                });
+                deptHtml += '</div>';
+                deptDiv.innerHTML = deptHtml;
+                container.appendChild(deptDiv);
+            }
+
+            // 4. รายการเมนูเปิด-ปิด
             const menuLinks = document.querySelectorAll('a[id^="menu-"]');
             const groupedMenus = {};
 
@@ -380,7 +428,6 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
                 });
                 container.appendChild(zoneDiv);
             }
-            modal.classList.remove('hidden');
         }
 
         function saveSystemVersion() {
@@ -401,6 +448,22 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC
             }).catch(err => console.error(err));
         }
 
+        // เพิ่มฟังก์ชันสำหรับบันทึกหัวหน้าสายชั้น/กลุ่มสาระฯ
+        function saveRoleSetting(key, value) {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            savedSettings[key] = value;
+            localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
+            
+            fetch(GAS_API_URL, {
+                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: key, isEnabled: value })
+            }).then(r=>r.json()).then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'บันทึกรายชื่อสำเร็จ', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
+                }
+            }).catch(err => console.error(err));
+        }
+
+        function toggleMenuState(id, state) {
         function toggleMenuState(id, state) {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             savedSettings[id] = state;
