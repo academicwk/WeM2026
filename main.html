@@ -215,10 +215,21 @@
     <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
     
     <script>
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         const DEFAULT_PROFILE_IMG = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
         let currentUser = null;
         let currentUploadingUserId = null;
+        
+        let allUsersList = []; // เพิ่มตัวแปรเก็บรายชื่อครู
+
+        // เพิ่มฟังก์ชันดึงรายชื่อครูสำหรับการตั้งค่า
+        async function fetchAllUsersForSettings() {
+            if(allUsersList.length > 0) return;
+            try {
+                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllUsers' }) }).then(r=>r.json());
+                if(res.status === 'success') allUsersList = res.users;
+            } catch(e) { console.error(e); }
+        }
 
         async function loadSidebarComponent() {
             try {
