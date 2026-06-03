@@ -473,8 +473,8 @@
             document.getElementById('oc-proposer').value = currentPLCOpenClass ? currentPLCOpenClass.proposer : currentUser.name;
             document.getElementById('oc-dept').value = currentPLCOpenClass ? currentPLCOpenClass.department : myGroup;
 
-            // กรองสมาชิกให้อยู่ในกลุ่มสาระฯ (Group) เดียวกัน
-            const deptMembers = allUsers.filter(u => u.Group === myGroup && u.Room !== "-");
+            // กรองสมาชิกให้อยู่ในกลุ่มสาระฯ (Group) เดียวกัน (เอาเงื่อนไข Room ออก)
+            const deptMembers = allUsers.filter(u => u.Group === myGroup);
 
             // สร้าง Dropdown สมาชิก 4 คน
             let memberHtml = '';
