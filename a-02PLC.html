@@ -244,6 +244,7 @@
         document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
+            applyMenuStates(); // โหลดเวอร์ชันของระบบ
 
             const userRoom = String(currentUser.room || "").trim();
             userGradePrefix = userRoom.split('/')[0].trim(); 
@@ -254,6 +255,16 @@
             await fetchPLCPlanOpenClass(); 
             Swal.close(); 
         });
+
+        // ----------------------------------------------------
+        // ฟังก์ชันอัปเดตเวอร์ชันบน Sidebar
+        // ----------------------------------------------------
+        function applyMenuStates() {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const version = savedSettings['sys_version'] || '2.0.1';
+            const versionDisplay = document.getElementById('sidebar-version-display');
+            if(versionDisplay) versionDisplay.textContent = `WeM System Version ${version}`;
+        }
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
