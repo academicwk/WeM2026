@@ -304,21 +304,22 @@ function submitResearchData() {
             const id = document.getElementById('modal-id').value;
             const semester = document.getElementById('modal-semester').value;
             const year = document.getElementById('modal-year').value;
-            const title = document.getElementById('modal-title').value.trim(); // ใช้ trim() เพื่อตัดช่องว่าง (Spacebar) ออก
+            const title = document.getElementById('modal-title').value.trim(); 
             const existingPdf = document.getElementById('modal-existing-pdf').value;
 
-            // ตรวจสอบว่ากรอกชื่อเรื่องหรือไม่
             if (title === "") {
                 Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อเรื่องการวิจัย', 'warning');
                 return;
             }
-            // ตรวจสอบว่าแนบไฟล์หรือไม่ (บังคับเฉพาะตอนสร้างใหม่ ถ้าโหมดแก้ไขอนุญาตให้ใช้ไฟล์เดิมได้)
             if (!id && tempBase64File === "") {
                 Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาแนบไฟล์รายงานการวิจัย (PDF)', 'warning');
                 return;
             }
 
             Swal.fire({ title: 'กำลังบันทึกและอัปโหลดไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            // 🌟 ตั้งชื่อไฟล์ใหม่ตามรูปแบบ: วิจัย_ภาคเรียน_ปีการศึกษา_ชื่อผู้ใช้งาน.pdf
+            const customFilename = `วิจัย_${semester}_${year}_${currentUser.name}.pdf`;
 
             fetch(GAS_API_URL, {
                 method: 'POST',
@@ -330,14 +331,14 @@ function submitResearchData() {
                     year: year,
                     title: title,
                     base64: tempBase64File,
-                    filename: `Research_${year}_${semester}.pdf`,
+                    filename: customFilename, // ใช้งานชื่อไฟล์ที่ตั้งใหม่
                     existingPdfUrl: existingPdf
                 })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
                     closeResearchModal();
-                    fetchResearchData(); // รีเฟรชตารางใหม่
+                    fetchResearchData(); 
                 } else {
                     Swal.fire('ผิดพลาด', res.message, 'error');
                 }
