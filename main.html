@@ -19,13 +19,15 @@
     <main class="flex-1 flex flex-col h-full relative w-full">
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
             <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
+                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
                     <h2 class="text-xl font-bold text-navy-900 leading-none">ระบบบริหารจัดการทางการศึกษา Watkhod e-Management : WeM</h2>
                     <p class="text-xs font-medium text-gray-500 mt-1.5">โรงเรียนเทศบาลวัดโขดทิมทาราม | กองการศึกษา เทศบาลนครระยอง</p>
                 </div>
             </div>
-            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
+            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2">
                 <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="Icon" border="0" class="h-12 w-auto object-contain">
                 <span id="current-date"></span>
             </div>
@@ -47,24 +49,177 @@
                         <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-people-group text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
                         <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC)</span>
                     </a>
-                    <a href="#" id="menu-acad-3" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300"><div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-flask text-blue-600 group-hover:text-white text-sm transition-colors"></i></div><span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">วิจัยเชิงปฏิบัติการในชั้นเรียน</span></a>
-                    <a href="#" id="menu-acad-4" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300"><div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-shapes text-blue-600 group-hover:text-white text-sm transition-colors"></i></div><span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สื่อการเรียนรู้</span></a>
-                    <a href="#" id="menu-acad-5" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300"><div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-file-circle-question text-blue-600 group-hover:text-white text-sm transition-colors"></i></div><span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">คลังข้อสอบ</span></a>
+                    <a href="#" id="menu-acad-3" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-flask text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">วิจัยเชิงปฏิบัติการในชั้นเรียน</span>
+                    </a>
+                    <a href="#" id="menu-acad-4" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-shapes text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สื่อการเรียนรู้</span>
+                    </a>
+                    <a href="#" id="menu-acad-5" class="group bg-white hover:bg-blue-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-blue-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-file-circle-question text-blue-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">คลังข้อสอบ</span>
+                    </a>
                 </div>
             </div>
 
             <div id="zone-hr" class="mb-8 scroll-mt-6">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-amber-600"></i> ระบบบริหารงานบุคคล
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a href="#" id="menu-hr-1" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-user-gear text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">แผนพัฒนาตนเอง (ID Plan)</span>
+                    </a>
+                    <a href="#" id="menu-hr-2" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-person-chalkboard text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการอบรม/สัมมนา</span>
+                    </a>
+                    <a href="#" id="menu-hr-3" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-money-check-dollar text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สลิปเงินเดือน</span>
+                    </a>
+                    <a href="#" id="menu-hr-4" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-money-bill-trend-up text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ผลการพิจารณาเลื่อนเงินเดือน</span>
+                    </a>
+                    <a href="#" id="menu-hr-5" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-clipboard-check text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">แบบสรุปผลการประเมินข้อตกลงการปฏิบัติงาน (PA3)</span>
+                    </a>
+                    <a href="#" id="menu-hr-6" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-calendar-check text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">สถิติการมาเรียนของนักเรียน</span>
+                    </a>
+                    <a href="#" id="menu-hr-7" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-weight-scale text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">น้ำหนัก/ส่วนสูงของนักเรียน</span>
+                    </a>
+                    <a href="#" id="menu-hr-8" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-house-user text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการเยี่ยมบ้านนักเรียน</span>
+                    </a>
+                    <a href="#" id="menu-hr-9" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-brain text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการประเมินจุดแข็ง/จุดอ่อน (SDQ)</span>
+                    </a>
+                    <a href="#" id="menu-hr-10" class="group bg-white hover:bg-amber-500 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-amber-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-star text-amber-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานผลการประเมินคุณลักษณะอันพึงประสงค์</span>
+                    </a>
                 </div>
-            
+            </div>
+
+            <div id="zone-budget" class="mb-8 scroll-mt-6">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-coins text-green-600"></i> ระบบบริหารงานงบประมาณ
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a href="#" id="menu-bud-1" class="group bg-white hover:bg-green-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-green-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-diagram-project text-green-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ระบบบริหารโครงการ</span>
+                    </a>
+                    <a href="#" id="menu-bud-2" class="group bg-white hover:bg-green-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-green-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-magnifying-glass-dollar text-green-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">ระบบกำกับติดตามงบประมาณ</span>
+                    </a>
+                </div>
+            </div>
+
+            <div id="zone-admin" class="mb-8 scroll-mt-6">
+                <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gray-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-building text-purple-600"></i> ระบบบริหารงานทั่วไป
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a href="#" id="menu-adm-1" class="group bg-white hover:bg-purple-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-purple-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-file-contract text-purple-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">คำสั่งสถานศึกษา</span>
+                    </a>
+                    <a href="#" id="menu-adm-2" class="group bg-white hover:bg-purple-600 rounded-lg shadow-sm hover:shadow-md border border-gray-100 hover:border-transparent py-2 px-4 flex items-center gap-3 transition-all duration-300">
+                        <div class="w-8 h-8 bg-purple-50 group-hover:bg-white/20 rounded-full flex items-center justify-center shrink-0 transition-colors"><i class="fa-solid fa-comments text-purple-600 group-hover:text-white text-sm transition-colors"></i></div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-white transition-colors">รายงานการประชุมคณะกรรมการ</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </main>
 
+    <div id="settingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-gears text-gold-400"></i> ควบคุมการเปิด-ปิดระบบงานย่อย</h3>
+                <button onclick="closeSettingsModal()" class="text-gray-300 hover:text-white focus:outline-none"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <div id="settings-container" class="p-6 overflow-y-auto flex-1"></div>
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end">
+                <button onclick="closeSettingsModal()" class="bg-navy-800 hover:bg-navy-900 text-white font-medium py-2 px-6 rounded-lg transition-colors">เสร็จสิ้น</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="userSettingsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-navy-900 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-users-gear text-gold-400"></i> การตั้งค่าผู้ใช้งาน</h3>
+                <button onclick="closeUserSettingsModal()" class="text-gray-300 hover:text-white focus:outline-none"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <div id="user-cards-container" class="p-6 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50"></div>
+        </div>
+    </div>
+
+    <div id="editUserModal" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-center justify-center backdrop-blur-sm px-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl"><h3 class="text-lg font-bold text-white">แก้ไขข้อมูลผู้ใช้งาน</h3></div>
+            <div class="p-6">
+                <form id="editUserForm" onsubmit="handleSaveUserEdit(event)" class="space-y-4">
+                    <input type="hidden" id="edit-id">
+                    <div>
+                        <label class="block text-sm font-bold text-navy-900 mb-1">ชื่อ-นามสกุล</label>
+                        <input type="text" id="edit-name" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-navy-800 outline-none" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">Username</label>
+                            <input type="text" id="edit-username" class="w-full border rounded-lg px-3 py-2 outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">Password</label>
+                            <input type="text" id="edit-password" class="w-full border rounded-lg px-3 py-2 outline-none" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-navy-900 mb-1">ตำแหน่ง / วิทยฐานะ</label>
+                        <input type="text" id="edit-position" class="w-full border rounded-lg px-3 py-2 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">กลุ่มสาระฯ</label>
+                            <input type="text" id="edit-group" class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-navy-900 mb-1">ห้องประจำ</label>
+                            <input type="text" id="edit-room" class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="closeEditUserModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">ยกเลิก</button>
+                        <button type="submit" class="px-4 py-2 bg-gold-500 text-navy-900 rounded-lg font-bold hover:bg-gold-400 shadow">บันทึกข้อมูล</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+    
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         const DEFAULT_PROFILE_IMG = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
         let currentUser = null;
+        let currentUploadingUserId = null;
 
-        // ฟังก์ชันโหลด Sidebar
         async function loadSidebarComponent() {
             try {
                 const response = await fetch('sidebar.html');
@@ -73,7 +228,6 @@
             } catch (error) { console.error('Error loading sidebar:', error); }
         }
 
-        // ฟังก์ชันตั้งค่าข้อมูลผู้ใช้
         function setupUserData() {
             const userData = localStorage.getItem('wem_user');
             if (!userData) { window.location.href = "index.html"; return; }
@@ -96,13 +250,12 @@
                 sidebarIcon.classList.add('hidden');
             }
 
-            // ถ้าเป็น Admin ให้เปิดปุ่มตั้งค่า
+            // ถ้าเป็น Admin ให้เปิดปุ่มการตั้งค่า
             if (fullName === "นายพีระศิน ไชยศร") {
                 document.getElementById('btn-settings').classList.replace('hidden', 'flex');
                 document.getElementById('btn-user-settings').classList.replace('hidden', 'flex');
             }
 
-            // ตั้งเวลานาฬิกา
             setInterval(() => {
                 const now = new Date();
                 const clockElement = document.getElementById('current-date');
@@ -111,9 +264,9 @@
         }
 
         document.addEventListener("DOMContentLoaded", async () => {
-            await loadSidebarComponent(); // รอโหลด Sidebar เสร็จก่อน
-            setupUserData(); // นำข้อมูลมาใส่ Sidebar
-            fetchSettingsFromDatabase(); // รันฟังก์ชันอื่นๆ ต่อ...
+            await loadSidebarComponent(); 
+            setupUserData(); 
+            fetchSettingsFromDatabase(); 
             applyMenuStates();
         });
 
@@ -126,9 +279,10 @@
         }
         function closeSidebarMobile() {
             const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
                 sidebar.classList.add('-translate-x-full');
-                document.getElementById('sidebarOverlay').classList.add('hidden');
+                if(overlay) overlay.classList.add('hidden');
             }
         }
         function handleLogout() {
@@ -136,8 +290,238 @@
             window.location.href = "index.html";
         }
 
-        // (ใส่ฟังก์ชันอื่นๆ ของหน้า Main.html เดิมของคุณครูไว้ใต้บรรทัดนี้ได้เลยครับ เช่น openSettingsModal, uploadImage ToGas ฯลฯ)
-        // ...
+        // ----------------------------------------------------
+        // ระบบตั้งค่าเปิด-ปิดเมนู
+        // ----------------------------------------------------
+        async function fetchSettingsFromDatabase() {
+            try {
+                const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSettings' }) });
+                const result = await response.json();
+                if (result.status === 'success' && result.settings) {
+                    localStorage.setItem('wem_sys_settings', JSON.stringify(result.settings));
+                    applyMenuStates();
+                }
+            } catch (error) { console.error("โหลดการตั้งค่าล้มเหลว:", error); }
+        }
+
+        function applyMenuStates() {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const menuLinks = document.querySelectorAll('a[id^="menu-"]');
+            menuLinks.forEach(link => {
+                const id = link.id;
+                const isEnabled = savedSettings[id] !== false;
+                if (!isEnabled) {
+                    link.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
+                } else {
+                    link.classList.remove('opacity-40', 'pointer-events-none', 'grayscale');
+                }
+            });
+        }
+
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            const container = document.getElementById('settings-container');
+            container.innerHTML = ''; 
+
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const menuLinks = document.querySelectorAll('a[id^="menu-"]');
+            const groupedMenus = {};
+
+            menuLinks.forEach(link => {
+                const parentBox = link.closest('.mb-8') || link.parentElement;
+                const zoneHeader = parentBox ? parentBox.querySelector('h3') : null;
+                const zoneTitle = zoneHeader ? zoneHeader.textContent.trim() : 'ระบบงานอื่นๆ';
+
+                if (!groupedMenus[zoneTitle]) { groupedMenus[zoneTitle] = []; }
+                groupedMenus[zoneTitle].push({ id: link.id, name: link.querySelector('span').textContent.trim() });
+            });
+
+            for (const [zoneTitle, menus] of Object.entries(groupedMenus)) {
+                const zoneDiv = document.createElement('div');
+                zoneDiv.className = 'mb-6';
+                zoneDiv.innerHTML = `<h4 class="font-bold text-navy-900 mb-3 border-b-2 border-gold-400 pb-1 inline-block">${zoneTitle}</h4>`;
+                
+                menus.forEach(menu => {
+                    const isChecked = savedSettings[menu.id] !== false ? 'checked' : '';
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center mb-2 bg-slate-50 p-3 rounded-lg border border-slate-100 shadow-sm';
+                    item.innerHTML = `
+                        <span class="text-sm font-medium text-gray-700">${menu.name}</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" class="sr-only peer" onchange="toggleMenuState('${menu.id}', this.checked)" ${isChecked}>
+                          <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                    `;
+                    zoneDiv.appendChild(item);
+                });
+                container.appendChild(zoneDiv);
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function toggleMenuState(id, state) {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            savedSettings[id] = state;
+            localStorage.setItem('wem_sys_settings', JSON.stringify(savedSettings));
+            applyMenuStates(); 
+
+            fetch(GAS_API_URL, {
+                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: id, isEnabled: state })
+            }).catch(err => console.error(err));
+        }
+
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
+
+        // ----------------------------------------------------
+        // ระบบจัดการ User
+        // ----------------------------------------------------
+        async function openUserSettingsModal() {
+            document.getElementById('userSettingsModal').classList.remove('hidden');
+            const container = document.getElementById('user-cards-container');
+            container.innerHTML = '<div class="col-span-full text-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i><p class="mt-4 font-medium text-gray-600">กำลังโหลดข้อมูลผู้ใช้งาน...</p></div>';
+
+            try {
+                const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllUsers' }) });
+                const result = await response.json();
+                if (result.status === 'success') { renderUserCards(result.users); }
+            } catch (error) { container.innerHTML = '<p class="col-span-full text-center text-red-500 py-10">เกิดข้อผิดพลาดในการดึงข้อมูล</p>'; }
+        }
+
+        function closeUserSettingsModal() { document.getElementById('userSettingsModal').classList.add('hidden'); }
+
+        function renderUserCards(users) {
+            const container = document.getElementById('user-cards-container');
+            container.innerHTML = '';
+            users.forEach(u => {
+                if(!u.id) return; 
+                const userImg = (u.Image && u.Image.trim() !== "") ? u.Image : DEFAULT_PROFILE_IMG;
+                const userDataStr = encodeURIComponent(JSON.stringify(u));
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow border border-gray-100 p-5 flex flex-col relative group transition hover:shadow-md";
+                card.innerHTML = `
+                    <button onclick="openEditUserModal('${userDataStr}')" class="absolute top-3 right-3 w-8 h-8 bg-gray-100 hover:bg-gold-400 hover:text-navy-900 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm">
+                        <i class="fa-solid fa-pen text-sm"></i>
+                    </button>
+                    <div class="flex items-center gap-4 border-b pb-4 mb-4">
+                        <div class="relative w-16 h-16 shrink-0 cursor-pointer group-hover:opacity-90" onclick="triggerImageUpload('${u.id}')" title="คลิกเพื่อเปลี่ยนรูปโปรไฟล์">
+                            <img src="${userImg}" class="w-full h-full rounded-full object-cover border-2 border-navy-800" id="img-user-${u.id}">
+                            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-camera text-white text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="font-bold text-navy-900 text-lg truncate" id="name-user-${u.id}">${u.Name}</h4>
+                            <p class="text-xs text-gray-500">ID: ${u.Username} | รหัสผ่าน: ${u.Password}</p>
+                        </div>
+                    </div>
+                    <div class="text-sm space-y-1 text-gray-600">
+                        <p><i class="fa-solid fa-id-badge w-5 text-gold-500 text-center"></i> <span id="pos-user-${u.id}">${u.Position || '-'}</span></p>
+                        <p><i class="fa-solid fa-layer-group w-5 text-gold-500 text-center"></i> <span id="group-user-${u.id}">${u.Group || '-'}</span></p>
+                        <p><i class="fa-solid fa-chalkboard-user w-5 text-gold-500 text-center"></i> <span id="room-user-${u.id}">${u.Room || '-'}</span></p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openEditUserModal(userStrEncoded) {
+            const u = JSON.parse(decodeURIComponent(userStrEncoded));
+            document.getElementById('edit-id').value = u.id;
+            document.getElementById('edit-name').value = u.Name;
+            document.getElementById('edit-username').value = u.Username;
+            document.getElementById('edit-password').value = u.Password;
+            document.getElementById('edit-position').value = u.Position || '';
+            document.getElementById('edit-group').value = u.Group || '';
+            document.getElementById('edit-room').value = u.Room || '';
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() { document.getElementById('editUserModal').classList.add('hidden'); }
+
+        function handleSaveUserEdit(e) {
+            e.preventDefault();
+            const data = {
+                action: 'updateUser',
+                id: document.getElementById('edit-id').value,
+                name: document.getElementById('edit-name').value,
+                username: document.getElementById('edit-username').value,
+                password: document.getElementById('edit-password').value,
+                position: document.getElementById('edit-position').value,
+                group: document.getElementById('edit-group').value,
+                room: document.getElementById('edit-room').value
+            };
+
+            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(data) })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
+                    closeEditUserModal();
+                    
+                    const myUser = JSON.parse(localStorage.getItem('wem_user'));
+                    if (myUser && String(data.name) === String(myUser.name)) {
+                        myUser.position = data.position; myUser.group = data.group; myUser.room = data.room;
+                        localStorage.setItem('wem_user', JSON.stringify(myUser));
+                        document.getElementById('display-position').textContent = data.position || "-";
+                        document.getElementById('display-group').textContent = data.group || "-";
+                        document.getElementById('display-room').textContent = data.room || "-";
+                    }
+                    openUserSettingsModal(); 
+                } else { Swal.fire('ข้อผิดพลาด', res.message, 'error'); }
+            }).catch(err => Swal.fire('ข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้', 'error'));
+        }
+
+        function triggerImageUpload(userId) {
+            currentUploadingUserId = userId;
+            document.getElementById('imageUploader').click();
+        }
+
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 400; 
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > MAX_SIZE) { h *= MAX_SIZE / w; w = MAX_SIZE; } } 
+                    else { if (h > MAX_SIZE) { w *= MAX_SIZE / h; h = MAX_SIZE; } }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    uploadImageToGas(currentUploadingUserId, canvas.toDataURL('image/jpeg', 0.7), file.name);
+                }
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            event.target.value = ''; 
+        }
+
+        function uploadImageToGas(userId, base64, filename) {
+            const imgElement = document.getElementById(`img-user-${userId}`);
+            const oldSrc = imgElement.src;
+            imgElement.src = "https://i.gifer.com/ZKZg.gif"; 
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'uploadImage', id: userId, base64: base64, filename: filename }) })
+            .then(res => res.json()).then(res => {
+                if(res.status === 'success') {
+                    imgElement.src = res.imageUrl; 
+                    Swal.fire({ icon: 'success', title: 'อัปเดตรูปโปรไฟล์สำเร็จ', timer: 1500, showConfirmButton: false, toast: true, position: 'top-end' });
+                    
+                    const myUser = JSON.parse(localStorage.getItem('wem_user'));
+                    const targetName = document.getElementById(`name-user-${userId}`).textContent.trim();
+                    if (myUser && myUser.name === targetName) {
+                        myUser.image = res.imageUrl;
+                        localStorage.setItem('wem_user', JSON.stringify(myUser)); 
+                        document.getElementById('sidebar-user-img').src = res.imageUrl; 
+                    }
+                } else { imgElement.src = oldSrc; Swal.fire('ข้อผิดพลาด', res.message, 'error'); }
+            }).catch(err => { imgElement.src = oldSrc; Swal.fire('ข้อผิดพลาด', 'อัปโหลดรูปภาพล้มเหลว', 'error'); });
+        }
     </script>
 </body>
 </html>
