@@ -414,7 +414,7 @@
             document.getElementById('oc-proposer').value = currentPLCOpenClass ? currentPLCOpenClass.proposer : currentUser.name;
             document.getElementById('oc-dept').value = currentPLCOpenClass ? currentPLCOpenClass.department : myGroup;
 
-            const deptMembers = allUsers.filter(u => u.Group === myGroup); // เอา Room !== "-" ออกแล้วตามที่คุณครูขอ
+            const deptMembers = allUsers.filter(u => u.Group === myGroup); 
 
             let memberHtml = '';
             for(let i=1; i<=4; i++) {
