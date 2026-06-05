@@ -22,7 +22,7 @@
                 <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
                     <h2 class="text-xl font-bold text-navy-900 leading-none">แผนพัฒนาตนเอง (ID Plan)</h2>
-                    <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบจัดการและรายงานผลแผนพัฒนาตนเองรายบุคคล ประจำปีการศึกษา</p>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5">โครงการพัฒนาศักยภาพครูและบุคลากรทางการศึกษา โดย นางสันทนี บุญจิ่ม</p>
                 </div>
             </div>
             <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
@@ -34,7 +34,8 @@
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             <div class="max-w-4xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-4">
                 <div class="flex justify-between items-center mb-2">
-<h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-bullseye text-gold-500 mr-2"></i>สถานะการจัดทำ ID Plan (ปีการศึกษา <span id="display-current-year">2569</span>)</h3>                    <span id="overall-text" class="text-sm font-bold text-gray-600">0/1 ฉบับ (0%)</span>
+                    <h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-bullseye text-gold-500 mr-2"></i>สถานะการจัดทำ ID Plan (ปีการศึกษา <span id="display-current-year">2569</span>)</h3>
+                    <span id="overall-text" class="text-sm font-bold text-gray-600">0/1 ฉบับ (0%)</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner">
                     <div id="overall-bar" class="h-full bg-blue-500 transition-all duration-500" style="width: 0%"></div>
@@ -58,6 +59,7 @@
             
             <input type="hidden" id="modal-id">
             <input type="hidden" id="modal-existing-pdf">
+            <input type="hidden" id="modal-expLevel">
             
             <div class="space-y-6">
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -73,33 +75,57 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-700 mb-1 block">ตำแหน่งและวิทยฐานะ <span class="text-red-500">*</span></label>
-                            <select id="modal-position" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-navy-800 outline-none text-sm bg-white">
+                            <select id="modal-position" onchange="updateExpLevel()" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-navy-800 outline-none text-sm bg-white cursor-pointer">
                                 <option value="">-- เลือกตำแหน่ง --</option>
+                                <option value="ผู้ช่วยครูผู้ช่วย">ผู้ช่วยครูผู้ช่วย</option>
                                 <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
                                 <option value="ครู ไม่มีวิทยฐานะ">ครู ไม่มีวิทยฐานะ</option>
                                 <option value="ครู วิทยฐานะครูชำนาญการ">ครู วิทยฐานะครูชำนาญการ</option>
                                 <option value="ครู วิทยฐานะครูชำนาญการพิเศษ">ครู วิทยฐานะครูชำนาญการพิเศษ</option>
                                 <option value="ครู วิทยฐานะครูเชี่ยวชาญ">ครู วิทยฐานะครูเชี่ยวชาญ</option>
+                                <option value="ครู วิทยฐานะครูเชี่ยวชาญพิเศษ">ครู วิทยฐานะครูเชี่ยวชาญพิเศษ</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                    <h4 class="text-sm font-bold text-indigo-900 mb-3 border-l-4 border-indigo-600 pl-2">ส่วนที่ 2: แบบประเมินสมรรถนะในการปฏิบัติงาน</h4>
+                    
+                    <div class="mb-4 bg-white p-3 rounded-lg border border-indigo-200 text-sm shadow-sm flex items-center justify-between">
+                        <span class="font-bold text-gray-700">ระดับการปฏิบัติงานที่คาดหวัง:</span> 
+                        <span id="display-exp-level" class="font-bold text-white bg-indigo-600 px-3 py-1 rounded-full text-xs">กรุณาเลือกตำแหน่ง</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-xs font-bold text-indigo-800 mb-2">1. ด้านการจัดการเรียนรู้</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="c1-container"></div>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="text-xs font-bold text-indigo-800 mb-2">2. ด้านการส่งเสริมและสนับสนุนการจัดการเรียนรู้</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="c2-container"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-xs font-bold text-indigo-800 mb-2">3. ด้านการพัฒนาตนเองและวิชาชีพ</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="c3-container"></div>
+                    </div>
+                </div>
+
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <h4 class="text-sm font-bold text-blue-900 mb-3 border-l-4 border-blue-600 pl-2">1. แผนการพัฒนาด้วยตนเอง</h4>
+                    <h4 class="text-sm font-bold text-blue-900 mb-3 border-l-4 border-blue-600 pl-2">ส่วนที่ 3.1: แผนการพัฒนาด้วยตนเอง</h4>
                     <div class="space-y-3">
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">เรื่องที่ต้องการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p1-topic" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p1-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">แหล่งเรียนรู้ <span class="text-red-500">*</span></label><textarea id="modal-p1-source" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น (เช่น 1 พ.ค. 2568) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด (เช่น 31 มี.ค. 2569) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น (เช่น 1 พ.ค. 2569) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด (เช่น 31 มี.ค. 2570) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                    <h4 class="text-sm font-bold text-amber-900 mb-3 border-l-4 border-amber-600 pl-2">2. แผนการพัฒนาตนเองร่วมกับบุคลากรภายในสถานศึกษา (PLC)</h4>
+                    <h4 class="text-sm font-bold text-amber-900 mb-3 border-l-4 border-amber-600 pl-2">ส่วนที่ 3.2: แผนการพัฒนาตนเองร่วมกับบุคลากรภายในสถานศึกษา (PLC)</h4>
                     <div class="space-y-3">
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">เรื่องที่ต้องการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p2-topic" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p2-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
@@ -112,7 +138,7 @@
                 </div>
 
                 <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                    <h4 class="text-sm font-bold text-emerald-900 mb-3 border-l-4 border-emerald-600 pl-2">3. แผนการขอรับการสนับสนุนจากหน่วยงานภายนอก</h4>
+                    <h4 class="text-sm font-bold text-emerald-900 mb-3 border-l-4 border-emerald-600 pl-2">ส่วนที่ 3.3: แผนการขอรับการสนับสนุนจากหน่วยงานภายนอก</h4>
                     <div class="space-y-3">
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">เรื่องที่ต้องการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p3-topic" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p3-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></textarea></div>
@@ -136,7 +162,22 @@
         
         let currentUser = null;
         let idPlanDataList = [];
-        let defaultYear = 2569; // อิงจาก PDF ตัวอย่างที่ส่งมา
+        let defaultYear = 2569; 
+
+        // ตัวแปรกลุ่มสมรรถนะ
+        const c1_labels = ["1.1 สร้าง/พัฒนาหลักสูตร", "1.2 ออกแบบการจัดการเรียนรู้", "1.3 จัดกิจกรรมการเรียนรู้", "1.4 สร้าง/พัฒนาสื่อ นวัตกรรม", "1.5 วัดและประเมินผล", "1.6 ศึกษา วิเคราะห์ สังเคราะห์", "1.7 จัดบรรยากาศ", "1.8 อบรมและพัฒนาคุณลักษณะ"];
+        const c2_labels = ["2.1 จัดทำข้อมูลสารสนเทศ", "2.2 ดำเนินการตามระบบดูแล", "2.3 ปฏิบัติงานวิชาการ/งานอื่นๆ", "2.4 ประสานความร่วมมือกับผู้ปกครอง"];
+        const c3_labels = ["3.1 พัฒนาตนเอง", "3.2 มีส่วนร่วม PLC", "3.3 นำความรู้ทักษะมาใช้"];
+
+        const expLevelMap = {
+            "ผู้ช่วยครูผู้ช่วย": "เรียนรู้และปฏิบัติ",
+            "ครูผู้ช่วย": "เรียนรู้และปฏิบัติ",
+            "ครู ไม่มีวิทยฐานะ": "ปรับประยุกต์",
+            "ครู วิทยฐานะครูชำนาญการ": "แก้ปัญหา",
+            "ครู วิทยฐานะครูชำนาญการพิเศษ": "คิดค้นปรับเปลี่ยน",
+            "ครู วิทยฐานะครูเชี่ยวชาญ": "ริเริ่มพัฒนา",
+            "ครู วิทยฐานะครูเชี่ยวชาญพิเศษ": "สร้างการเปลี่ยนแปลง"
+        };
 
         async function loadSidebarComponent() {
             try {
@@ -174,8 +215,42 @@
             await loadSidebarComponent();
             setupUserData();
             applyMenuStates();
+            generateCompetencySelects();
             fetchIDPlanData();
         });
+
+        function generateCompetencySelects() {
+            const optionsHtml = `<option value="">-- เลือกระดับคุณภาพ --</option><option value="สูงกว่าที่คาดหวัง">สูงกว่าที่คาดหวัง</option><option value="ตามที่คาดหวัง">ตามที่คาดหวัง</option><option value="ต่ำกว่าที่คาดหวัง">ต่ำกว่าที่คาดหวัง</option><option value="ต่ำกว่าที่คาดหวังมาก">ต่ำกว่าที่คาดหวังมาก</option>`;
+            
+            const createGroup = (labels, prefix, containerId) => {
+                let html = "";
+                labels.forEach((label, i) => {
+                    html += `
+                        <div class="bg-white p-2 rounded border border-gray-200 flex flex-col justify-between">
+                            <label class="text-[11px] font-bold text-gray-600 mb-1">${label} <span class="text-red-500">*</span></label>
+                            <select id="modal-${prefix}-${i+1}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-indigo-500 outline-none cursor-pointer">${optionsHtml}</select>
+                        </div>`;
+                });
+                document.getElementById(containerId).innerHTML = html;
+            };
+
+            createGroup(c1_labels, 'c1', 'c1-container');
+            createGroup(c2_labels, 'c2', 'c2-container');
+            createGroup(c3_labels, 'c3', 'c3-container');
+        }
+
+        function updateExpLevel() {
+            const pos = document.getElementById('modal-position').value;
+            const exp = expLevelMap[pos] || "กรุณาเลือกตำแหน่ง";
+            document.getElementById('display-exp-level').textContent = exp;
+            document.getElementById('modal-expLevel').value = expLevelMap[pos] ? exp : "";
+            
+            if(expLevelMap[pos]) {
+                document.getElementById('display-exp-level').className = "font-bold text-white bg-green-500 px-3 py-1 rounded-full text-xs shadow-sm";
+            } else {
+                document.getElementById('display-exp-level').className = "font-bold text-white bg-indigo-400 px-3 py-1 rounded-full text-xs shadow-sm";
+            }
+        }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
         function closeSidebarMobile() { const sb = document.getElementById('sidebar'); if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 768) { sb.classList.add('-translate-x-full'); document.getElementById('sidebarOverlay').classList.add('hidden'); } }
@@ -227,7 +302,7 @@
             }
 
             let completedInCurrentYear = idPlanDataList.filter(item => parseInt(item.year) === defaultYear).length;
-            const target = 1; // ID Plan ทำปีละ 1 ฉบับ
+            const target = 1; 
             let pct = Math.round((completedInCurrentYear / target) * 100);
             if (pct > 100) pct = 100;
             const barColor = pct === 100 ? 'bg-green-500' : 'bg-red-500';
@@ -248,7 +323,12 @@
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
                     document.getElementById('modal-position').value = data.position;
+                    updateExpLevel();
                     
+                    for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = data[`c1_${i}`] || "";
+                    for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = data[`c2_${i}`] || "";
+                    for(let i=1; i<=3; i++) document.getElementById(`modal-c3-${i}`).value = data[`c3_${i}`] || "";
+
                     document.getElementById('modal-p1-topic').value = data.p1Topic;
                     document.getElementById('modal-p1-method').value = data.p1Method;
                     document.getElementById('modal-p1-source').value = data.p1Source;
@@ -274,7 +354,12 @@
                 document.getElementById('modal-id').value = "";
                 document.getElementById('modal-year').value = defaultYear;
                 document.getElementById('modal-position').value = "";
+                updateExpLevel();
                 
+                for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = "";
+                for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = "";
+                for(let i=1; i<=3; i++) document.getElementById(`modal-c3-${i}`).value = "";
+
                 const fields = ['p1-topic','p1-method','p1-source','p1-start','p1-end', 'p2-topic','p2-method','p2-source','p2-start','p2-end', 'p3-topic','p3-method','p3-agency','p3-start','p3-end'];
                 fields.forEach(f => document.getElementById(`modal-${f}`).value = "");
                 document.getElementById('modal-existing-pdf').value = "";
@@ -285,24 +370,28 @@
         function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
 
         function submitIDPlanData() {
-            const fields = [
-                'year', 'position', 
+            let fields = [
+                'year', 'position', 'expLevel',
                 'p1-topic', 'p1-method', 'p1-source', 'p1-start', 'p1-end',
                 'p2-topic', 'p2-method', 'p2-source', 'p2-start', 'p2-end',
                 'p3-topic', 'p3-method', 'p3-agency', 'p3-start', 'p3-end'
             ];
+            
+            for(let i=1; i<=8; i++) fields.push(`c1-${i}`);
+            for(let i=1; i<=4; i++) fields.push(`c2-${i}`);
+            for(let i=1; i<=3; i++) fields.push(`c3-${i}`);
+
             let isComplete = true;
             let payload = { action: 'saveIDPlan', name: currentUser.name, id: document.getElementById('modal-id').value, existingPdfUrl: document.getElementById('modal-existing-pdf').value };
             
             fields.forEach(f => {
                 let val = document.getElementById(`modal-${f}`).value.trim();
                 if(val === "") isComplete = false;
-                // เปลี่ยนขีดกลางให้เป็นตัวอักษรใหญ่แบบ camelCase เพื่อส่งไปหลังบ้าน
-                let keyName = f.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+                let keyName = f.replace(/-([a-z0-9])/g, function (g) { return g[1].toUpperCase(); });
                 payload[keyName] = val;
             });
 
-            if (!isComplete) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลในฟอร์มให้ครบทุกช่องที่มีเครื่องหมาย *', 'warning'); return; }
+            if (!isComplete) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลและประเมินให้ครบทุกช่องที่มีเครื่องหมาย *', 'warning'); return; }
 
             Swal.fire({ title: 'กำลังบันทึกและสร้าง PDF...', html: 'กระบวนการนี้อาจใช้เวลา 10-15 วินาที<br>กรุณาอย่าปิดหน้าต่าง', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
