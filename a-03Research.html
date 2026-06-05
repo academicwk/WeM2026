@@ -215,6 +215,14 @@
                     </div>`;
             } else {
                 researchDataList.forEach(item => {
+                    
+                    // 🌟 แปลงลิงก์ให้อ่าน (View) บนเว็บได้แทนการดาวน์โหลด (คลุมไฟล์เก่าที่เคยอัปไปแล้วด้วย)
+                    let viewUrl = item.pdfUrl;
+                    if (viewUrl && viewUrl.includes("id=")) {
+                        const fileId = viewUrl.split("id=")[1].split("&")[0];
+                        viewUrl = `https://drive.google.com/file/d/${fileId}/view`;
+                    }
+
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-3 flex flex-col sm:flex-row items-center gap-3 hover:shadow-md transition-shadow relative overflow-hidden";
                     card.innerHTML = `
@@ -230,7 +238,7 @@
                             <button onclick="openResearchModal('${item.id}')" class="w-9 h-9 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 border border-gray-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="แก้ไขข้อมูล">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </button>
-                            <a href="${item.pdfUrl}" target="_blank" class="w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors" title="เปิดไฟล์ PDF">
+                            <a href="${viewUrl}" target="_blank" class="w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors" title="เปิดดูไฟล์ PDF">
                                 <i class="fa-solid fa-file-pdf text-xs"></i>
                             </a>
                             <button onclick="deleteResearchData('${item.id}')" class="w-9 h-9 bg-white hover:bg-red-500 hover:text-white text-red-400 border border-red-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="ลบข้อมูล">
