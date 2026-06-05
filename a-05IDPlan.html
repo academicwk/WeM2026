@@ -90,15 +90,15 @@
 
                     <div class="mb-4">
                         <h5 class="text-xs font-bold text-indigo-800 mb-2">1. ด้านการจัดการเรียนรู้</h5>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="c1-container"></div>
+                        <div class="grid grid-cols-1 gap-3" id="c1-container"></div>
                     </div>
                     <div class="mb-4">
                         <h5 class="text-xs font-bold text-indigo-800 mb-2">2. ด้านการส่งเสริมและสนับสนุนการจัดการเรียนรู้</h5>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="c2-container"></div>
+                        <div class="grid grid-cols-1 gap-3" id="c2-container"></div>
                     </div>
                     <div>
                         <h5 class="text-xs font-bold text-indigo-800 mb-2">3. ด้านการพัฒนาตนเองและวิชาชีพ</h5>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="c3-container"></div>
+                        <div class="grid grid-cols-1 gap-3" id="c3-container"></div>
                     </div>
                 </div>
 
@@ -109,8 +109,8 @@
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p1-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">แหล่งเรียนรู้ <span class="text-red-500">*</span></label><textarea id="modal-p1-source" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น (เช่น 1 พ.ค. 2569) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด (เช่น 31 มี.ค. 2570) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="date" id="modal-p1-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="date" id="modal-p1-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer"></div>
                         </div>
                     </div>
                 </div>
@@ -122,8 +122,8 @@
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p2-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">แหล่งเรียนรู้ <span class="text-red-500">*</span></label><textarea id="modal-p2-source" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="text" id="modal-p2-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="text" id="modal-p2-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="date" id="modal-p2-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500 text-gray-600 cursor-pointer"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="date" id="modal-p2-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500 text-gray-600 cursor-pointer"></div>
                         </div>
                     </div>
                 </div>
@@ -135,8 +135,8 @@
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p3-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></textarea></div>
                         <div><label class="text-xs font-bold text-gray-700 mb-1 block">การขอรับการสนับสนุนจากหน่วยงาน (ระบุชื่อหน่วยงาน) <span class="text-red-500">*</span></label><input type="text" id="modal-p3-agency" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="text" id="modal-p3-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="text" id="modal-p3-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="date" id="modal-p3-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500 text-gray-600 cursor-pointer"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="date" id="modal-p3-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500 text-gray-600 cursor-pointer"></div>
                         </div>
                     </div>
                 </div>
@@ -156,9 +156,28 @@
         let idPlanDataList = [];
         let defaultYear = 2569; 
 
-        const c1_labels = ["1.1 สร้าง/พัฒนาหลักสูตร", "1.2 ออกแบบการจัดการเรียนรู้", "1.3 จัดกิจกรรมการเรียนรู้", "1.4 สร้าง/พัฒนาสื่อ นวัตกรรม", "1.5 วัดและประเมินผล", "1.6 ศึกษา วิเคราะห์ สังเคราะห์", "1.7 จัดบรรยากาศ", "1.8 อบรมและพัฒนาคุณลักษณะ"];
-        const c2_labels = ["2.1 จัดทำข้อมูลสารสนเทศ", "2.2 ดำเนินการตามระบบดูแล", "2.3 ปฏิบัติงานวิชาการ/งานอื่นๆ", "2.4 ประสานความร่วมมือกับผู้ปกครอง"];
-        const c3_labels = ["3.1 พัฒนาตนเอง", "3.2 มีส่วนร่วม PLC", "3.3 นำความรู้ทักษะมาใช้"];
+        // 🌟 ปรับปรุงชื่อตัวชี้วัดเป็นชื่อเต็มตามที่กำหนด
+        const c1_labels = [
+            "1.1 สร้างและหรือพัฒนาหลักสูตร", 
+            "1.2 ออกแบบการจัดการเรียนรู้", 
+            "1.3 จัดกิจกรรมการเรียนรู้", 
+            "1.4 สร้างและหรือพัฒนาสื่อ นวัตกรรม เทคโนโลยีและแหล่งเรียนรู้", 
+            "1.5 วัดและประเมินผลการเรียนรู้", 
+            "1.6 ศึกษา วิเคราะห์ และสังเคราะห์ เพื่อแก้ปัญหาหรือพัฒนาการเรียนรู้", 
+            "1.7 จัดบรรยากาศที่ส่งเสริมและพัฒนาผู้เรียน", 
+            "1.8 อบรมและพัฒนาคุณลักษณะที่ดีของผู้เรียน"
+        ];
+        const c2_labels = [
+            "2.1 จัดทำข้อมูลสารสนเทศของผู้เรียนและรายวิชา", 
+            "2.2 ดำเนินการตามระบบดูแลช่วยเหลือผู้เรียน", 
+            "2.3 ปฏิบัติงานวิชาการ และงานอื่น ๆ ของสถานศึกษา", 
+            "2.4 ประสานความร่วมมือกับผู้ปกครอง ภาคีเครือข่าย และหรือสถานประกอบการ"
+        ];
+        const c3_labels = [
+            "3.1 พัฒนาตนเองอย่างเป็นระบบและต่อเนื่อง", 
+            "3.2 มีส่วนร่วมในการแลกเปลี่ยนเรียนรู้ทางวิชาชีพ เพื่อแก้ไขปัญหาและพัฒนาการจัดการเรียนรู้", 
+            "3.3 นำความรู้ ความสามารถ ทักษะที่ได้จากการพัฒนาตนเองและวิชาชีพมาใช้ในการพัฒนาการจัดการเรียนรู้ การพัฒนาคุณภาพผู้เรียน และการพัฒนานวัตกรรมการจัดการเรียนรู้ที่มีผลต่อคุณภาพผู้เรียน"
+        ];
 
         async function loadSidebarComponent() {
             try {
@@ -202,7 +221,6 @@
             fetchIDPlanData();
         });
 
-        // โหลดข้อมูล All Users มาเก็บไว้ในตัวแปร ไม่ต้องสร้าง Dropdown แล้ว
         async function fetchAllUsersForPosition() {
             try {
                 const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllUsers' }) }).then(r => r.json());
@@ -219,9 +237,9 @@
                 let html = "";
                 labels.forEach((label, i) => {
                     html += `
-                        <div class="bg-white p-2 rounded border border-gray-200 flex flex-col justify-between">
-                            <label class="text-[11px] font-bold text-gray-600 mb-1">${label} <span class="text-red-500">*</span></label>
-                            <select id="modal-${prefix}-${i+1}" class="w-full border border-gray-300 p-1.5 rounded text-xs focus:border-indigo-500 outline-none cursor-pointer">${optionsHtml}</select>
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-sm">
+                            <label class="text-[12px] font-bold text-gray-700 leading-tight flex-1">${label} <span class="text-red-500">*</span></label>
+                            <select id="modal-${prefix}-${i+1}" class="w-full md:w-48 border border-gray-300 p-1.5 rounded-lg text-xs focus:border-indigo-500 outline-none cursor-pointer bg-slate-50 shrink-0">${optionsHtml}</select>
                         </div>`;
                 });
                 document.getElementById(containerId).innerHTML = html;
@@ -232,7 +250,6 @@
             createGroup(c3_labels, 'c3', 'c3-container');
         }
 
-        // ประมวลผลระดับปฏิบัติงานที่คาดหวัง โดยอิงจากข้อความในช่อง input แบบ disabled
         function updateExpLevel() {
             const pos = document.getElementById('modal-position').value;
             let exp = "";
@@ -253,6 +270,14 @@
             } else {
                 document.getElementById('display-exp-level').className = "font-bold text-white bg-indigo-400 px-3 py-1 rounded-full text-xs shadow-sm";
             }
+        }
+
+        // 🌟 ฟังก์ชันแปลงวันที่ YYYY-MM-DD เป็นภาษาไทย (เช่น 1 พฤษภาคม พ.ศ. 2569)
+        function formatThaiDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${parseInt(y) + 543}`;
         }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
@@ -318,8 +343,6 @@
 
         function openIDPlanModal(id = null) {
             document.getElementById('modal-name').value = currentUser.name;
-
-            // วิ่งหาตำแหน่งใน allUsers โดยเทียบจากชื่อ currentUser
             const myUserObj = allUsers.find(u => u.Name === currentUser.name);
             const myPosition = myUserObj && myUserObj.Position && myUserObj.Position !== "-" ? myUserObj.Position : (currentUser.position || "ไม่ระบุตำแหน่ง");
 
@@ -330,7 +353,6 @@
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
                     
-                    // ใส่ตำแหน่งเดิมที่เคยบันทึกไว้ ถ้าไม่มีให้ดึงใหม่
                     document.getElementById('modal-position').value = data.position || myPosition;
                     updateExpLevel();
                     
@@ -341,7 +363,7 @@
                     document.getElementById('modal-p1-topic').value = data.p1Topic;
                     document.getElementById('modal-p1-method').value = data.p1Method;
                     document.getElementById('modal-p1-source').value = data.p1Source;
-                    document.getElementById('modal-p1-start').value = data.p1Start;
+                    document.getElementById('modal-p1-start').value = data.p1Start; // ใส่ YYYY-MM-DD ให้ input type="date"
                     document.getElementById('modal-p1-end').value = data.p1End;
 
                     document.getElementById('modal-p2-topic').value = data.p2Topic;
@@ -363,7 +385,6 @@
                 document.getElementById('modal-id').value = "";
                 document.getElementById('modal-year').value = defaultYear;
                 
-                // ดึงตำแหน่งของ User มาโชว์ให้อัตโนมัติเวลาเปิดสร้างใหม่
                 document.getElementById('modal-position').value = myPosition;
                 updateExpLevel();
                 
@@ -383,10 +404,13 @@
         function submitIDPlanData() {
             let fields = [
                 'year', 'position', 'expLevel',
-                'p1-topic', 'p1-method', 'p1-source', 'p1-start', 'p1-end',
-                'p2-topic', 'p2-method', 'p2-source', 'p2-start', 'p2-end',
-                'p3-topic', 'p3-method', 'p3-agency', 'p3-start', 'p3-end'
+                'p1-topic', 'p1-method', 'p1-source',
+                'p2-topic', 'p2-method', 'p2-source',
+                'p3-topic', 'p3-method', 'p3-agency'
             ];
+            
+            // แยกชุดวันที่เพื่อแปลงภาษาไทย
+            const dateFields = ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'];
             
             for(let i=1; i<=8; i++) fields.push(`c1-${i}`);
             for(let i=1; i<=4; i++) fields.push(`c2-${i}`);
@@ -400,6 +424,15 @@
                 if(val === "") isComplete = false;
                 let keyName = f.replace(/-([a-z0-9])/g, function (g) { return g[1].toUpperCase(); });
                 payload[keyName] = val;
+            });
+
+            // ตรวจสอบและแทรกวันที่ (ทั้งแบบดิบและแบบไทย)
+            dateFields.forEach(f => {
+                let val = document.getElementById(`modal-${f}`).value;
+                if(!val) isComplete = false;
+                let keyName = f.replace(/-([a-z0-9])/g, function (g) { return g[1].toUpperCase(); });
+                payload[keyName] = val; // ค่าดิบสำหรับตาราง YYYY-MM-DD
+                payload[`${keyName}Thai`] = formatThaiDate(val); // ค่าภาษาไทยสำหรับ PDF
             });
 
             if (!isComplete) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลและประเมินให้ครบทุกช่องที่มีเครื่องหมาย *', 'warning'); return; }
