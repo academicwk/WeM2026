@@ -192,11 +192,20 @@
             } catch (error) { console.error('Error loading sidebar:', error); }
         }
 
-        function setupUserData() {
+function setupUserData() {
             const userData = localStorage.getItem('wem_user');
             if (!userData) { window.location.href = "index.html"; return; }
 
             currentUser = JSON.parse(userData);
+            const nameParts = (currentUser.name || "").split(" ");
+            
+            // เพิ่มคำสั่งดึงชื่อและข้อมูลไปแสดงผล
+            document.getElementById('display-firstname').textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            document.getElementById('display-lastname').textContent = nameParts.slice(1).join(" ") || ""; 
+            document.getElementById('display-position').textContent = currentUser.position || "-";
+            document.getElementById('display-group').textContent = currentUser.group || "-";
+            document.getElementById('display-room').textContent = currentUser.room || "-";
+
             if (currentUser.image && currentUser.image.trim() !== "") {
                 document.getElementById('sidebar-user-img').src = currentUser.image;
                 document.getElementById('sidebar-user-img').classList.remove('hidden');
