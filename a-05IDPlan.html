@@ -323,19 +323,9 @@ function setupUserData() {
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${pct === 100 ? 'bg-green-500' : 'bg-red-500'}`;
         }
 
-function openIDPlanModal(id = null) {
-            // 1. ตรวจสอบ currentUser อีกครั้งให้มั่นใจ
-            const user = JSON.parse(localStorage.getItem('wem_user'));
-            currentUser = user || currentUser;
-            
-            // 2. ดึงค่าชื่อและตำแหน่ง
-            const name = currentUser ? currentUser.name : "ไม่ระบุชื่อ";
-            const myUserObj = allUsers.find(u => u.Name === name);
-            const myPosition = myUserObj ? myUserObj.Position : (currentUser ? currentUser.position : "ไม่ระบุตำแหน่ง");
-
-            // 3. ใส่ค่าในช่องทั่วไป
-            document.getElementById('modal-name').value = name;
-            document.getElementById('modal-position').value = myPosition || "ไม่ระบุตำแหน่ง";
+        function openIDPlanModal(id = null) {
+            document.getElementById('modal-name').value = currentUser.name;
+            document.getElementById('modal-position').value = currentUser.position || "ไม่ระบุตำแหน่ง";
             updateExpLevel();
 
             if (id) {
@@ -344,55 +334,28 @@ function openIDPlanModal(id = null) {
                     document.getElementById('modal-title-text').textContent = "แก้ไข ID Plan";
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
-                    
-                    // หากมีข้อมูลตำแหน่งเดิมในบันทึก ให้ใช้ตัวนั้น ถ้าไม่มีให้ใช้ตำแหน่งปัจจุบัน
-                    document.getElementById('modal-position').value = data.position || myPosition;
-                    updateExpLevel();
-                    
                     for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = data[`c1_${i}`] || "";
                     for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = data[`c2_${i}`] || "";
                     for(let i=1; i<=3; i++) document.getElementById(`modal-c3-${i}`).value = data[`c3_${i}`] || "";
-
-                    document.getElementById('modal-p1-topic').value = data.p1Topic || "";
-                    document.getElementById('modal-p1-method').value = data.p1Method || "";
-                    document.getElementById('modal-p1-source').value = data.p1Source || "";
-                    document.getElementById('modal-p1-start').value = data.p1Start || "";
-                    document.getElementById('modal-p1-end').value = data.p1End || "";
-
-                    document.getElementById('modal-p2-topic').value = data.p2Topic || "";
-                    document.getElementById('modal-p2-method').value = data.p2Method || "";
-                    document.getElementById('modal-p2-source').value = data.p2Source || "";
-                    document.getElementById('modal-p2-start').value = data.p2Start || "";
-                    document.getElementById('modal-p2-end').value = data.p2End || "";
-
-                    document.getElementById('modal-p3-topic').value = data.p3Topic || "";
-                    document.getElementById('modal-p3-method').value = data.p3Method || "";
-                    document.getElementById('modal-p3-agency').value = data.p3Agency || "";
-                    document.getElementById('modal-p3-start').value = data.p3Start || "";
-                    document.getElementById('modal-p3-end').value = data.p3End || "";
-
+                    document.getElementById('modal-p1-topic').value = data.p1Topic; document.getElementById('modal-p1-method').value = data.p1Method; document.getElementById('modal-p1-source').value = data.p1Source;
+                    document.getElementById('modal-p1-start').value = data.p1Start; document.getElementById('modal-p1-end').value = data.p1End;
+                    document.getElementById('modal-p2-topic').value = data.p2Topic; document.getElementById('modal-p2-method').value = data.p2Method; document.getElementById('modal-p2-source').value = data.p2Source;
+                    document.getElementById('modal-p2-start').value = data.p2Start; document.getElementById('modal-p2-end').value = data.p2End;
+                    document.getElementById('modal-p3-topic').value = data.p3Topic; document.getElementById('modal-p3-method').value = data.p3Method; document.getElementById('modal-p3-agency').value = data.p3Agency;
+                    document.getElementById('modal-p3-start').value = data.p3Start; document.getElementById('modal-p3-end').value = data.p3End;
                     document.getElementById('modal-existing-pdf').value = data.pdfUrl || "";
                 }
             } else {
                 document.getElementById('modal-title-text').textContent = "จัดทำแผนพัฒนาตนเอง (ID Plan)";
                 document.getElementById('modal-id').value = "";
                 document.getElementById('modal-year').value = defaultYear;
-                
-                // ล้างค่าฟอร์ม
-                const textareas = document.querySelectorAll('#idPlanModal textarea');
-                const inputs = document.querySelectorAll('#idPlanModal input[type="text"], #idPlanModal input[type="date"]');
-                textareas.forEach(t => t.value = "");
-                inputs.forEach(i => { if(i.id !== 'modal-name' && i.id !== 'modal-position' && i.id !== 'modal-year') i.value = ""; });
-                document.getElementById('modal-existing-pdf').value = "";
+                const inputs = document.querySelectorAll('#idPlanModal textarea, #idPlanModal input[type="text"], #idPlanModal input[type="date"]');
+                inputs.forEach(i => i.value = "");
             }
-
-            // อัปเดตข้อความวันที่ไทยทุกครั้งที่เปิด Modal
-            ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'].forEach(id => {
-                updateThaiDate(`modal-${id}`, `display-${id}`);
-            });
-            
+            ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'].forEach(id => updateThaiDate(`modal-${id}`, `display-${id}`));
             document.getElementById('idPlanModal').classList.remove('hidden');
         }
+
         function submitIDPlanData() {
             let fields = ['year', 'position', 'expLevel', 'p1-topic', 'p1-method', 'p1-source', 'p2-topic', 'p2-method', 'p2-source', 'p3-topic', 'p3-method', 'p3-agency'];
             const dateFields = ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'];
