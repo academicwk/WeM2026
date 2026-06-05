@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนพัฒนาตนเอง (ID Plan) | WeM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Sarabun', 'sans-serif'] }, colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } } } } }
+    </script>
+</head>
+<body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
+
+    <div id="sidebar-container" class="h-full flex shrink-0"></div>
+
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
+                <div class="border-l-4 border-gold-500 pl-3 py-1">
+                    <h2 class="text-xl font-bold text-navy-900 leading-none">แผนพัฒนาตนเอง (ID Plan)</h2>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบจัดการและรายงานผลแผนพัฒนาตนเองรายบุคคล ประจำปีการศึกษา</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
+                <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="Icon" border="0" class="h-12 w-auto object-contain">
+                <span id="current-date"></span>
+            </div>
+        </header>
+
+        <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
+            <div class="max-w-4xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-bullseye text-gold-500 mr-2"></i>สถานะการจัดทำ ID Plan (ปีการศึกษา <span id="display-current-year">2568</span>)</h3>
+                    <span id="overall-text" class="text-sm font-bold text-gray-600">0/1 ฉบับ (0%)</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner">
+                    <div id="overall-bar" class="h-full bg-blue-500 transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto mb-6 flex justify-end">
+                <button onclick="openIDPlanModal()" class="w-full sm:w-auto bg-navy-900 hover:bg-navy-800 text-white py-2 px-6 rounded-xl font-bold shadow-md transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> เพิ่ม/แก้ไข ID Plan
+                </button>
+            </div>
+
+            <div id="idplan-cards-container" class="max-w-4xl mx-auto space-y-3 pb-10"></div>
+        </div>
+    </main>
+
+    <div id="idPlanModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto">
+            <button onclick="closeIDPlanModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-bold text-navy-900 mb-4 border-b pb-2"><i class="fa-solid fa-clipboard-user text-gold-500 mr-2"></i><span id="modal-title-text">จัดทำแผนพัฒนาตนเอง (ID Plan)</span></h3>
+            
+            <input type="hidden" id="modal-id">
+            <input type="hidden" id="modal-existing-pdf">
+            
+            <div class="space-y-6">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="text-sm font-bold text-navy-900 mb-3 border-l-4 border-navy-800 pl-2">ส่วนที่ 1: ข้อมูลทั่วไป</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-700 mb-1 block">ชื่อผู้จัดทำ</label>
+                            <input type="text" id="modal-name" class="w-full border border-gray-300 p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold" disabled>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-700 mb-1 block">ปีการศึกษา <span class="text-red-500">*</span></label>
+                            <input type="number" id="modal-year" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-navy-800 outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-700 mb-1 block">ตำแหน่งและวิทยฐานะ <span class="text-red-500">*</span></label>
+                            <select id="modal-position" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-navy-800 outline-none text-sm bg-white">
+                                <option value="">-- เลือกตำแหน่ง --</option>
+                                <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
+                                <option value="ครู ไม่มีวิทยฐานะ">ครู ไม่มีวิทยฐานะ</option>
+                                <option value="ครู วิทยฐานะครูชำนาญการ">ครู วิทยฐานะครูชำนาญการ</option>
+                                <option value="ครู วิทยฐานะครูชำนาญการพิเศษ">ครู วิทยฐานะครูชำนาญการพิเศษ</option>
+                                <option value="ครู วิทยฐานะครูเชี่ยวชาญ">ครู วิทยฐานะครูเชี่ยวชาญ</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <h4 class="text-sm font-bold text-blue-900 mb-3 border-l-4 border-blue-600 pl-2">1. แผนการพัฒนาด้วยตนเอง</h4>
+                    <div class="space-y-3">
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">เรื่องที่ต้องการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p1-topic" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p1-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">แหล่งเรียนรู้ <span class="text-red-500">*</span></label><textarea id="modal-p1-source" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></textarea></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น (เช่น 1 พ.ค. 2568) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด (เช่น 31 มี.ค. 2569) <span class="text-red-500">*</span></label><input type="text" id="modal-p1-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                    <h4 class="text-sm font-bold text-amber-900 mb-3 border-l-4 border-amber-600 pl-2">2. แผนการพัฒนาตนเองร่วมกับบุคลากรภายในสถานศึกษา (PLC)</h4>
+                    <div class="space-y-3">
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">เรื่องที่ต้องการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p2-topic" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p2-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">แหล่งเรียนรู้ <span class="text-red-500">*</span></label><textarea id="modal-p2-source" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></textarea></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="text" id="modal-p2-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="text" id="modal-p2-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                    <h4 class="text-sm font-bold text-emerald-900 mb-3 border-l-4 border-emerald-600 pl-2">3. แผนการขอรับการสนับสนุนจากหน่วยงานภายนอก</h4>
+                    <div class="space-y-3">
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">เรื่องที่ต้องการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p3-topic" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></textarea></div>
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">รูปแบบ/วิธีการพัฒนา <span class="text-red-500">*</span></label><textarea id="modal-p3-method" rows="2" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></textarea></div>
+                        <div><label class="text-xs font-bold text-gray-700 mb-1 block">การขอรับการสนับสนุนจากหน่วยงาน (ระบุชื่อหน่วยงาน) <span class="text-red-500">*</span></label><input type="text" id="modal-p3-agency" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label><input type="text" id="modal-p3-start" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></div>
+                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="text" id="modal-p3-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <button onclick="submitIDPlanData()" class="w-full mt-6 bg-gold-500 hover:bg-gold-400 text-navy-900 py-3 rounded-lg font-bold shadow-md transition-colors flex justify-center items-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> บันทึกข้อมูลและสร้างรายงาน PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        
+        let currentUser = null;
+        let idPlanDataList = [];
+        let defaultYear = 2568; // อิงจาก PDF ตัวอย่างที่ส่งมา
+
+        async function loadSidebarComponent() {
+            try {
+                const response = await fetch('sidebar.html');
+                const html = await response.text();
+                document.getElementById('sidebar-container').innerHTML = html;
+            } catch (error) { console.error('Error loading sidebar:', error); }
+        }
+
+        function setupUserData() {
+            const userData = localStorage.getItem('wem_user');
+            if (!userData) { window.location.href = "index.html"; return; }
+
+            currentUser = JSON.parse(userData);
+            if (currentUser.image && currentUser.image.trim() !== "") {
+                document.getElementById('sidebar-user-img').src = currentUser.image;
+                document.getElementById('sidebar-user-img').classList.remove('hidden');
+                document.getElementById('sidebar-user-icon').classList.add('hidden');
+            }
+            setInterval(() => {
+                const now = new Date();
+                const clockElement = document.getElementById('current-date');
+                if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
+            }, 1000);
+        }
+
+        function applyMenuStates() {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const version = savedSettings['sys_version'] || '2.0.1';
+            const versionDisplay = document.getElementById('sidebar-version-display');
+            if(versionDisplay) versionDisplay.textContent = `WeM System Version ${version}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadSidebarComponent();
+            setupUserData();
+            applyMenuStates();
+            fetchIDPlanData();
+        });
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
+        function closeSidebarMobile() { const sb = document.getElementById('sidebar'); if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 768) { sb.classList.add('-translate-x-full'); document.getElementById('sidebarOverlay').classList.add('hidden'); } }
+        function handleLogout() { localStorage.removeItem('wem_user'); window.location.href = "index.html"; }
+
+        async function fetchIDPlanData() {
+            const container = document.getElementById('idplan-cards-container');
+            container.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-navy-800"></i></div>`;
+            try {
+                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getIDPlan', name: currentUser.name }) }).then(r => r.json());
+                if (res.status === 'success') {
+                    idPlanDataList = res.data || [];
+                    renderIDPlanCards();
+                } else { container.innerHTML = `<div class="text-center py-10 text-red-500">ไม่สามารถโหลดข้อมูลได้</div>`; }
+            } catch (error) { container.innerHTML = `<div class="text-center py-10 text-red-500">การเชื่อมต่อผิดพลาด</div>`; }
+        }
+
+        function renderIDPlanCards() {
+            const container = document.getElementById('idplan-cards-container');
+            container.innerHTML = '';
+            
+            idPlanDataList.sort((a, b) => b.year - a.year);
+
+            if (idPlanDataList.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center"><i class="fa-solid fa-folder-open text-5xl text-gray-300 mb-3"></i><p class="text-gray-500 font-medium">ยังไม่มีข้อมูลแผนพัฒนาตนเอง</p></div>`;
+            } else {
+                idPlanDataList.forEach(item => {
+                    let viewUrl = item.pdfUrl || "#";
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col sm:flex-row items-center gap-4 hover:shadow-md transition-shadow relative overflow-hidden";
+                    card.innerHTML = `
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-inner ml-2"><i class="fa-solid fa-clipboard-user"></i></div>
+                        <div class="flex-1 text-left w-full flex flex-col gap-1 overflow-hidden">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-slate-100 px-2 py-0.5 rounded text-[11px] font-bold text-gray-600 shrink-0 border border-slate-200">ปีการศึกษา ${item.year}</span>
+                            </div>
+                            <h4 class="font-bold text-navy-900 text-sm md:text-base leading-tight truncate">แผนพัฒนาตนเอง (ID Plan) ประจำปี ${item.year}</h4>
+                            <p class="text-[11px] text-gray-500 truncate"><i class="fa-solid fa-bullseye text-amber-500 mr-1"></i>เรื่องที่เน้นพัฒนา: ${item.p1Topic}</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-2 sm:mt-0">
+                            <button onclick="openIDPlanModal('${item.id}')" class="w-10 h-10 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 border border-gray-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="แก้ไขข้อมูล"><i class="fa-solid fa-pen"></i></button>
+                            <a href="${viewUrl}" target="_blank" class="w-10 h-10 ${item.pdfUrl ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 pointer-events-none'} text-white rounded-lg flex items-center justify-center shadow-md transition-colors" title="เปิดดูรายงาน PDF"><i class="fa-solid fa-file-pdf"></i></a>
+                            <button onclick="deleteIDPlanData('${item.id}')" class="w-10 h-10 bg-white hover:bg-red-500 hover:text-white text-red-400 border border-red-200 rounded-lg flex items-center justify-center transition-all shadow-sm" title="ลบข้อมูล"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            let completedInCurrentYear = idPlanDataList.filter(item => parseInt(item.year) === defaultYear).length;
+            const target = 1; // ID Plan ทำปีละ 1 ฉบับ
+            let pct = Math.round((completedInCurrentYear / target) * 100);
+            if (pct > 100) pct = 100;
+            const barColor = pct === 100 ? 'bg-green-500' : 'bg-red-500';
+            
+            document.getElementById('display-current-year').textContent = defaultYear;
+            document.getElementById('overall-text').textContent = `${completedInCurrentYear}/${target} ฉบับ (${pct}%)`;
+            document.getElementById('overall-bar').style.width = `${pct}%`;
+            document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
+        }
+
+        function openIDPlanModal(id = null) {
+            document.getElementById('modal-name').value = currentUser.name;
+
+            if (id) {
+                const data = idPlanDataList.find(r => String(r.id) === String(id));
+                if(data) {
+                    document.getElementById('modal-title-text').textContent = "แก้ไข ID Plan";
+                    document.getElementById('modal-id').value = data.id;
+                    document.getElementById('modal-year').value = data.year;
+                    document.getElementById('modal-position').value = data.position;
+                    
+                    document.getElementById('modal-p1-topic').value = data.p1Topic;
+                    document.getElementById('modal-p1-method').value = data.p1Method;
+                    document.getElementById('modal-p1-source').value = data.p1Source;
+                    document.getElementById('modal-p1-start').value = data.p1Start;
+                    document.getElementById('modal-p1-end').value = data.p1End;
+
+                    document.getElementById('modal-p2-topic').value = data.p2Topic;
+                    document.getElementById('modal-p2-method').value = data.p2Method;
+                    document.getElementById('modal-p2-source').value = data.p2Source;
+                    document.getElementById('modal-p2-start').value = data.p2Start;
+                    document.getElementById('modal-p2-end').value = data.p2End;
+
+                    document.getElementById('modal-p3-topic').value = data.p3Topic;
+                    document.getElementById('modal-p3-method').value = data.p3Method;
+                    document.getElementById('modal-p3-agency').value = data.p3Agency;
+                    document.getElementById('modal-p3-start').value = data.p3Start;
+                    document.getElementById('modal-p3-end').value = data.p3End;
+
+                    document.getElementById('modal-existing-pdf').value = data.pdfUrl || "";
+                }
+            } else {
+                document.getElementById('modal-title-text').textContent = "จัดทำแผนพัฒนาตนเอง (ID Plan)";
+                document.getElementById('modal-id').value = "";
+                document.getElementById('modal-year').value = defaultYear;
+                document.getElementById('modal-position').value = "";
+                
+                const fields = ['p1-topic','p1-method','p1-source','p1-start','p1-end', 'p2-topic','p2-method','p2-source','p2-start','p2-end', 'p3-topic','p3-method','p3-agency','p3-start','p3-end'];
+                fields.forEach(f => document.getElementById(`modal-${f}`).value = "");
+                document.getElementById('modal-existing-pdf').value = "";
+            }
+            document.getElementById('idPlanModal').classList.remove('hidden');
+        }
+
+        function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
+
+        function submitIDPlanData() {
+            const fields = [
+                'year', 'position', 
+                'p1-topic', 'p1-method', 'p1-source', 'p1-start', 'p1-end',
+                'p2-topic', 'p2-method', 'p2-source', 'p2-start', 'p2-end',
+                'p3-topic', 'p3-method', 'p3-agency', 'p3-start', 'p3-end'
+            ];
+            let isComplete = true;
+            let payload = { action: 'saveIDPlan', name: currentUser.name, id: document.getElementById('modal-id').value, existingPdfUrl: document.getElementById('modal-existing-pdf').value };
+            
+            fields.forEach(f => {
+                let val = document.getElementById(`modal-${f}`).value.trim();
+                if(val === "") isComplete = false;
+                // เปลี่ยนขีดกลางให้เป็นตัวอักษรใหญ่แบบ camelCase เพื่อส่งไปหลังบ้าน
+                let keyName = f.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+                payload[keyName] = val;
+            });
+
+            if (!isComplete) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลในฟอร์มให้ครบทุกช่องที่มีเครื่องหมาย *', 'warning'); return; }
+
+            Swal.fire({ title: 'กำลังบันทึกและสร้าง PDF...', html: 'กระบวนการนี้อาจใช้เวลา 10-15 วินาที<br>กรุณาอย่าปิดหน้าต่าง', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(r => r.json()).then(res => {
+                if (res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 2000, showConfirmButton: false });
+                    closeIDPlanModal();
+                    fetchIDPlanData(); 
+                } else { Swal.fire('ผิดพลาด', res.message, 'error'); }
+            }).catch(e => Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error'));
+        }
+
+        function deleteIDPlanData(id) {
+            Swal.fire({
+                title: 'ยืนยันการลบแผนพัฒนา?', text: "หากลบแล้วจะไม่สามารถกู้คืนได้!", icon: 'warning', showCancelButton: true,
+                confirmButtonColor: '#ef4444', cancelButtonColor: '#94a3b8', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteIDPlan', id: id }) })
+                    .then(r => r.json()).then(res => {
+                        if (res.status === 'success') { Swal.fire({ icon: 'success', title: 'ลบสำเร็จ', timer: 1500, showConfirmButton: false }); fetchIDPlanData(); } 
+                        else { Swal.fire('ผิดพลาด', res.message, 'error'); }
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
