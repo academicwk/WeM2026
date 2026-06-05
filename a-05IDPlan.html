@@ -74,10 +74,8 @@
                             <input type="number" id="modal-year" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-navy-800 outline-none text-sm">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-gray-700 mb-1 block">ตำแหน่งและวิทยฐานะ <span class="text-red-500">*</span></label>
-                            <select id="modal-position" onchange="updateExpLevel()" class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-navy-800 outline-none text-sm bg-white cursor-pointer">
-                                <option value="">-- กำลังโหลดข้อมูล... --</option>
-                            </select>
+                            <label class="text-xs font-bold text-gray-700 mb-1 block">ตำแหน่งและวิทยฐานะ</label>
+                            <input type="text" id="modal-position" class="w-full border border-gray-300 p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold" disabled>
                         </div>
                     </div>
                 </div>
@@ -87,7 +85,7 @@
                     
                     <div class="mb-4 bg-white p-3 rounded-lg border border-indigo-200 text-sm shadow-sm flex items-center justify-between">
                         <span class="font-bold text-gray-700">ระดับการปฏิบัติงานที่คาดหวัง:</span> 
-                        <span id="display-exp-level" class="font-bold text-white bg-indigo-600 px-3 py-1 rounded-full text-xs">กรุณาเลือกตำแหน่ง</span>
+                        <span id="display-exp-level" class="font-bold text-white bg-indigo-600 px-3 py-1 rounded-full text-xs">กำลังโหลดข้อมูล...</span>
                     </div>
 
                     <div class="mb-4">
@@ -154,11 +152,10 @@
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
         let currentUser = null;
-        let allUsers = []; // เก็บรายชื่อผู้ใช้เพื่อดึงตำแหน่ง
+        let allUsers = []; 
         let idPlanDataList = [];
         let defaultYear = 2569; 
 
-        // ตัวแปรกลุ่มสมรรถนะ
         const c1_labels = ["1.1 สร้าง/พัฒนาหลักสูตร", "1.2 ออกแบบการจัดการเรียนรู้", "1.3 จัดกิจกรรมการเรียนรู้", "1.4 สร้าง/พัฒนาสื่อ นวัตกรรม", "1.5 วัดและประเมินผล", "1.6 ศึกษา วิเคราะห์ สังเคราะห์", "1.7 จัดบรรยากาศ", "1.8 อบรมและพัฒนาคุณลักษณะ"];
         const c2_labels = ["2.1 จัดทำข้อมูลสารสนเทศ", "2.2 ดำเนินการตามระบบดูแล", "2.3 ปฏิบัติงานวิชาการ/งานอื่นๆ", "2.4 ประสานความร่วมมือกับผู้ปกครอง"];
         const c3_labels = ["3.1 พัฒนาตนเอง", "3.2 มีส่วนร่วม PLC", "3.3 นำความรู้ทักษะมาใช้"];
@@ -201,26 +198,18 @@
             applyMenuStates();
             generateCompetencySelects();
             
-            // ดึงรายการตำแหน่งจากชีท Users ก่อน
             await fetchAllUsersForPosition(); 
             fetchIDPlanData();
         });
 
-        // ดึงตำแหน่งแบบไดนามิกจากคอลัมน์ E (Position) ในชีท Users
+        // โหลดข้อมูล All Users มาเก็บไว้ในตัวแปร ไม่ต้องสร้าง Dropdown แล้ว
         async function fetchAllUsersForPosition() {
             try {
                 const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllUsers' }) }).then(r => r.json());
                 if(res.status === 'success') { 
                     allUsers = res.users; 
-                    // กรองเอาเฉพาะรายชื่อตำแหน่งที่ไม่ซ้ำกัน
-                    const positions = [...new Set(allUsers.map(u => u.Position).filter(p => p && p.trim() !== "" && p !== "-"))];
-                    let html = '<option value="">-- เลือกตำแหน่ง --</option>';
-                    positions.forEach(p => { html += `<option value="${p}">${p}</option>`; });
-                    
-                    const posSelect = document.getElementById('modal-position');
-                    if(posSelect) posSelect.innerHTML = html;
                 }
-            } catch (err) { console.error("Error fetching positions:", err); }
+            } catch (err) { console.error("Error fetching users:", err); }
         }
 
         function generateCompetencySelects() {
@@ -243,23 +232,23 @@
             createGroup(c3_labels, 'c3', 'c3-container');
         }
 
-        // ประมวลผลระดับปฏิบัติงานที่คาดหวัง อัตโนมัติจากคำในตำแหน่ง
+        // ประมวลผลระดับปฏิบัติงานที่คาดหวัง โดยอิงจากข้อความในช่อง input แบบ disabled
         function updateExpLevel() {
             const pos = document.getElementById('modal-position').value;
             let exp = "";
             
-            if (!pos) exp = "กรุณาเลือกตำแหน่ง";
+            if (!pos || pos === "ไม่ระบุตำแหน่ง") exp = "ไม่สามารถระบุได้";
             else if (pos.includes("เชี่ยวชาญพิเศษ")) exp = "สร้างการเปลี่ยนแปลง";
             else if (pos.includes("เชี่ยวชาญ")) exp = "ริเริ่มพัฒนา";
             else if (pos.includes("ชำนาญการพิเศษ")) exp = "คิดค้นปรับเปลี่ยน";
             else if (pos.includes("ชำนาญการ")) exp = "แก้ปัญหา";
             else if (pos.includes("ผู้ช่วย")) exp = "เรียนรู้และปฏิบัติ";
-            else exp = "ปรับประยุกต์"; // ครอบคลุม "ครู" และ "ครู ไม่มีวิทยฐานะ"
+            else exp = "ปรับประยุกต์"; 
 
             document.getElementById('display-exp-level').textContent = exp;
-            document.getElementById('modal-expLevel').value = exp === "กรุณาเลือกตำแหน่ง" ? "" : exp;
+            document.getElementById('modal-expLevel').value = exp === "ไม่สามารถระบุได้" ? "" : exp;
             
-            if(exp !== "กรุณาเลือกตำแหน่ง") {
+            if(exp !== "ไม่สามารถระบุได้") {
                 document.getElementById('display-exp-level').className = "font-bold text-white bg-green-500 px-3 py-1 rounded-full text-xs shadow-sm";
             } else {
                 document.getElementById('display-exp-level').className = "font-bold text-white bg-indigo-400 px-3 py-1 rounded-full text-xs shadow-sm";
@@ -330,6 +319,10 @@
         function openIDPlanModal(id = null) {
             document.getElementById('modal-name').value = currentUser.name;
 
+            // วิ่งหาตำแหน่งใน allUsers โดยเทียบจากชื่อ currentUser
+            const myUserObj = allUsers.find(u => u.Name === currentUser.name);
+            const myPosition = myUserObj && myUserObj.Position && myUserObj.Position !== "-" ? myUserObj.Position : (currentUser.position || "ไม่ระบุตำแหน่ง");
+
             if (id) {
                 const data = idPlanDataList.find(r => String(r.id) === String(id));
                 if(data) {
@@ -337,8 +330,8 @@
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
                     
-                    // กำหนดตำแหน่งเดิมและประมวลผล
-                    document.getElementById('modal-position').value = data.position || "";
+                    // ใส่ตำแหน่งเดิมที่เคยบันทึกไว้ ถ้าไม่มีให้ดึงใหม่
+                    document.getElementById('modal-position').value = data.position || myPosition;
                     updateExpLevel();
                     
                     for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = data[`c1_${i}`] || "";
@@ -370,8 +363,8 @@
                 document.getElementById('modal-id').value = "";
                 document.getElementById('modal-year').value = defaultYear;
                 
-                // ดึงตำแหน่งของ User มาเลือกให้อัตโนมัติเวลาเปิดสร้างใหม่
-                document.getElementById('modal-position').value = currentUser.position || "";
+                // ดึงตำแหน่งของ User มาโชว์ให้อัตโนมัติเวลาเปิดสร้างใหม่
+                document.getElementById('modal-position').value = myPosition;
                 updateExpLevel();
                 
                 for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = "";
