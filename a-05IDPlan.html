@@ -409,6 +409,10 @@
                 document.getElementById('modal-existing-pdf').value = "";
             }
             document.getElementById('idPlanModal').classList.remove('hidden');
+            // เพิ่มไว้ก่อนปิดฟังก์ชัน openIDPlanModal
+['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'].forEach(id => {
+    updateThaiDate(`modal-${id}`, `display-${id}`);
+});
         }
 
         function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
