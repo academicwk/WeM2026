@@ -85,7 +85,7 @@
                     
                     <div class="mb-4 bg-white p-3 rounded-lg border border-indigo-200 text-sm shadow-sm flex items-center justify-between">
                         <span class="font-bold text-gray-700">ระดับการปฏิบัติงานที่คาดหวัง:</span> 
-                        <span id="display-exp-level" class="font-bold text-white bg-indigo-600 px-3 py-1 rounded-full text-xs">กำลังโหลดข้อมูล...</span>
+                        <span id="display-exp-level" class="font-bold text-white bg-indigo-600 px-3 py-1 rounded-full text-xs">กำลังประมวลผล...</span>
                     </div>
 
                     <div class="mb-4">
@@ -114,7 +114,11 @@
                                 <input type="date" id="modal-p1-start" onchange="updateThaiDate('modal-p1-start', 'display-p1-start')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer">
                                 <span id="display-p1-start" class="text-[10px] font-bold text-green-600 hidden"></span>
                             </div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="date" id="modal-p1-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer"></div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label>
+                                <input type="date" id="modal-p1-end" onchange="updateThaiDate('modal-p1-end', 'display-p1-end')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer">
+                                <span id="display-p1-end" class="text-[10px] font-bold text-green-600 hidden"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,10 +132,14 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label>
-                                <input type="date" id="modal-p1-start" onchange="updateThaiDate('modal-p1-start', 'display-p1-start')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer">
-                                <span id="display-p1-start" class="text-[10px] font-bold text-green-600 hidden"></span>
+                                <input type="date" id="modal-p2-start" onchange="updateThaiDate('modal-p2-start', 'display-p2-start')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500 text-gray-600 cursor-pointer">
+                                <span id="display-p2-start" class="text-[10px] font-bold text-green-600 hidden"></span>
                             </div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="date" id="modal-p2-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500 text-gray-600 cursor-pointer"></div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label>
+                                <input type="date" id="modal-p2-end" onchange="updateThaiDate('modal-p2-end', 'display-p2-end')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-amber-500 text-gray-600 cursor-pointer">
+                                <span id="display-p2-end" class="text-[10px] font-bold text-green-600 hidden"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,10 +153,14 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาเริ่มต้น <span class="text-red-500">*</span></label>
-                                <input type="date" id="modal-p1-start" onchange="updateThaiDate('modal-p1-start', 'display-p1-start')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 text-gray-600 cursor-pointer">
-                                <span id="display-p1-start" class="text-[10px] font-bold text-green-600 hidden"></span>
+                                <input type="date" id="modal-p3-start" onchange="updateThaiDate('modal-p3-start', 'display-p3-start')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500 text-gray-600 cursor-pointer">
+                                <span id="display-p3-start" class="text-[10px] font-bold text-green-600 hidden"></span>
                             </div>
-                            <div><label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label><input type="date" id="modal-p3-end" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500 text-gray-600 cursor-pointer"></div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-700 mb-1 block">ระยะเวลาสิ้นสุด <span class="text-red-500">*</span></label>
+                                <input type="date" id="modal-p3-end" onchange="updateThaiDate('modal-p3-end', 'display-p3-end')" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-emerald-500 text-gray-600 cursor-pointer">
+                                <span id="display-p3-end" class="text-[10px] font-bold text-green-600 hidden"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -164,32 +176,13 @@
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
         let currentUser = null;
-        let allUsers = []; 
         let idPlanDataList = [];
         let defaultYear = 2569; 
 
-        // 🌟 ปรับปรุงชื่อตัวชี้วัดเป็นชื่อเต็มตามที่กำหนด
-        const c1_labels = [
-            "1.1 สร้างและหรือพัฒนาหลักสูตร", 
-            "1.2 ออกแบบการจัดการเรียนรู้", 
-            "1.3 จัดกิจกรรมการเรียนรู้", 
-            "1.4 สร้างและหรือพัฒนาสื่อ นวัตกรรม เทคโนโลยีและแหล่งเรียนรู้", 
-            "1.5 วัดและประเมินผลการเรียนรู้", 
-            "1.6 ศึกษา วิเคราะห์ และสังเคราะห์ เพื่อแก้ปัญหาหรือพัฒนาการเรียนรู้", 
-            "1.7 จัดบรรยากาศที่ส่งเสริมและพัฒนาผู้เรียน", 
-            "1.8 อบรมและพัฒนาคุณลักษณะที่ดีของผู้เรียน"
-        ];
-        const c2_labels = [
-            "2.1 จัดทำข้อมูลสารสนเทศของผู้เรียนและรายวิชา", 
-            "2.2 ดำเนินการตามระบบดูแลช่วยเหลือผู้เรียน", 
-            "2.3 ปฏิบัติงานวิชาการ และงานอื่น ๆ ของสถานศึกษา", 
-            "2.4 ประสานความร่วมมือกับผู้ปกครอง ภาคีเครือข่าย และหรือสถานประกอบการ"
-        ];
-        const c3_labels = [
-            "3.1 พัฒนาตนเองอย่างเป็นระบบและต่อเนื่อง", 
-            "3.2 มีส่วนร่วมในการแลกเปลี่ยนเรียนรู้ทางวิชาชีพ เพื่อแก้ไขปัญหาและพัฒนาการจัดการเรียนรู้", 
-            "3.3 นำความรู้ ความสามารถ ทักษะที่ได้จากการพัฒนาตนเองและวิชาชีพมาใช้ในการพัฒนาการจัดการเรียนรู้ การพัฒนาคุณภาพผู้เรียน และการพัฒนานวัตกรรมการจัดการเรียนรู้ที่มีผลต่อคุณภาพผู้เรียน"
-        ];
+        // ตัวชี้วัดแบบเต็ม
+        const c1_labels = ["1.1 สร้างและหรือพัฒนาหลักสูตร", "1.2 ออกแบบการจัดการเรียนรู้", "1.3 จัดกิจกรรมการเรียนรู้", "1.4 สร้างและหรือพัฒนาสื่อ นวัตกรรม เทคโนโลยีและแหล่งเรียนรู้", "1.5 วัดและประเมินผลการเรียนรู้", "1.6 ศึกษา วิเคราะห์ และสังเคราะห์ เพื่อแก้ปัญหาหรือพัฒนาการเรียนรู้", "1.7 จัดบรรยากาศที่ส่งเสริมและพัฒนาผู้เรียน", "1.8 อบรมและพัฒนาคุณลักษณะที่ดีของผู้เรียน"];
+        const c2_labels = ["2.1 จัดทำข้อมูลสารสนเทศของผู้เรียนและรายวิชา", "2.2 ดำเนินการตามระบบดูแลช่วยเหลือผู้เรียน", "2.3 ปฏิบัติงานวิชาการ และงานอื่น ๆ ของสถานศึกษา", "2.4 ประสานความร่วมมือกับผู้ปกครอง ภาคีเครือข่าย และหรือสถานประกอบการ"];
+        const c3_labels = ["3.1 พัฒนาตนเองอย่างเป็นระบบและต่อเนื่อง", "3.2 มีส่วนร่วมในการแลกเปลี่ยนเรียนรู้ทางวิชาชีพ เพื่อแก้ไขปัญหาและพัฒนาการจัดการเรียนรู้", "3.3 นำความรู้ ความสามารถ ทักษะที่ได้จากการพัฒนาตนเองและวิชาชีพมาใช้ในการพัฒนาการจัดการเรียนรู้ การพัฒนาคุณภาพผู้เรียน และการพัฒนานวัตกรรมการจัดการเรียนรู้ที่มีผลต่อคุณภาพผู้เรียน"];
 
         async function loadSidebarComponent() {
             try {
@@ -216,75 +209,38 @@
             }, 1000);
         }
 
-        function applyMenuStates() {
-            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
-            const version = savedSettings['sys_version'] || '2.0.1';
-            const versionDisplay = document.getElementById('sidebar-version-display');
-            if(versionDisplay) versionDisplay.textContent = `WeM System Version ${version}`;
-        }
-
         document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
-            applyMenuStates();
             generateCompetencySelects();
-            
-            await fetchAllUsersForPosition(); 
             fetchIDPlanData();
         });
 
-        async function fetchAllUsersForPosition() {
-            try {
-                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllUsers' }) }).then(r => r.json());
-                if(res.status === 'success') { 
-                    allUsers = res.users; 
-                }
-            } catch (err) { console.error("Error fetching users:", err); }
-        }
-
         function generateCompetencySelects() {
-            const optionsHtml = `<option value="">-- เลือกระดับคุณภาพ --</option><option value="สูงกว่าที่คาดหวัง">สูงกว่าที่คาดหวัง</option><option value="ตามที่คาดหวัง">ตามที่คาดหวัง</option><option value="ต่ำกว่าที่คาดหวัง">ต่ำกว่าที่คาดหวัง</option><option value="ต่ำกว่าที่คาดหวังมาก">ต่ำกว่าที่คาดหวังมาก</option>`;
-            
+            const optionsHtml = `<option value="">-- เลือกระดับ --</option><option value="สูงกว่าที่คาดหวัง">สูงกว่าที่คาดหวัง</option><option value="ตามที่คาดหวัง">ตามที่คาดหวัง</option><option value="ต่ำกว่าที่คาดหวัง">ต่ำกว่าที่คาดหวัง</option><option value="ต่ำกว่าที่คาดหวังมาก">ต่ำกว่าที่คาดหวังมาก</option>`;
             const createGroup = (labels, prefix, containerId) => {
                 let html = "";
                 labels.forEach((label, i) => {
-                    html += `
-                        <div class="bg-white p-3 rounded-lg border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-sm">
-                            <label class="text-[12px] font-bold text-gray-700 leading-tight flex-1">${label} <span class="text-red-500">*</span></label>
-                            <select id="modal-${prefix}-${i+1}" class="w-full md:w-48 border border-gray-300 p-1.5 rounded-lg text-xs focus:border-indigo-500 outline-none cursor-pointer bg-slate-50 shrink-0">${optionsHtml}</select>
-                        </div>`;
+                    html += `<div class="bg-white p-3 rounded-lg border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-sm"><label class="text-[12px] font-bold text-gray-700 leading-tight flex-1">${label} <span class="text-red-500">*</span></label><select id="modal-${prefix}-${i+1}" class="w-full md:w-48 border border-gray-300 p-1.5 rounded-lg text-xs focus:border-indigo-500 outline-none cursor-pointer bg-slate-50 shrink-0">${optionsHtml}</select></div>`;
                 });
                 document.getElementById(containerId).innerHTML = html;
             };
-
             createGroup(c1_labels, 'c1', 'c1-container');
             createGroup(c2_labels, 'c2', 'c2-container');
             createGroup(c3_labels, 'c3', 'c3-container');
         }
 
-        function updateExpLevel() {
-            const pos = document.getElementById('modal-position').value;
-            let exp = "";
-            
-            if (!pos || pos === "ไม่ระบุตำแหน่ง") exp = "ไม่สามารถระบุได้";
-            else if (pos.includes("เชี่ยวชาญพิเศษ")) exp = "สร้างการเปลี่ยนแปลง";
-            else if (pos.includes("เชี่ยวชาญ")) exp = "ริเริ่มพัฒนา";
-            else if (pos.includes("ชำนาญการพิเศษ")) exp = "คิดค้นปรับเปลี่ยน";
-            else if (pos.includes("ชำนาญการ")) exp = "แก้ปัญหา";
-            else if (pos.includes("ผู้ช่วย")) exp = "เรียนรู้และปฏิบัติ";
-            else exp = "ปรับประยุกต์"; 
-
-            document.getElementById('display-exp-level').textContent = exp;
-            document.getElementById('modal-expLevel').value = exp === "ไม่สามารถระบุได้" ? "" : exp;
-            
-            if(exp !== "ไม่สามารถระบุได้") {
-                document.getElementById('display-exp-level').className = "font-bold text-white bg-green-500 px-3 py-1 rounded-full text-xs shadow-sm";
-            } else {
-                document.getElementById('display-exp-level').className = "font-bold text-white bg-indigo-400 px-3 py-1 rounded-full text-xs shadow-sm";
-            }
+        function updateThaiDate(inputId, displayId) {
+            const dateVal = document.getElementById(inputId).value;
+            const displayEl = document.getElementById(displayId);
+            if (dateVal) {
+                const [y, m, d] = dateVal.split('-');
+                const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+                displayEl.textContent = `(ตรงกับ: ${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${parseInt(y) + 543})`;
+                displayEl.classList.remove('hidden');
+            } else { displayEl.classList.add('hidden'); }
         }
 
-        // 🌟 ฟังก์ชันแปลงวันที่ YYYY-MM-DD เป็นภาษาไทย (เช่น 1 พฤษภาคม พ.ศ. 2569)
         function formatThaiDate(dateStr) {
             if(!dateStr) return "";
             const [y, m, d] = dateStr.split('-');
@@ -292,9 +248,23 @@
             return `${parseInt(d)} ${months[parseInt(m)-1]} พ.ศ. ${parseInt(y) + 543}`;
         }
 
+        function updateExpLevel() {
+            const pos = document.getElementById('modal-position').value;
+            let exp = "";
+            if (!pos) exp = "กรุณาเลือกตำแหน่ง";
+            else if (pos.includes("เชี่ยวชาญพิเศษ")) exp = "สร้างการเปลี่ยนแปลง";
+            else if (pos.includes("เชี่ยวชาญ")) exp = "ริเริ่มพัฒนา";
+            else if (pos.includes("ชำนาญการพิเศษ")) exp = "คิดค้นปรับเปลี่ยน";
+            else if (pos.includes("ชำนาญการ")) exp = "แก้ปัญหา";
+            else if (pos.includes("ผู้ช่วย")) exp = "เรียนรู้และปฏิบัติ";
+            else exp = "ปรับประยุกต์";
+            document.getElementById('display-exp-level').textContent = exp;
+            document.getElementById('modal-expLevel').value = exp;
+            document.getElementById('display-exp-level').className = (exp !== "กรุณาเลือกตำแหน่ง") ? "font-bold text-white bg-green-500 px-3 py-1 rounded-full text-xs shadow-sm" : "font-bold text-white bg-indigo-400 px-3 py-1 rounded-full text-xs shadow-sm";
+        }
+
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
-        function closeSidebarMobile() { const sb = document.getElementById('sidebar'); if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 768) { sb.classList.add('-translate-x-full'); document.getElementById('sidebarOverlay').classList.add('hidden'); } }
-        function handleLogout() { localStorage.removeItem('wem_user'); window.location.href = "index.html"; }
+        function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
 
         async function fetchIDPlanData() {
             const container = document.getElementById('idplan-cards-container');
@@ -311,9 +281,7 @@
         function renderIDPlanCards() {
             const container = document.getElementById('idplan-cards-container');
             container.innerHTML = '';
-            
             idPlanDataList.sort((a, b) => b.year - a.year);
-
             if (idPlanDataList.length === 0) {
                 container.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center"><i class="fa-solid fa-folder-open text-5xl text-gray-300 mb-3"></i><p class="text-gray-500 font-medium">ยังไม่มีข้อมูลแผนพัฒนาตนเอง</p></div>`;
             } else {
@@ -325,9 +293,7 @@
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-inner ml-2"><i class="fa-solid fa-clipboard-user"></i></div>
                         <div class="flex-1 text-left w-full flex flex-col gap-1 overflow-hidden">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-slate-100 px-2 py-0.5 rounded text-[11px] font-bold text-gray-600 shrink-0 border border-slate-200">ปีการศึกษา ${item.year}</span>
-                            </div>
+                            <span class="bg-slate-100 px-2 py-0.5 rounded text-[11px] font-bold text-gray-600 w-max border border-slate-200">ปีการศึกษา ${item.year}</span>
                             <h4 class="font-bold text-navy-900 text-sm md:text-base leading-tight truncate">แผนพัฒนาตนเอง (ID Plan) ประจำปี ${item.year}</h4>
                             <p class="text-[11px] text-gray-500 truncate"><i class="fa-solid fa-bullseye text-amber-500 mr-1"></i>เรื่องที่เน้นพัฒนา: ${item.p1Topic}</p>
                         </div>
@@ -340,23 +306,18 @@
                     container.appendChild(card);
                 });
             }
-
             let completedInCurrentYear = idPlanDataList.filter(item => parseInt(item.year) === defaultYear).length;
-            const target = 1; 
-            let pct = Math.round((completedInCurrentYear / target) * 100);
+            let pct = Math.round((completedInCurrentYear / 1) * 100);
             if (pct > 100) pct = 100;
-            const barColor = pct === 100 ? 'bg-green-500' : 'bg-red-500';
-            
-            document.getElementById('display-current-year').textContent = defaultYear;
-            document.getElementById('overall-text').textContent = `${completedInCurrentYear}/${target} ฉบับ (${pct}%)`;
+            document.getElementById('overall-text').textContent = `${completedInCurrentYear}/1 ฉบับ (${pct}%)`;
             document.getElementById('overall-bar').style.width = `${pct}%`;
-            document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
+            document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${pct === 100 ? 'bg-green-500' : 'bg-red-500'}`;
         }
 
         function openIDPlanModal(id = null) {
             document.getElementById('modal-name').value = currentUser.name;
-            const myUserObj = allUsers.find(u => u.Name === currentUser.name);
-            const myPosition = myUserObj && myUserObj.Position && myUserObj.Position !== "-" ? myUserObj.Position : (currentUser.position || "ไม่ระบุตำแหน่ง");
+            document.getElementById('modal-position').value = currentUser.position || "ไม่ระบุตำแหน่ง";
+            updateExpLevel();
 
             if (id) {
                 const data = idPlanDataList.find(r => String(r.id) === String(id));
@@ -364,125 +325,67 @@
                     document.getElementById('modal-title-text').textContent = "แก้ไข ID Plan";
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
-                    
-                    document.getElementById('modal-position').value = data.position || myPosition;
-                    updateExpLevel();
-                    
                     for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = data[`c1_${i}`] || "";
                     for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = data[`c2_${i}`] || "";
                     for(let i=1; i<=3; i++) document.getElementById(`modal-c3-${i}`).value = data[`c3_${i}`] || "";
-
-                    document.getElementById('modal-p1-topic').value = data.p1Topic;
-                    document.getElementById('modal-p1-method').value = data.p1Method;
-                    document.getElementById('modal-p1-source').value = data.p1Source;
-                    document.getElementById('modal-p1-start').value = data.p1Start; // ใส่ YYYY-MM-DD ให้ input type="date"
-                    document.getElementById('modal-p1-end').value = data.p1End;
-
-                    document.getElementById('modal-p2-topic').value = data.p2Topic;
-                    document.getElementById('modal-p2-method').value = data.p2Method;
-                    document.getElementById('modal-p2-source').value = data.p2Source;
-                    document.getElementById('modal-p2-start').value = data.p2Start;
-                    document.getElementById('modal-p2-end').value = data.p2End;
-
-                    document.getElementById('modal-p3-topic').value = data.p3Topic;
-                    document.getElementById('modal-p3-method').value = data.p3Method;
-                    document.getElementById('modal-p3-agency').value = data.p3Agency;
-                    document.getElementById('modal-p3-start').value = data.p3Start;
-                    document.getElementById('modal-p3-end').value = data.p3End;
-
+                    document.getElementById('modal-p1-topic').value = data.p1Topic; document.getElementById('modal-p1-method').value = data.p1Method; document.getElementById('modal-p1-source').value = data.p1Source;
+                    document.getElementById('modal-p1-start').value = data.p1Start; document.getElementById('modal-p1-end').value = data.p1End;
+                    document.getElementById('modal-p2-topic').value = data.p2Topic; document.getElementById('modal-p2-method').value = data.p2Method; document.getElementById('modal-p2-source').value = data.p2Source;
+                    document.getElementById('modal-p2-start').value = data.p2Start; document.getElementById('modal-p2-end').value = data.p2End;
+                    document.getElementById('modal-p3-topic').value = data.p3Topic; document.getElementById('modal-p3-method').value = data.p3Method; document.getElementById('modal-p3-agency').value = data.p3Agency;
+                    document.getElementById('modal-p3-start').value = data.p3Start; document.getElementById('modal-p3-end').value = data.p3End;
                     document.getElementById('modal-existing-pdf').value = data.pdfUrl || "";
                 }
             } else {
                 document.getElementById('modal-title-text').textContent = "จัดทำแผนพัฒนาตนเอง (ID Plan)";
                 document.getElementById('modal-id').value = "";
                 document.getElementById('modal-year').value = defaultYear;
-                
-                document.getElementById('modal-position').value = myPosition;
-                updateExpLevel();
-                
-                for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = "";
-                for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = "";
-                for(let i=1; i<=3; i++) document.getElementById(`modal-c3-${i}`).value = "";
-
-                const fields = ['p1-topic','p1-method','p1-source','p1-start','p1-end', 'p2-topic','p2-method','p2-source','p2-start','p2-end', 'p3-topic','p3-method','p3-agency','p3-start','p3-end'];
-                fields.forEach(f => document.getElementById(`modal-${f}`).value = "");
-                document.getElementById('modal-existing-pdf').value = "";
+                const inputs = document.querySelectorAll('#idPlanModal textarea, #idPlanModal input[type="text"], #idPlanModal input[type="date"]');
+                inputs.forEach(i => i.value = "");
             }
+            ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'].forEach(id => updateThaiDate(`modal-${id}`, `display-${id}`));
             document.getElementById('idPlanModal').classList.remove('hidden');
-            // เพิ่มไว้ก่อนปิดฟังก์ชัน openIDPlanModal
-['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'].forEach(id => {
-    updateThaiDate(`modal-${id}`, `display-${id}`);
-});
         }
 
-        function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
-
         function submitIDPlanData() {
-            let fields = [
-                'year', 'position', 'expLevel',
-                'p1-topic', 'p1-method', 'p1-source',
-                'p2-topic', 'p2-method', 'p2-source',
-                'p3-topic', 'p3-method', 'p3-agency'
-            ];
-            
-            // แยกชุดวันที่เพื่อแปลงภาษาไทย
+            let fields = ['year', 'position', 'expLevel', 'p1-topic', 'p1-method', 'p1-source', 'p2-topic', 'p2-method', 'p2-source', 'p3-topic', 'p3-method', 'p3-agency'];
             const dateFields = ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'];
-            
             for(let i=1; i<=8; i++) fields.push(`c1-${i}`);
             for(let i=1; i<=4; i++) fields.push(`c2-${i}`);
             for(let i=1; i<=3; i++) fields.push(`c3-${i}`);
 
             let isComplete = true;
             let payload = { action: 'saveIDPlan', name: currentUser.name, id: document.getElementById('modal-id').value, existingPdfUrl: document.getElementById('modal-existing-pdf').value };
-            
             fields.forEach(f => {
                 let val = document.getElementById(`modal-${f}`).value.trim();
                 if(val === "") isComplete = false;
-                let keyName = f.replace(/-([a-z0-9])/g, function (g) { return g[1].toUpperCase(); });
+                let keyName = f.replace(/-([a-z0-9])/g, g => g[1].toUpperCase());
                 payload[keyName] = val;
             });
-
-            // ตรวจสอบและแทรกวันที่ (ทั้งแบบดิบและแบบไทย)
             dateFields.forEach(f => {
                 let val = document.getElementById(`modal-${f}`).value;
                 if(!val) isComplete = false;
-                let keyName = f.replace(/-([a-z0-9])/g, function (g) { return g[1].toUpperCase(); });
-                payload[keyName] = val; // ค่าดิบสำหรับตาราง YYYY-MM-DD
-                payload[`${keyName}Thai`] = formatThaiDate(val); // ค่าภาษาไทยสำหรับ PDF
+                let keyName = f.replace(/-([a-z0-9])/g, g => g[1].toUpperCase());
+                payload[keyName] = val;
+                payload[`${keyName}Thai`] = formatThaiDate(val);
             });
-
-            if (!isComplete) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลและประเมินให้ครบทุกช่องที่มีเครื่องหมาย *', 'warning'); return; }
-
-            Swal.fire({ title: 'กำลังบันทึกและสร้าง PDF...', html: 'กระบวนการนี้อาจใช้เวลา 10-15 วินาที<br>กรุณาอย่าปิดหน้าต่าง', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
+            if (!isComplete) { Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning'); return; }
+            Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) })
             .then(r => r.json()).then(res => {
-                if (res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 2000, showConfirmButton: false });
-                    closeIDPlanModal();
-                    fetchIDPlanData(); 
-                } else { Swal.fire('ผิดพลาด', res.message, 'error'); }
-            }).catch(e => Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error'));
+                if (res.status === 'success') { Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 2000 }); closeIDPlanModal(); fetchIDPlanData(); } 
+                else { Swal.fire('ผิดพลาด', res.message, 'error'); }
+            });
         }
 
         function deleteIDPlanData(id) {
-            Swal.fire({
-                title: 'ยืนยันการลบแผนพัฒนา?', text: "หากลบแล้วจะไม่สามารถกู้คืนได้!", icon: 'warning', showCancelButton: true,
-                confirmButtonColor: '#ef4444', cancelButtonColor: '#94a3b8', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            Swal.fire({ title: 'ลบข้อมูล?', icon: 'warning', showCancelButton: true, confirmButtonText: 'ใช่', cancelButtonText: 'ไม่' }).then(r => {
+                if (r.isConfirmed) {
                     fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteIDPlan', id: id }) })
-                    .then(r => r.json()).then(res => {
-                        if (res.status === 'success') { Swal.fire({ icon: 'success', title: 'ลบสำเร็จ', timer: 1500, showConfirmButton: false }); fetchIDPlanData(); } 
-                        else { Swal.fire('ผิดพลาด', res.message, 'error'); }
-                    });
+                    .then(r => r.json()).then(res => { if(res.status==='success') fetchIDPlanData(); });
                 }
             });
         }
-
-
-        
     </script>
 </body>
 </html>
