@@ -25,7 +25,7 @@
                 </a>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
                     <h2 class="text-xl font-bold text-navy-900 leading-none">ชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC)</h2>
-                    <p class="text-xs font-medium text-gray-500 mt-1.5" id="plc-header-subtitle">โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (Professional Learning Community : PLC)</p>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5" id="plc-header-subtitle">โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (Professional Learning Community : PLC) โดย นางสาววรรณธการ ศรประสิทธิ์</p>
                 </div>
             </div>
             <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
@@ -228,7 +228,6 @@
             document.getElementById('display-position').textContent = currentUser.position || "-";
             document.getElementById('display-group').textContent = currentUser.group || "-";
             document.getElementById('display-room').textContent = currentUser.room || "-";
-            document.getElementById('plc-header-subtitle').textContent = `โครงการชุมชนแห่งการเรียนรู้ทางวิชาชีพ (PLC) โดย ${currentUser.name}`;
 
             if (currentUser.image && currentUser.image.trim() !== "") {
                 document.getElementById('sidebar-user-img').src = currentUser.image;
