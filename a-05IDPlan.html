@@ -385,21 +385,21 @@
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
         }
 
-         function openIDPlanModal(id = null) {
+  function openIDPlanModal(id = null) {
+            // ดึงข้อมูลผู้ใช้จากเครื่อง (ตัวเดียวกับที่โชว์ตรงแถบด้านข้าง)
             const user = JSON.parse(localStorage.getItem('wem_user'));
             currentUser = user || currentUser;
             
-            const name = currentUser ? currentUser.name : "ไม่ระบุชื่อ";
-            const myUserObj = allUsers.find(u => u.Name === name);
-            const myPosition = myUserObj && myUserObj.Position && myUserObj.Position !== "-" ? myUserObj.Position : (currentUser ? currentUser.position : "ไม่ระบุตำแหน่ง");
-            
-            // 🌟 เพิ่มการดึงกลุ่มสาระฯ
-            const myGroup = myUserObj && myUserObj.Group && myUserObj.Group !== "-" ? myUserObj.Group : (currentUser ? currentUser.group : "ไม่ระบุกลุ่มสาระฯ");
+            // ดึงค่ามาตรงๆ เลย
+            const myName = currentUser && currentUser.name ? currentUser.name : "ไม่ระบุชื่อ";
+            const myPosition = currentUser && currentUser.position ? currentUser.position : "ไม่ระบุตำแหน่ง";
+            const myGroup = currentUser && currentUser.group ? currentUser.group : "ไม่ระบุกลุ่มสาระฯ";
 
-            document.getElementById('modal-name').value = name;
-            document.getElementById('modal-position').value = myPosition || "ไม่ระบุตำแหน่ง";
-            document.getElementById('modal-group').value = myGroup; // แสดงข้อมูลกลุ่มสาระฯ
-            updateExpLevel();
+            // ใส่ค่าลงในฟอร์มส่วนที่ 1
+            document.getElementById('modal-name').value = myName;
+            document.getElementById('modal-position').value = myPosition;
+            document.getElementById('modal-group').value = myGroup;
+            updateExpLevel(); // อัปเดตหลอดสีเขียว
 
             if (id) {
                 const data = idPlanDataList.find(r => String(r.id) === String(id));
@@ -408,7 +408,9 @@
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
                     
-                    document.getElementById('modal-position').value = data.position || myPosition;
+                    // หากเคยบันทึกไว้แล้วให้ใช้ของเดิม แต่ถ้าของเดิมว่างให้ดึงจากโปรไฟล์ปัจจุบัน
+                    document.getElementById('modal-position').value = (data.position && data.position !== "-" && data.position !== "") ? data.position : myPosition;
+                    document.getElementById('modal-group').value = (data.group && data.group !== "-" && data.group !== "") ? data.group : myGroup; 
                     updateExpLevel();
                     
                     for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = data[`c1_${i}`] || "";
@@ -443,7 +445,13 @@
                 const textareas = document.querySelectorAll('#idPlanModal textarea');
                 const inputs = document.querySelectorAll('#idPlanModal input[type="text"], #idPlanModal input[type="date"]');
                 textareas.forEach(t => t.value = "");
-                inputs.forEach(i => { if(i.id !== 'modal-name' && i.id !== 'modal-position' && i.id !== 'modal-year') i.value = ""; });
+                
+                // ล้างค่าทุกช่อง ยกเว้นช่องที่ล็อคไว้
+                inputs.forEach(i => { 
+                    if(i.id !== 'modal-name' && i.id !== 'modal-position' && i.id !== 'modal-group' && i.id !== 'modal-year') {
+                        i.value = ""; 
+                    }
+                });
                 
                 for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = "";
                 for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = "";
