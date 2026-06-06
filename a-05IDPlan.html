@@ -401,8 +401,6 @@
             document.getElementById('modal-group').value = myGroup; // แสดงข้อมูลกลุ่มสาระฯ
             updateExpLevel();
 
-            // ... โค้ดที่เหลือในฟังก์ชันปล่อยไว้เหมือนเดิมครับ
-
             if (id) {
                 const data = idPlanDataList.find(r => String(r.id) === String(id));
                 if(data) {
@@ -479,8 +477,13 @@
             for(let i=1; i<=3; i++) fields.push(`c3-${i}`);
 
             let isComplete = true;
-            let payload = { action: 'saveIDPlan', name: currentUser.name, id: document.getElementById('modal-id').value, existingPdfUrl: document.getElementById('modal-existing-pdf').value };
-            
+            let payload = { 
+                action: 'saveIDPlan', 
+                name: currentUser.name, 
+                group: document.getElementById('modal-group').value, // 🌟 ส่งข้อมูลกลุ่มสาระฯ ด้วย
+                id: document.getElementById('modal-id').value, 
+                existingPdfUrl: document.getElementById('modal-existing-pdf').value 
+            };            
             fields.forEach(f => {
                 let val = document.getElementById(`modal-${f}`).value.trim();
                 if(val === "") isComplete = false;
