@@ -324,7 +324,26 @@
             }
         }
 
+        // ฟังก์ชันแปลงวันที่ที่ดึงจากหลังบ้าน ให้เป็นรูปแบบ YYYY-MM-DD สำหรับ input type="date"
+        function formatDateForInput(dateString) {
+            if (!dateString) return "";
+            try {
+                // หากเป็นรูปแบบ YYYY-MM-DD อยู่แล้ว ส่งกลับได้เลย
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString.substring(0, 10);
+                
+                const d = new Date(dateString);
+                if (isNaN(d.getTime())) return dateString; 
+                
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            } catch(e) { return ""; }
+        }
+        
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
+
+        
         function closeSidebarMobile() { const sb = document.getElementById('sidebar'); if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 768) { sb.classList.add('-translate-x-full'); document.getElementById('sidebarOverlay').classList.add('hidden'); } }
         function handleLogout() { localStorage.removeItem('wem_user'); window.location.href = "index.html"; }
 
@@ -385,21 +404,31 @@
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
         }
 
-  function openIDPlanModal(id = null) {
-            // ดึงข้อมูลผู้ใช้จากเครื่อง (ตัวเดียวกับที่โชว์ตรงแถบด้านข้าง)
+ function openIDPlanModal(id = null) {
             const user = JSON.parse(localStorage.getItem('wem_user'));
             currentUser = user || currentUser;
             
-            // ดึงค่ามาตรงๆ เลย
-            const myName = currentUser && currentUser.name ? currentUser.name : "ไม่ระบุชื่อ";
-            const myPosition = currentUser && currentUser.position ? currentUser.position : "ไม่ระบุตำแหน่ง";
-            const myGroup = currentUser && currentUser.group ? currentUser.group : "ไม่ระบุกลุ่มสาระฯ";
+            const name = currentUser ? currentUser.name : "ไม่ระบุชื่อ";
+            const myUserObj = allUsers.find(u => u.Name === name);
+            
+            let myPosition = "ไม่ระบุตำแหน่ง";
+            if (myUserObj && myUserObj.Position && myUserObj.Position.trim() !== "" && myUserObj.Position !== "-") {
+                myPosition = myUserObj.Position;
+            } else if (currentUser && currentUser.position && currentUser.position.trim() !== "" && currentUser.position !== "-") {
+                myPosition = currentUser.position;
+            }
+            
+            let myGroup = "ไม่ระบุกลุ่มสาระฯ";
+            if (myUserObj && myUserObj.Group && myUserObj.Group.trim() !== "" && myUserObj.Group !== "-") {
+                myGroup = myUserObj.Group;
+            } else if (currentUser && currentUser.group && currentUser.group.trim() !== "" && currentUser.group !== "-") {
+                myGroup = currentUser.group;
+            }
 
-            // ใส่ค่าลงในฟอร์มส่วนที่ 1
-            document.getElementById('modal-name').value = myName;
+            document.getElementById('modal-name').value = name;
             document.getElementById('modal-position').value = myPosition;
             document.getElementById('modal-group').value = myGroup;
-            updateExpLevel(); // อัปเดตหลอดสีเขียว
+            updateExpLevel();
 
             if (id) {
                 const data = idPlanDataList.find(r => String(r.id) === String(id));
@@ -408,9 +437,8 @@
                     document.getElementById('modal-id').value = data.id;
                     document.getElementById('modal-year').value = data.year;
                     
-                    // หากเคยบันทึกไว้แล้วให้ใช้ของเดิม แต่ถ้าของเดิมว่างให้ดึงจากโปรไฟล์ปัจจุบัน
-                    document.getElementById('modal-position').value = (data.position && data.position !== "-" && data.position !== "") ? data.position : myPosition;
-                    document.getElementById('modal-group').value = (data.group && data.group !== "-" && data.group !== "") ? data.group : myGroup; 
+                    document.getElementById('modal-position').value = data.position || myPosition;
+                    document.getElementById('modal-group').value = data.group || myGroup; 
                     updateExpLevel();
                     
                     for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = data[`c1_${i}`] || "";
@@ -420,20 +448,22 @@
                     document.getElementById('modal-p1-topic').value = data.p1Topic || "";
                     document.getElementById('modal-p1-method').value = data.p1Method || "";
                     document.getElementById('modal-p1-source').value = data.p1Source || "";
-                    document.getElementById('modal-p1-start').value = data.p1Start || "";
-                    document.getElementById('modal-p1-end').value = data.p1End || "";
+                    
+                    // 🌟 ใช้ formatDateForInput ครอบวันที่ที่ดึงมาจากฐานข้อมูล
+                    document.getElementById('modal-p1-start').value = formatDateForInput(data.p1Start);
+                    document.getElementById('modal-p1-end').value = formatDateForInput(data.p1End);
 
                     document.getElementById('modal-p2-topic').value = data.p2Topic || "";
                     document.getElementById('modal-p2-method').value = data.p2Method || "";
                     document.getElementById('modal-p2-source').value = data.p2Source || "";
-                    document.getElementById('modal-p2-start').value = data.p2Start || "";
-                    document.getElementById('modal-p2-end').value = data.p2End || "";
+                    document.getElementById('modal-p2-start').value = formatDateForInput(data.p2Start);
+                    document.getElementById('modal-p2-end').value = formatDateForInput(data.p2End);
 
                     document.getElementById('modal-p3-topic').value = data.p3Topic || "";
                     document.getElementById('modal-p3-method').value = data.p3Method || "";
                     document.getElementById('modal-p3-agency').value = data.p3Agency || "";
-                    document.getElementById('modal-p3-start').value = data.p3Start || "";
-                    document.getElementById('modal-p3-end').value = data.p3End || "";
+                    document.getElementById('modal-p3-start').value = formatDateForInput(data.p3Start);
+                    document.getElementById('modal-p3-end').value = formatDateForInput(data.p3End);
 
                     document.getElementById('modal-existing-pdf').value = data.pdfUrl || "";
                 }
@@ -445,13 +475,7 @@
                 const textareas = document.querySelectorAll('#idPlanModal textarea');
                 const inputs = document.querySelectorAll('#idPlanModal input[type="text"], #idPlanModal input[type="date"]');
                 textareas.forEach(t => t.value = "");
-                
-                // ล้างค่าทุกช่อง ยกเว้นช่องที่ล็อคไว้
-                inputs.forEach(i => { 
-                    if(i.id !== 'modal-name' && i.id !== 'modal-position' && i.id !== 'modal-group' && i.id !== 'modal-year') {
-                        i.value = ""; 
-                    }
-                });
+                inputs.forEach(i => { if(i.id !== 'modal-name' && i.id !== 'modal-position' && i.id !== 'modal-group' && i.id !== 'modal-year') i.value = ""; });
                 
                 for(let i=1; i<=8; i++) document.getElementById(`modal-c1-${i}`).value = "";
                 for(let i=1; i<=4; i++) document.getElementById(`modal-c2-${i}`).value = "";
@@ -467,7 +491,6 @@
 
             document.getElementById('idPlanModal').classList.remove('hidden');
         }
-
         function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
 
 function submitIDPlanData() {
