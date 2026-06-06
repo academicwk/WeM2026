@@ -716,6 +716,14 @@ function renderDashboardCards(payload) {
         container.appendChild(card);
     });
 }
+
+        // ฟังก์ชันสำหรับปิด Modal Dashboard
+function closeTeacherDashboardModal() {
+    const modal = document.getElementById('teacherDashboardModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
     </script>
 </body>
 </html>
