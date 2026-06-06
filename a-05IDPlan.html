@@ -66,7 +66,7 @@
                 <!-- ส่วนที่ 1: ข้อมูลทั่วไป -->
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <h4 class="text-sm font-bold text-navy-900 mb-3 border-l-4 border-navy-800 pl-2">ส่วนที่ 1: ข้อมูลทั่วไป</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                             <label class="text-xs font-bold text-gray-700 mb-1 block">ชื่อผู้จัดทำ</label>
                             <input type="text" id="modal-name" class="w-full border border-gray-300 p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold" disabled>
@@ -78,6 +78,10 @@
                         <div>
                             <label class="text-xs font-bold text-gray-700 mb-1 block">ตำแหน่งและวิทยฐานะ</label>
                             <input type="text" id="modal-position" class="w-full border border-gray-300 p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold" disabled>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-700 mb-1 block">กลุ่มสาระการเรียนรู้</label>
+                            <input type="text" id="modal-group" class="w-full border border-gray-300 p-2 rounded-lg bg-gray-200 text-gray-600 outline-none text-sm font-bold" disabled>
                         </div>
                     </div>
                 </div>
@@ -381,18 +385,23 @@
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${barColor}`;
         }
 
-        function openIDPlanModal(id = null) {
-            // ดึงค่าผู้ใช้งานอีกครั้งเพื่อความชัวร์
+         function openIDPlanModal(id = null) {
             const user = JSON.parse(localStorage.getItem('wem_user'));
             currentUser = user || currentUser;
             
             const name = currentUser ? currentUser.name : "ไม่ระบุชื่อ";
             const myUserObj = allUsers.find(u => u.Name === name);
             const myPosition = myUserObj && myUserObj.Position && myUserObj.Position !== "-" ? myUserObj.Position : (currentUser ? currentUser.position : "ไม่ระบุตำแหน่ง");
+            
+            // 🌟 เพิ่มการดึงกลุ่มสาระฯ
+            const myGroup = myUserObj && myUserObj.Group && myUserObj.Group !== "-" ? myUserObj.Group : (currentUser ? currentUser.group : "ไม่ระบุกลุ่มสาระฯ");
 
             document.getElementById('modal-name').value = name;
             document.getElementById('modal-position').value = myPosition || "ไม่ระบุตำแหน่ง";
+            document.getElementById('modal-group').value = myGroup; // แสดงข้อมูลกลุ่มสาระฯ
             updateExpLevel();
+
+            // ... โค้ดที่เหลือในฟังก์ชันปล่อยไว้เหมือนเดิมครับ
 
             if (id) {
                 const data = idPlanDataList.find(r => String(r.id) === String(id));
