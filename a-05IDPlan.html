@@ -470,7 +470,8 @@
 
         function closeIDPlanModal() { document.getElementById('idPlanModal').classList.add('hidden'); }
 
-        function submitIDPlanData() {
+function submitIDPlanData() {
+            // ฟิลด์ข้อมูลทั่วไปและแผนพัฒนา
             let fields = [
                 'year', 'position', 'expLevel',
                 'p1-topic', 'p1-method', 'p1-source',
@@ -479,19 +480,17 @@
             ];
             
             const dateFields = ['p1-start', 'p1-end', 'p2-start', 'p2-end', 'p3-start', 'p3-end'];
-            
-            for(let i=1; i<=8; i++) fields.push(`c1-${i}`);
-            for(let i=1; i<=4; i++) fields.push(`c2-${i}`);
-            for(let i=1; i<=3; i++) fields.push(`c3-${i}`);
 
             let isComplete = true;
             let payload = { 
                 action: 'saveIDPlan', 
                 name: currentUser.name, 
-                group: document.getElementById('modal-group').value, // 🌟 ส่งข้อมูลกลุ่มสาระฯ ด้วย
+                group: document.getElementById('modal-group').value,
                 id: document.getElementById('modal-id').value, 
                 existingPdfUrl: document.getElementById('modal-existing-pdf').value 
             };            
+            
+            // 1. ดึงค่าจากฟิลด์ข้อความทั่วไป
             fields.forEach(f => {
                 let val = document.getElementById(`modal-${f}`).value.trim();
                 if(val === "") isComplete = false;
@@ -499,6 +498,24 @@
                 payload[keyName] = val;
             });
 
+            // 🌟 2. ดึงค่าแบบประเมินสมรรถนะ (บังคับให้คีย์เป็น c1_1 เพื่อให้ตรงกับหลังบ้าน)
+            for(let i=1; i<=8; i++) {
+                let val = document.getElementById(`modal-c1-${i}`).value;
+                if(!val) isComplete = false;
+                payload[`c1_${i}`] = val;
+            }
+            for(let i=1; i<=4; i++) {
+                let val = document.getElementById(`modal-c2-${i}`).value;
+                if(!val) isComplete = false;
+                payload[`c2_${i}`] = val;
+            }
+            for(let i=1; i<=3; i++) {
+                let val = document.getElementById(`modal-c3-${i}`).value;
+                if(!val) isComplete = false;
+                payload[`c3_${i}`] = val;
+            }
+
+            // 3. ดึงค่าจากฟิลด์วันที่
             dateFields.forEach(f => {
                 let val = document.getElementById(`modal-${f}`).value;
                 if(!val) isComplete = false;
