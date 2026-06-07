@@ -691,10 +691,14 @@ function renderDashboardCards(payload) {
             container.innerHTML = '';
             const teachers = payload.teachers;
 
-            // 1. ดึงการตั้งค่าจาก LocalStorage (ค่าสวิตช์ที่บันทึกไว้)
+            // 1. ดึงการตั้งค่าจาก LocalStorage
             const settings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            
+            // 💡 ตัวช่วยตรวจสอบ! (กด F12 -> Console เพื่อดูว่าหน้าตั้งค่าเซฟคีย์ชื่ออะไรมาบ้าง)
+            console.log("ตั้งค่าที่ดึงมาได้:", settings);
 
-            // 2. กำหนดชื่อย่อและ "คีย์" ให้ตรงกับ ID ของสวิตช์ในหน้าตั้งค่าของคุณครู
+            // 🌟 2. กำหนดชื่อย่อและ "คีย์ตั้งค่า" (settingKey)
+            // คุณครูต้องแก้คำในเครื่องหมายคำพูดของ settingKey ให้ตรงกับที่โชว์ใน Console (F12) เป๊ะๆ นะครับ
             const SYSTEM_CONFIG = [
                 { key: 'lessonPlan', label: 'แผนฯ', settingKey: 'menu_lessonplan' },
                 { key: 'plc', label: 'PLC', settingKey: 'menu_plc' },
@@ -704,10 +708,11 @@ function renderDashboardCards(payload) {
                 { key: 'idPlan', label: 'ID Plan', settingKey: 'menu_idplan' }
             ];
 
-            // 3. กรองเอาระบบที่ตั้งค่าเป็น "เปิด (true)" มาแสดง
+            // 3. กรองเอาระบบที่เปิดใช้งาน
             const activeSystems = SYSTEM_CONFIG.filter(sys => {
                 let val = settings[sys.settingKey];
-                return val === true || val === "true" || val === "on";
+                // เช็คว่าค่าเป็น true (ทั้งแบบ boolean และ string)
+                return val === true || String(val).toLowerCase() === "true" || String(val).toLowerCase() === "on";
             });
 
             if (teachers.length === 0) {
@@ -716,7 +721,7 @@ function renderDashboardCards(payload) {
             }
 
             if (activeSystems.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold bg-white rounded-xl border border-gray-200"><i class="fa-solid fa-sliders text-4xl mb-3 text-gray-300"></i><br>ระบบถูกปิดใช้งานจากหน้าตั้งค่าทั้งหมด</div>`;
+                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold bg-white rounded-xl border border-gray-200"><i class="fa-solid fa-sliders text-4xl mb-3 text-gray-300"></i><br>ระบบถูกปิดใช้งานจากหน้าตั้งค่าทั้งหมด<br><span class="text-xs font-normal text-gray-400 mt-2 block">(กด F12 ดู Console เพื่อเช็คชื่อ Setting Key ให้ตรงกัน)</span></div>`;
                 return;
             }
 
@@ -728,7 +733,6 @@ function renderDashboardCards(payload) {
                     let stat = t.stats[sys.key] || { percent: 0 };
                     let pct = stat.percent;
                     
-                    // เปลี่ยนสีหลอดตามสถานะ (เต็ม=เขียว, กลางๆ=เหลือง, 0=เทา/แดง)
                     let barColor = pct >= 100 ? 'bg-green-500' : (pct > 0 ? 'bg-amber-400' : 'bg-red-400');
                     let textColor = pct >= 100 ? 'text-green-600' : (pct > 0 ? 'text-amber-600' : 'text-slate-400');
                     let bgColor = pct > 0 ? 'bg-white' : 'bg-slate-50';
@@ -761,7 +765,6 @@ function renderDashboardCards(payload) {
                 container.appendChild(card);
             });
         }
-
         // ฟังก์ชันสำหรับปิด Modal Dashboard
 function closeTeacherDashboardModal() {
     const modal = document.getElementById('teacherDashboardModal');
