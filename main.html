@@ -691,26 +691,23 @@ function renderDashboardCards(payload) {
             container.innerHTML = '';
             const teachers = payload.teachers;
 
-            // 🌟 1. ดึงการตั้งค่าจาก LocalStorage เพื่อตรวจสอบว่าระบบไหนถูกกดเปิดไว้บ้าง
+            // 1. ดึงการตั้งค่าจาก LocalStorage (ค่าสวิตช์ที่บันทึกไว้)
             const settings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
 
-            // 🌟 2. กำหนด "ชื่อย่อ" ที่จะแสดงใน Card และ "คีย์ของการตั้งค่า"
-            // (ถ้าคีย์การตั้งค่าของคุณครูชื่อไม่ตรงกับด้านล่าง ให้แก้ตรง settingKey ได้เลยครับ)
+            // 2. กำหนดชื่อย่อและ "คีย์" ให้ตรงกับ ID ของสวิตช์ในหน้าตั้งค่าของคุณครู
             const SYSTEM_CONFIG = [
                 { key: 'lessonPlan', label: 'แผนฯ', settingKey: 'menu_lessonplan' },
                 { key: 'plc', label: 'PLC', settingKey: 'menu_plc' },
                 { key: 'research', label: 'วิจัย', settingKey: 'menu_research' },
                 { key: 'media', label: 'สื่อฯ', settingKey: 'menu_media' },
                 { key: 'testBank', label: 'คลังข้อสอบ', settingKey: 'menu_testbank' },
-                { key: 'idPlan', label: 'ID Plan', settingKey: 'menu_idplan' },
-                { key: 'training', label: 'อบรม', settingKey: 'menu_training' }
+                { key: 'idPlan', label: 'ID Plan', settingKey: 'menu_idplan' }
             ];
 
-            // 🌟 3. กรองเอาเฉพาะระบบที่ "เปิดใช้งาน" (ค่าในตั้งค่าไม่เป็น false)
+            // 3. กรองเอาระบบที่ตั้งค่าเป็น "เปิด (true)" มาแสดง
             const activeSystems = SYSTEM_CONFIG.filter(sys => {
                 let val = settings[sys.settingKey];
-                // ถ้ายังไม่เคยตั้งค่า (undefined) หรือตั้งเป็นเปิดไว้ (true/on) ให้ดึงมาแสดง
-                return val === undefined || val === true || val === "true" || val === "on";
+                return val === true || val === "true" || val === "on";
             });
 
             if (teachers.length === 0) {
@@ -719,27 +716,32 @@ function renderDashboardCards(payload) {
             }
 
             if (activeSystems.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold bg-white rounded-xl border border-gray-200"><i class="fa-solid fa-sliders text-4xl mb-3 text-gray-300"></i><br>ไม่มีระบบย่อยใดถูกเปิดใช้งานในหน้าตั้งค่า</div>`;
+                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold bg-white rounded-xl border border-gray-200"><i class="fa-solid fa-sliders text-4xl mb-3 text-gray-300"></i><br>ระบบถูกปิดใช้งานจากหน้าตั้งค่าทั้งหมด</div>`;
                 return;
             }
 
-            // 4. วาด Card ของครูแต่ละคน
+            // 4. วาด Card
             teachers.forEach(t => {
-                let badgesHtml = '';
+                let progressBarsHtml = '';
                 
-                // สร้างป้ายชื่อย่อและจำนวน ตามระบบที่เปิดใช้งาน
                 activeSystems.forEach(sys => {
-                    let count = t.stats[sys.key] || 0;
+                    let stat = t.stats[sys.key] || { percent: 0 };
+                    let pct = stat.percent;
                     
-                    // ถ้ามีงานส่ง สีจะเข้ม / ถ้าเป็น 0 สีจะจาง
-                    let bgColor = count > 0 ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200';
-                    let labelColor = count > 0 ? 'text-indigo-800' : 'text-slate-500';
-                    let countColor = count > 0 ? 'text-indigo-600' : 'text-slate-400';
+                    // เปลี่ยนสีหลอดตามสถานะ (เต็ม=เขียว, กลางๆ=เหลือง, 0=เทา/แดง)
+                    let barColor = pct >= 100 ? 'bg-green-500' : (pct > 0 ? 'bg-amber-400' : 'bg-red-400');
+                    let textColor = pct >= 100 ? 'text-green-600' : (pct > 0 ? 'text-amber-600' : 'text-slate-400');
+                    let bgColor = pct > 0 ? 'bg-white' : 'bg-slate-50';
 
-                    badgesHtml += `
-                        <div class="${bgColor} px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex justify-between items-center w-[95px] shadow-sm">
-                            <span class="${labelColor} truncate mr-1">${sys.label}</span>
-                            <span class="${countColor}">${count}</span>
+                    progressBarsHtml += `
+                        <div class="${bgColor} border border-slate-200 p-2 rounded-lg flex flex-col w-[95px] md:w-[110px] shadow-sm shrink-0">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="text-[10px] font-bold text-navy-900 truncate pr-1">${sys.label}</span>
+                                <span class="text-[10px] font-bold ${textColor}">${pct}%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                                <div class="h-full ${barColor} transition-all duration-500" style="width: ${pct}%"></div>
+                            </div>
                         </div>
                     `;
                 });
@@ -751,8 +753,8 @@ function renderDashboardCards(payload) {
                     <div class="flex-1 text-center md:text-left w-full overflow-hidden">
                         <h4 class="font-bold text-navy-900 text-base truncate">${t.name}</h4>
                         <p class="text-[11px] text-gray-500 truncate mb-3">${t.position}</p>
-                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-1.5">
-                            ${badgesHtml}
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                            ${progressBarsHtml}
                         </div>
                     </div>
                 `;
