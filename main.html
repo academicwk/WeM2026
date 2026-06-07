@@ -687,35 +687,78 @@ async function openTeacherDashboardModal() {
         }
 
 function renderDashboardCards(payload) {
-    const container = document.getElementById('dashboard-cards-container');
-    container.innerHTML = '';
-    const { teachers, systems } = payload;
+            const container = document.getElementById('dashboard-cards-container');
+            container.innerHTML = '';
+            const teachers = payload.teachers;
 
-    teachers.forEach(t => {
-        let badgesHtml = '';
-        systems.forEach(sysName => {
-            const stat = t.status[sysName] || { percent: 0 };
-            badgesHtml += `
-                <div class="flex items-center justify-between text-[10px] font-bold bg-white px-2 py-1 rounded border border-gray-200 min-w-[100px]">
-                    <span>${sysName}</span>
-                    <span class="${stat.percent === 100 ? 'text-green-600' : 'text-red-500'}">${stat.percent}%</span>
-                </div>
-            `;
-        });
+            // 🌟 1. ดึงการตั้งค่าจาก LocalStorage เพื่อตรวจสอบว่าระบบไหนถูกกดเปิดไว้บ้าง
+            const settings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
 
-        const card = document.createElement('div');
-        card.className = "bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4 hover:border-navy-900 transition-all";
-        card.innerHTML = `
-            <img src="${t.image}" class="w-10 h-10 rounded-full object-cover">
-            <div class="flex-1">
-                <h4 class="font-bold text-sm text-navy-900">${t.name}</h4>
-                <p class="text-[10px] text-gray-500">${t.position}</p>
-            </div>
-            <div class="flex gap-2">${badgesHtml}</div>
-        `;
-        container.appendChild(card);
-    });
-}
+            // 🌟 2. กำหนด "ชื่อย่อ" ที่จะแสดงใน Card และ "คีย์ของการตั้งค่า"
+            // (ถ้าคีย์การตั้งค่าของคุณครูชื่อไม่ตรงกับด้านล่าง ให้แก้ตรง settingKey ได้เลยครับ)
+            const SYSTEM_CONFIG = [
+                { key: 'lessonPlan', label: 'แผนฯ', settingKey: 'menu_lessonplan' },
+                { key: 'plc', label: 'PLC', settingKey: 'menu_plc' },
+                { key: 'research', label: 'วิจัย', settingKey: 'menu_research' },
+                { key: 'media', label: 'สื่อฯ', settingKey: 'menu_media' },
+                { key: 'testBank', label: 'คลังข้อสอบ', settingKey: 'menu_testbank' },
+                { key: 'idPlan', label: 'ID Plan', settingKey: 'menu_idplan' },
+                { key: 'training', label: 'อบรม', settingKey: 'menu_training' }
+            ];
+
+            // 🌟 3. กรองเอาเฉพาะระบบที่ "เปิดใช้งาน" (ค่าในตั้งค่าไม่เป็น false)
+            const activeSystems = SYSTEM_CONFIG.filter(sys => {
+                let val = settings[sys.settingKey];
+                // ถ้ายังไม่เคยตั้งค่า (undefined) หรือตั้งเป็นเปิดไว้ (true/on) ให้ดึงมาแสดง
+                return val === undefined || val === true || val === "true" || val === "on";
+            });
+
+            if (teachers.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold bg-white rounded-xl border border-gray-200"><i class="fa-solid fa-users-slash text-4xl mb-3 text-gray-300"></i><br>ไม่พบรายชื่อครูในระบบ</div>`;
+                return;
+            }
+
+            if (activeSystems.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold bg-white rounded-xl border border-gray-200"><i class="fa-solid fa-sliders text-4xl mb-3 text-gray-300"></i><br>ไม่มีระบบย่อยใดถูกเปิดใช้งานในหน้าตั้งค่า</div>`;
+                return;
+            }
+
+            // 4. วาด Card ของครูแต่ละคน
+            teachers.forEach(t => {
+                let badgesHtml = '';
+                
+                // สร้างป้ายชื่อย่อและจำนวน ตามระบบที่เปิดใช้งาน
+                activeSystems.forEach(sys => {
+                    let count = t.stats[sys.key] || 0;
+                    
+                    // ถ้ามีงานส่ง สีจะเข้ม / ถ้าเป็น 0 สีจะจาง
+                    let bgColor = count > 0 ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200';
+                    let labelColor = count > 0 ? 'text-indigo-800' : 'text-slate-500';
+                    let countColor = count > 0 ? 'text-indigo-600' : 'text-slate-400';
+
+                    badgesHtml += `
+                        <div class="${bgColor} px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex justify-between items-center w-[95px] shadow-sm">
+                            <span class="${labelColor} truncate mr-1">${sys.label}</span>
+                            <span class="${countColor}">${count}</span>
+                        </div>
+                    `;
+                });
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-4 hover:border-navy-800 hover:shadow-md transition-all";
+                card.innerHTML = `
+                    <img src="${t.image}" onerror="this.src='https://img2.pic.in.th/pic/default-avatar.png'" class="w-14 h-14 rounded-full object-cover border-2 border-slate-100 shrink-0">
+                    <div class="flex-1 text-center md:text-left w-full overflow-hidden">
+                        <h4 class="font-bold text-navy-900 text-base truncate">${t.name}</h4>
+                        <p class="text-[11px] text-gray-500 truncate mb-3">${t.position}</p>
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-1.5">
+                            ${badgesHtml}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
         // ฟังก์ชันสำหรับปิด Modal Dashboard
 function closeTeacherDashboardModal() {
