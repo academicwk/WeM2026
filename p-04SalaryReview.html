@@ -84,12 +84,22 @@
     </div>
 
     <script>
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec"; // ⚠️ เปลี่ยนเป็นลิงก์ API ของคุณครู
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
 
         let currentUser = null;
         let allUsers = []; 
         let salaryDataList = [];
         const ADMIN_NAME = "นายพีระศิน ไชยศร";
+
+        // 🌟 เพิ่มคำสั่งโหลดข้อมูลตอนเริ่มเปิดหน้าเว็บ (จุดที่หายไป)
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadSidebarComponent();
+            setupUserData();
+            if (currentUser && currentUser.name === ADMIN_NAME) {
+                await fetchAllUsers();
+            }
+            fetchSalaryData();
+        });
 
         async function loadSidebarComponent() {
             try {
@@ -103,13 +113,11 @@
             if (!userData) { window.location.href = "index.html"; return; }
             currentUser = JSON.parse(userData);
 
-            // เช็คสิทธิ์ Admin
             if (currentUser.name === ADMIN_NAME) {
                 const adminActions = document.getElementById('admin-actions');
                 if(adminActions) adminActions.classList.remove('hidden');
             }
 
-            // 🌟 1. ส่วนที่เติมเข้ามา: ดึงข้อมูลโปรไฟล์ไปแสดงที่ Sidebar
             const nameParts = (currentUser.name || "").split(" ");
             const elFirst = document.getElementById('display-firstname');
             const elLast = document.getElementById('display-lastname');
@@ -129,7 +137,6 @@
                 }
             }
 
-            // นาฬิกามุมขวาบน
             setInterval(() => {
                 const now = new Date();
                 const clockEl = document.getElementById('current-date');
@@ -137,7 +144,6 @@
             }, 1000);
         }
 
-        // 🌟 2. ส่วนที่เติมเข้ามา: ฟังก์ชันปุ่มกดต่างๆ ของ Sidebar
         function toggleSidebar() { 
             const sb = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -190,9 +196,10 @@
         function renderCards() {
             const container = document.getElementById('salary-cards-container');
             container.innerHTML = '';
+            
+            if (!currentUser) return;
             const isAdmin = currentUser.name === ADMIN_NAME;
 
-            // กรองข้อมูล: ถ้าเป็น Admin เห็นหมด, ถ้าเป็นครู เห็นเฉพาะของตัวเอง
             const viewData = isAdmin ? salaryDataList : salaryDataList.filter(d => d.name === currentUser.name);
 
             if (viewData.length === 0) {
@@ -284,7 +291,7 @@
                     reader.onload = (e) => resolve(e.target.result.split(',')[1]);
                     reader.readAsDataURL(file);
                 });
-            } else if (!payload.id) { // ถ้าเพิ่มใหม่ ต้องบังคับแนบไฟล์
+            } else if (!payload.id) {
                 Swal.fire('ลืมแนบไฟล์', 'กรุณาอัปโหลดไฟล์ผลการพิจารณา (PDF)', 'warning'); return;
             }
 
