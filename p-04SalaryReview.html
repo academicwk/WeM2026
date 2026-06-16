@@ -196,17 +196,15 @@
         function renderCards() {
             const container = document.getElementById('salary-cards-container');
             
-            // 🌟 1. ปรับ Container ให้เป็นแนวตั้งแถวเดียว (ยกเลิก Grid)
+            // ปรับ Container ให้เป็นแนวตั้งแถวเดียว
             container.className = "max-w-5xl mx-auto flex flex-col gap-3 pb-10";
             container.innerHTML = '';
             
             if (!currentUser) return;
             const isAdmin = currentUser.name === ADMIN_NAME;
 
-            // กรองข้อมูล: ถ้าเป็น Admin เห็นหมด, ถ้าเป็นครู เห็นเฉพาะของตัวเอง
+            // กรองข้อมูลและเรียงลำดับ ก-ฮ
             let viewData = isAdmin ? salaryDataList : salaryDataList.filter(d => d.name === currentUser.name);
-
-            // 🌟 2. เรียงลำดับตามตัวอักษรของชื่อ (รองรับภาษาไทย)
             viewData.sort((a, b) => a.name.localeCompare(b.name, 'th'));
 
             if (viewData.length === 0) {
@@ -214,14 +212,14 @@
                 return;
             }
 
-            // 🌟 3. ปรับดีไซน์ Card ให้เป็นแนวยาว (Flex Row)
             viewData.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all gap-4";
+                // เอา justify-between ออก เปลี่ยนมาคุมขนาดรายชิ้นแทน
+                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all gap-4";
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
                     
-                    <div class="flex items-center gap-4 ml-2 w-full md:w-auto overflow-hidden">
+                    <div class="flex items-center gap-4 ml-2 w-full md:flex-1 overflow-hidden">
                         <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                         <div class="truncate">
                             <h4 class="font-bold text-navy-900 text-sm md:text-base leading-tight truncate">${item.name}</h4>
@@ -229,12 +227,12 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex justify-center w-full md:w-auto shrink-0">
-                        <p class="text-xs font-bold text-gray-600"><i class="fa-regular fa-calendar text-gold-500 mr-1.5"></i> ${item.term} / ปีงบฯ ${item.year}</p>
+                    <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex justify-center items-center w-full md:w-[200px] shrink-0">
+                        <p class="text-xs font-bold text-gray-600 whitespace-nowrap"><i class="fa-regular fa-calendar text-gold-500 mr-1.5"></i> ${item.term} / ปีงบฯ ${item.year}</p>
                     </div>
 
-                    <div class="flex items-center gap-2 w-full md:w-auto justify-end shrink-0 ml-1">
-                        <a href="${item.pdfUrl || '#'}" target="_blank" class="px-5 py-2 bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold rounded-lg flex justify-center items-center gap-1.5 transition-colors shadow-sm ${!item.pdfUrl ? 'opacity-50 pointer-events-none' : ''}">
+                    <div class="flex items-center gap-2 w-full md:w-[220px] justify-end shrink-0 pr-1">
+                        <a href="${item.pdfUrl || '#'}" target="_blank" class="px-4 py-2 bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold rounded-lg flex justify-center items-center gap-1.5 transition-colors shadow-sm ${!item.pdfUrl ? 'opacity-50 pointer-events-none' : ''}">
                             <i class="fa-solid fa-file-pdf"></i> ดูผลพิจารณา
                         </a>
                         ${isAdmin ? `
