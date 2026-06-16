@@ -38,7 +38,7 @@
                 </button>
             </div>
 
-            <div id="salary-cards-container" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-10"></div>
+            <div id="salary-cards-container" class="max-w-5xl mx-auto flex flex-col gap-3 pb-10"></div>
         </div>
     </main>
 
@@ -89,13 +89,18 @@
         let currentUser = null;
         let allUsers = []; 
         let salaryDataList = [];
-        const ADMIN_NAME = "นายพีระศิน ไชยศร";
+        
+        // 🌟 ตั้งค่ารายชื่อผู้จัดการระบบ (Admin)
+        const ADMIN_NAMES = [
+            "นายพีระศิน ไชยศร", 
+            "นางสาวจิณณานิจ ไพโรจน์ณรงค์", 
+            "นางสันทนี บุญจิ่ม"
+        ];
 
-        // 🌟 เพิ่มคำสั่งโหลดข้อมูลตอนเริ่มเปิดหน้าเว็บ (จุดที่หายไป)
         document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
-            if (currentUser && currentUser.name === ADMIN_NAME) {
+            if (currentUser && ADMIN_NAMES.includes(currentUser.name)) {
                 await fetchAllUsers();
             }
             fetchSalaryData();
@@ -113,7 +118,8 @@
             if (!userData) { window.location.href = "index.html"; return; }
             currentUser = JSON.parse(userData);
 
-            if (currentUser.name === ADMIN_NAME) {
+            // เช็คสิทธิ์ Admin
+            if (ADMIN_NAMES.includes(currentUser.name)) {
                 const adminActions = document.getElementById('admin-actions');
                 if(adminActions) adminActions.classList.remove('hidden');
             }
@@ -183,27 +189,23 @@
 
         async function fetchSalaryData() {
             const container = document.getElementById('salary-cards-container');
-            container.innerHTML = `<div class="col-span-full text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-navy-800"></i></div>`;
+            container.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-navy-800"></i></div>`;
             try {
                 const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSalaryReview' }) }).then(r => r.json());
                 if (res.status === 'success') {
                     salaryDataList = res.data || [];
                     renderCards();
-                } else { container.innerHTML = `<div class="col-span-full text-center py-10 text-red-500">ไม่สามารถโหลดข้อมูลได้</div>`; }
-            } catch (error) { container.innerHTML = `<div class="col-span-full text-center py-10 text-red-500">การเชื่อมต่อผิดพลาด</div>`; }
+                } else { container.innerHTML = `<div class="text-center py-10 text-red-500">ไม่สามารถโหลดข้อมูลได้</div>`; }
+            } catch (error) { container.innerHTML = `<div class="text-center py-10 text-red-500">การเชื่อมต่อผิดพลาด</div>`; }
         }
 
         function renderCards() {
             const container = document.getElementById('salary-cards-container');
-            
-            // ปรับ Container ให้เป็นแนวตั้งแถวเดียว
-            container.className = "max-w-5xl mx-auto flex flex-col gap-3 pb-10";
             container.innerHTML = '';
             
             if (!currentUser) return;
-            const isAdmin = currentUser.name === ADMIN_NAME;
+            const isAdmin = ADMIN_NAMES.includes(currentUser.name);
 
-            // กรองข้อมูลและเรียงลำดับ ก-ฮ
             let viewData = isAdmin ? salaryDataList : salaryDataList.filter(d => d.name === currentUser.name);
             viewData.sort((a, b) => a.name.localeCompare(b.name, 'th'));
 
@@ -213,15 +215,16 @@
             }
 
             viewData.forEach(item => {
-                // 🌟 กำหนดสีตามครั้งที่ประเมิน (ครึ่งปีแรก = สีน้ำเงิน, ครึ่งปีหลัง = สีส้ม)
-                let termColor = item.term === 'ครึ่งปีแรก' ? 'text-blue-600' : 'text-orange-500';
+                let badgeStyle = item.term === 'ครึ่งปีแรก' 
+                    ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                    : 'bg-orange-50 border-orange-200 text-orange-700';
+                let iconColor = item.term === 'ครึ่งปีแรก' ? 'text-blue-500' : 'text-orange-500';
 
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all gap-4";
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
                     
-                    <!-- ส่วนซ้าย: ไอคอน และ ชื่อ -->
                     <div class="flex items-center gap-4 ml-2 w-full md:flex-1 overflow-hidden">
                         <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                         <div class="truncate">
@@ -230,15 +233,13 @@
                         </div>
                     </div>
 
-                    <!-- ส่วนกลาง: ครั้งที่ / ปีงบประมาณ (🌟 ขยายเป็น 250px รับข้อความยาว และแยกสี) -->
-                    <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex justify-center items-center w-full md:w-[250px] shrink-0">
-                        <p class="text-xs font-bold text-gray-600 whitespace-nowrap">
-                            <i class="fa-regular fa-calendar text-gold-500 mr-1.5"></i> 
-                            <span class="${termColor}">${item.term}</span> / ปีงบประมาณ พ.ศ. ${item.year}
+                    <div class="${badgeStyle} px-4 py-2 rounded-lg border flex justify-center items-center w-full md:w-[250px] shrink-0">
+                        <p class="text-xs font-bold whitespace-nowrap">
+                            <i class="fa-regular fa-calendar ${iconColor} mr-1.5"></i> 
+                            ${item.term} / ปีงบประมาณ พ.ศ. ${item.year}
                         </p>
                     </div>
 
-                    <!-- ส่วนขวา: ปุ่มจัดการ -->
                     <div class="flex items-center gap-2 w-full md:w-[220px] justify-end shrink-0 pr-1">
                         <a href="${item.pdfUrl || '#'}" target="_blank" class="px-4 py-2 bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold rounded-lg flex justify-center items-center gap-1.5 transition-colors shadow-sm ${!item.pdfUrl ? 'opacity-50 pointer-events-none' : ''}">
                             <i class="fa-solid fa-file-pdf"></i> ดูผลพิจารณา
@@ -252,6 +253,7 @@
                 container.appendChild(card);
             });
         }
+
         function openSalaryModal(id = null) {
             if (id) {
                 const data = salaryDataList.find(r => String(r.id) === String(id));
@@ -338,4 +340,3 @@
         }
     </script>
 </body>
-</html>
