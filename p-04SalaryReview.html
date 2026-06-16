@@ -116,46 +116,52 @@
         function setupUserData() {
             const userData = localStorage.getItem('wem_user');
             if (!userData) { window.location.href = "index.html"; return; }
-            currentUser = JSON.parse(userData);
 
-            // เช็คสิทธิ์ Admin
-            if (ADMIN_NAMES.includes(currentUser.name)) {
+            currentUser = JSON.parse(userData);
+            const fullName = currentUser.name || "";
+            const nameParts = fullName.split(" ");
+            
+            // 🌟 1. ดึงข้อมูลโปรไฟล์ (ใช้ตัวแปรและ ID ตรงกับหน้าหลัก 100%)
+            const elFirst = document.getElementById('display-firstname');
+            const elLast = document.getElementById('display-lastname');
+            const elPos = document.getElementById('display-position');
+            const elGroup = document.getElementById('display-group');
+            const elRoom = document.getElementById('display-room');
+
+            if(elFirst) elFirst.textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            if(elLast) elLast.textContent = nameParts.slice(1).join(" ") || ""; 
+            if(elPos) elPos.textContent = currentUser.position || "-";
+            if(elGroup) elGroup.textContent = currentUser.group || "-";
+            if(elRoom) elRoom.textContent = currentUser.room || "-";
+
+            // 🌟 2. จัดการรูปโปรไฟล์
+            const sidebarImg = document.getElementById('sidebar-user-img');
+            const sidebarIcon = document.getElementById('sidebar-user-icon');
+            if (currentUser.image && currentUser.image.trim() !== "" && sidebarImg && sidebarIcon) {
+                sidebarImg.src = currentUser.image;
+                sidebarImg.classList.remove('hidden');
+                sidebarIcon.classList.add('hidden');
+            }
+
+            // 🌟 3. จัดการปุ่มตั้งค่าใน Sidebar (เฉพาะคุณครูพีระศิน)
+            if (fullName === "นายพีระศิน ไชยศร") {
+                const btnSettings = document.getElementById('btn-settings');
+                const btnUserSettings = document.getElementById('btn-user-settings');
+                if(btnSettings) btnSettings.classList.replace('hidden', 'flex');
+                if(btnUserSettings) btnUserSettings.classList.replace('hidden', 'flex');
+            }
+
+            // 🌟 4. เช็คสิทธิ์โชว์ปุ่ม "เพิ่มข้อมูลการเลื่อนเงินเดือน" (สำหรับแอดมิน 3 ท่าน)
+            if (ADMIN_NAMES.includes(fullName)) {
                 const adminActions = document.getElementById('admin-actions');
                 if(adminActions) adminActions.classList.remove('hidden');
             }
 
-            // 🌟 จัดการแสดงข้อมูลโปรไฟล์ให้ครบถ้วน
-            const nameParts = (currentUser.name || "").split(" ");
-            const elFirst = document.getElementById('display-firstname');
-            const elLast = document.getElementById('display-lastname');
-            const elPos = document.getElementById('display-position');
-            const elDept = document.getElementById('display-department'); // เพิ่มกลุ่มสาระ
-            const elLevel = document.getElementById('display-level');     // เพิ่มระดับชั้น
-            
-            if(elFirst) elFirst.textContent = nameParts[0] || "ไม่ระบุชื่อ";
-            if(elLast) elLast.textContent = nameParts.slice(1).join(" ") || ""; 
-            if(elPos) elPos.textContent = currentUser.position || "-";
-            
-            // 🌟 เติมข้อมูลกลุ่มสาระและระดับชั้น (รองรับตัวแปรหลายรูปแบบตามฐานข้อมูล WeM)
-            if(elDept) elDept.textContent = currentUser.department || currentUser.subjectGroup || currentUser.subject || "";
-            if(elLevel) elLevel.textContent = currentUser.level || currentUser.className || "";
-
-            // จัดการรูปโปรไฟล์
-            if (currentUser.image && currentUser.image.trim() !== "") {
-                const imgEl = document.getElementById('sidebar-user-img');
-                const iconEl = document.getElementById('sidebar-user-icon');
-                if(imgEl && iconEl) {
-                    imgEl.src = currentUser.image;
-                    imgEl.classList.remove('hidden');
-                    iconEl.classList.add('hidden');
-                }
-            }
-
-            // นาฬิกา
+            // 🌟 5. นาฬิกา
             setInterval(() => {
                 const now = new Date();
-                const clockEl = document.getElementById('current-date');
-                if (clockEl) clockEl.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
+                const clockElement = document.getElementById('current-date');
+                if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
             }, 1000);
         }
         function toggleSidebar() { 
