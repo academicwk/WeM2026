@@ -213,12 +213,15 @@
             }
 
             viewData.forEach(item => {
+                // 🌟 กำหนดสีตามครั้งที่ประเมิน (ครึ่งปีแรก = สีน้ำเงิน, ครึ่งปีหลัง = สีส้ม)
+                let termColor = item.term === 'ครึ่งปีแรก' ? 'text-blue-600' : 'text-orange-500';
+
                 const card = document.createElement('div');
-                // เอา justify-between ออก เปลี่ยนมาคุมขนาดรายชิ้นแทน
                 card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center relative overflow-hidden group hover:shadow-md hover:border-emerald-300 transition-all gap-4";
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
                     
+                    <!-- ส่วนซ้าย: ไอคอน และ ชื่อ -->
                     <div class="flex items-center gap-4 ml-2 w-full md:flex-1 overflow-hidden">
                         <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                         <div class="truncate">
@@ -227,10 +230,15 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex justify-center items-center w-full md:w-[200px] shrink-0">
-                        <p class="text-xs font-bold text-gray-600 whitespace-nowrap"><i class="fa-regular fa-calendar text-gold-500 mr-1.5"></i> ${item.term} / ปีงบฯ ${item.year}</p>
+                    <!-- ส่วนกลาง: ครั้งที่ / ปีงบประมาณ (🌟 ขยายเป็น 250px รับข้อความยาว และแยกสี) -->
+                    <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex justify-center items-center w-full md:w-[250px] shrink-0">
+                        <p class="text-xs font-bold text-gray-600 whitespace-nowrap">
+                            <i class="fa-regular fa-calendar text-gold-500 mr-1.5"></i> 
+                            <span class="${termColor}">${item.term}</span> / ปีงบประมาณ พ.ศ. ${item.year}
+                        </p>
                     </div>
 
+                    <!-- ส่วนขวา: ปุ่มจัดการ -->
                     <div class="flex items-center gap-2 w-full md:w-[220px] justify-end shrink-0 pr-1">
                         <a href="${item.pdfUrl || '#'}" target="_blank" class="px-4 py-2 bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold rounded-lg flex justify-center items-center gap-1.5 transition-colors shadow-sm ${!item.pdfUrl ? 'opacity-50 pointer-events-none' : ''}">
                             <i class="fa-solid fa-file-pdf"></i> ดูผลพิจารณา
@@ -244,7 +252,6 @@
                 container.appendChild(card);
             });
         }
-
         function openSalaryModal(id = null) {
             if (id) {
                 const data = salaryDataList.find(r => String(r.id) === String(id));
