@@ -124,15 +124,23 @@
                 if(adminActions) adminActions.classList.remove('hidden');
             }
 
+            // 🌟 จัดการแสดงข้อมูลโปรไฟล์ให้ครบถ้วน
             const nameParts = (currentUser.name || "").split(" ");
             const elFirst = document.getElementById('display-firstname');
             const elLast = document.getElementById('display-lastname');
             const elPos = document.getElementById('display-position');
+            const elDept = document.getElementById('display-department'); // เพิ่มกลุ่มสาระ
+            const elLevel = document.getElementById('display-level');     // เพิ่มระดับชั้น
             
             if(elFirst) elFirst.textContent = nameParts[0] || "ไม่ระบุชื่อ";
             if(elLast) elLast.textContent = nameParts.slice(1).join(" ") || ""; 
             if(elPos) elPos.textContent = currentUser.position || "-";
+            
+            // 🌟 เติมข้อมูลกลุ่มสาระและระดับชั้น (รองรับตัวแปรหลายรูปแบบตามฐานข้อมูล WeM)
+            if(elDept) elDept.textContent = currentUser.department || currentUser.subjectGroup || currentUser.subject || "";
+            if(elLevel) elLevel.textContent = currentUser.level || currentUser.className || "";
 
+            // จัดการรูปโปรไฟล์
             if (currentUser.image && currentUser.image.trim() !== "") {
                 const imgEl = document.getElementById('sidebar-user-img');
                 const iconEl = document.getElementById('sidebar-user-icon');
@@ -143,13 +151,13 @@
                 }
             }
 
+            // นาฬิกา
             setInterval(() => {
                 const now = new Date();
                 const clockEl = document.getElementById('current-date');
                 if (clockEl) clockEl.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
             }, 1000);
         }
-
         function toggleSidebar() { 
             const sb = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
