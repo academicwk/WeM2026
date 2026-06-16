@@ -105,9 +105,31 @@
 
             // เช็คสิทธิ์ Admin
             if (currentUser.name === ADMIN_NAME) {
-                document.getElementById('admin-actions').classList.remove('hidden');
+                const adminActions = document.getElementById('admin-actions');
+                if(adminActions) adminActions.classList.remove('hidden');
             }
 
+            // 🌟 1. ส่วนที่เติมเข้ามา: ดึงข้อมูลโปรไฟล์ไปแสดงที่ Sidebar
+            const nameParts = (currentUser.name || "").split(" ");
+            const elFirst = document.getElementById('display-firstname');
+            const elLast = document.getElementById('display-lastname');
+            const elPos = document.getElementById('display-position');
+            
+            if(elFirst) elFirst.textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            if(elLast) elLast.textContent = nameParts.slice(1).join(" ") || ""; 
+            if(elPos) elPos.textContent = currentUser.position || "-";
+
+            if (currentUser.image && currentUser.image.trim() !== "") {
+                const imgEl = document.getElementById('sidebar-user-img');
+                const iconEl = document.getElementById('sidebar-user-icon');
+                if(imgEl && iconEl) {
+                    imgEl.src = currentUser.image;
+                    imgEl.classList.remove('hidden');
+                    iconEl.classList.add('hidden');
+                }
+            }
+
+            // นาฬิกามุมขวาบน
             setInterval(() => {
                 const now = new Date();
                 const clockEl = document.getElementById('current-date');
@@ -115,12 +137,27 @@
             }, 1000);
         }
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            await loadSidebarComponent();
-            setupUserData();
-            if (currentUser.name === ADMIN_NAME) { await fetchAllUsers(); } // โหลดรายชื่อเฉพาะ Admin
-            fetchSalaryData();
-        });
+        // 🌟 2. ส่วนที่เติมเข้ามา: ฟังก์ชันปุ่มกดต่างๆ ของ Sidebar
+        function toggleSidebar() { 
+            const sb = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if(sb) sb.classList.toggle('-translate-x-full'); 
+            if(overlay) overlay.classList.toggle('hidden'); 
+        }
+        
+        function closeSidebarMobile() { 
+            const sb = document.getElementById('sidebar'); 
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 768) { 
+                sb.classList.add('-translate-x-full'); 
+                if(overlay) overlay.classList.add('hidden'); 
+            } 
+        }
+        
+        function handleLogout() { 
+            localStorage.removeItem('wem_user'); 
+            window.location.href = "index.html"; 
+        }
 
         async function fetchAllUsers() {
             try {
