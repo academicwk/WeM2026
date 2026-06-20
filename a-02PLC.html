@@ -691,7 +691,7 @@
             container.innerHTML = '';
             let savedCount = 0;
 
-            for (let i = 1; i <= 15; i++) {
+            for (let i = 1; i <= 30; i++) { // 🌟 แก้เป็น 30
                 let plan = currentPLCPlan && currentPLCPlan.plans ? currentPLCPlan.plans.find(x => parseInt(x.week) === i) : null;
                 let logData = allLogbooks.lunch.find(x => parseInt(x.week) === i);
                 
@@ -706,27 +706,27 @@
                 let actionBtn = '';
 
                 if (!plan) {
-                    actionBtn = `<span class="text-xs text-gray-400 font-bold"><i class="fa-solid fa-ban"></i> ไม่มีแผน</span>`;
+                    actionBtn = `<span class="text-[11px] text-gray-400 font-bold"><i class="fa-solid fa-ban"></i> ไม่มีแผน</span>`;
                 } else if (isMine) {
-                    actionBtn = `<button onclick="openLunchLogbookModal(${i}, '${mtName}')" class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 shadow-sm"><i class="fa-solid fa-upload mr-1"></i>อัปโหลด</button>`;
+                    actionBtn = `<button onclick="openLunchLogbookModal(${i}, '${mtName}')" class="px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded hover:bg-blue-700 shadow-sm whitespace-nowrap"><i class="fa-solid fa-upload mr-1"></i>อัปโหลด</button>`;
                 } else {
-                    actionBtn = `<button onclick="Swal.fire('ไม่มีสิทธิ์', 'สงวนสิทธิ์แก้ไขเฉพาะ Model Teacher เท่านั้น', 'warning')" class="px-3 py-1 bg-gray-200 text-gray-500 text-xs font-bold rounded cursor-not-allowed"><i class="fa-solid fa-lock mr-1"></i>ไม่มีสิทธิ์</button>`;
+                    actionBtn = `<button onclick="Swal.fire('ไม่มีสิทธิ์', 'สงวนสิทธิ์แก้ไขเฉพาะ Model Teacher เท่านั้น', 'warning')" class="px-2.5 py-1.5 bg-gray-200 text-gray-500 text-[11px] font-bold rounded cursor-not-allowed whitespace-nowrap"><i class="fa-solid fa-lock mr-1"></i>ไม่มีสิทธิ์</button>`;
                 }
 
                 container.innerHTML += `
-                    <div class="${bgColor} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl ${iconColor}"><i class="fa-solid ${isSaved ? 'fa-check-circle' : 'fa-circle-notch'}"></i></div>
-                            <div>
+                    <div class="${bgColor} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md gap-2">
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <div class="text-2xl shrink-0 ${iconColor}"><i class="fa-solid ${isSaved ? 'fa-check-circle' : 'fa-circle-notch'}"></i></div>
+                            <div class="truncate">
                                 <h5 class="text-sm font-bold text-navy-900 leading-tight">สัปดาห์ที่ ${i}</h5>
-                                <p class="text-[10px] text-gray-500 mt-0.5 truncate w-32">MT: ${mtName}</p>
+                                <p class="text-[10px] text-gray-500 mt-0.5 truncate">MT: ${mtName}</p>
                             </div>
                         </div>
-                        <div>${actionBtn}</div>
+                        <div class="shrink-0">${actionBtn}</div>
                     </div>`;
             }
-            document.getElementById('lunch-progress-text').textContent = `${savedCount}/15 แผน`;
-            document.getElementById('lunch-progress-bar').style.width = `${(savedCount/15)*100}%`;
+            document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 แผน`;
+            document.getElementById('lunch-progress-bar').style.width = `${(savedCount/30)*100}%`;
         }
 
         function renderOpenClassLogbooks() {
@@ -736,28 +736,26 @@
             let myCards = [];
             let otherCards = [];
 
-            // หาแผนทั้งหมดในกลุ่มสาระ
             allLogbooks.ocPlans.forEach(plan => {
                 let isMyPlan = plan.proposer === currentUser.name;
                 
                 plan.cycles.forEach(c => {
                     const steps = [
-                        { key: 'plan', name: 'ขั้น Plan', icon: 'fa-pencil', bg: 'bg-blue-50', border: 'border-blue-200' },
-                        { key: 'do', name: 'ขั้น Do', icon: 'fa-person-chalkboard', bg: 'bg-amber-50', border: 'border-amber-200' },
-                        { key: 'see', name: 'ขั้น See', icon: 'fa-eye', bg: 'bg-green-50', border: 'border-green-200' }
+                        { key: 'plan', name: 'ขั้น Plan', icon: 'fa-pencil' },
+                        { key: 'do', name: 'ขั้น Do', icon: 'fa-person-chalkboard' },
+                        { key: 'see', name: 'ขั้น See', icon: 'fa-eye' }
                     ];
 
                     steps.forEach(s => {
-                        // ถ้าเป็นแผนคนอื่น และไม่ใช่ขั้น Do ให้ข้ามไปเลย
                         if (!isMyPlan && s.key !== 'do') return;
 
                         let logData = allLogbooks.ocLogbooks.find(x => x.proposer === plan.proposer && parseInt(x.cycle) === c.cycle && x.step === s.key);
                         let isSaved = !!logData;
                         if (isMyPlan && isSaved) mySavedCount++;
 
-                        let finalBg = isSaved ? 'bg-green-50 border-green-300' : (isMyPlan ? s.bg + ' border-' + s.border : 'bg-slate-50 border-slate-200 opacity-80');
+                        // 🌟 ไม่แยกสีวงรอบ ใช้สีเดียวแบบ Lunch PLC
+                        let finalBg = isSaved ? 'bg-green-50 border-green-300' : (isMyPlan ? 'bg-slate-50 border-slate-200' : 'bg-slate-50 border-slate-200 opacity-80');
                         
-                        // 🌟 เปลี่ยนไอคอนเป็น YouTube ถ้าเป็นขั้น Do
                         let finalIcon = '';
                         if (isSaved) {
                             if (s.key === 'do') finalIcon = '<i class="fa-brands fa-youtube text-red-500 text-3xl"></i>';
@@ -768,24 +766,25 @@
                         
                         let actionBtn = '';
                         if (isMyPlan) {
-                            let uploadBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded hover:bg-indigo-700 shadow-sm whitespace-nowrap"><i class="fa-solid ${s.key === 'do' ? 'fa-link' : 'fa-upload'} mr-1"></i>${s.key === 'do' ? 'แนบลิงก์' : 'อัปโหลด'}</button>`;
-                            let viewBtn = (isSaved && s.key === 'do') ? `<a href="${logData.mediaUrl}" target="_blank" class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : '';
-                            actionBtn = `<div class="flex flex-col gap-1 items-end">${viewBtn}${uploadBtn}</div>`;
+                            // 🌟 จัดปุ่มให้อยู่แนวนอน (flex-row) ไม่ล้นกล่อง
+                            let uploadBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="px-2.5 py-1.5 bg-indigo-600 text-white text-[11px] font-bold rounded hover:bg-indigo-700 shadow-sm whitespace-nowrap"><i class="fa-solid ${s.key === 'do' ? 'fa-link' : 'fa-upload'} mr-1"></i>${s.key === 'do' ? 'แนบลิงก์' : 'อัปโหลด'}</button>`;
+                            let viewBtn = (isSaved && s.key === 'do') ? `<a href="${logData.mediaUrl}" target="_blank" class="px-2.5 py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : '';
+                            actionBtn = `<div class="flex flex-row items-center gap-1.5">${viewBtn}${uploadBtn}</div>`;
                         } else {
-                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : `<span class="text-xs text-gray-400 font-bold">ยังไม่มีวิดีโอ</span>`;
-                            actionBtn = `<div class="flex flex-col items-end gap-1">${viewBtn}</div>`;
+                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="px-2.5 py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : `<span class="text-[11px] text-gray-400 font-bold">ยังไม่มีวิดีโอ</span>`;
+                            actionBtn = `<div class="flex flex-row items-center">${viewBtn}</div>`;
                         }
 
                         let cardHtml = `
-                            <div class="${finalBg} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md">
-                                <div class="flex items-center gap-3">
-                                    <div>${finalIcon}</div>
-                                    <div>
+                            <div class="${finalBg} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md gap-2">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="shrink-0 w-8 text-center">${finalIcon}</div>
+                                    <div class="truncate">
                                         <h5 class="text-sm font-bold text-navy-900 leading-tight">วงรอบที่ ${c.cycle} (${s.name})</h5>
-                                        <p class="text-[10px] text-gray-500 mt-0.5 truncate w-32">MT: ${plan.proposer}</p>
+                                        <p class="text-[10px] text-gray-500 mt-0.5 truncate">MT: ${plan.proposer}</p>
                                     </div>
                                 </div>
-                                <div>${actionBtn}</div>
+                                <div class="shrink-0">${actionBtn}</div>
                             </div>`;
                         
                         if (isMyPlan) myCards.push(cardHtml);
@@ -794,7 +793,6 @@
                 });
             });
 
-            // 🌟 แทรกหัวข้อคั่นระหว่างงานของเรา กับงานของสมาชิก
             let finalHtml = myCards.join('');
             if (otherCards.length > 0) {
                 finalHtml += `
@@ -808,8 +806,9 @@
             }
 
             container.innerHTML = finalHtml;
-            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/9 แผน (เฉพาะของคุณ)`;
-            document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/9)*100}%`;
+            // 🌟 แก้เป็น 18 แผน (6 วงรอบ x 3 ขั้นตอน)
+            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 แผน (เฉพาะของคุณ)`;
+            document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/18)*100}%`;
         }
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
