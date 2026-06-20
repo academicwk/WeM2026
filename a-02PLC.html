@@ -244,7 +244,7 @@
             <input type="hidden" id="lb-oc-cycle">
             <input type="hidden" id="lb-oc-step">
             <div class="space-y-4">
-                <div>
+                <div id="oc-pdf-container">
                     <label class="text-sm font-bold text-gray-700 block mb-1">ไฟล์ PDF บันทึก Logbook</label>
                     <input type="file" id="lb-oc-pdf" accept="application/pdf" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
                 </div>
@@ -748,7 +748,7 @@
                     ];
 
                     steps.forEach(s => {
-                        // ถ้าเป็นแผนคนอื่น และไม่ใช่ขั้น Do ให้ข้ามไปเลย ไม่ต้องแสดง
+                        // ถ้าเป็นแผนคนอื่น และไม่ใช่ขั้น Do ให้ข้ามไปเลย
                         if (!isMyPlan && s.key !== 'do') return;
 
                         let logData = allLogbooks.ocLogbooks.find(x => x.proposer === plan.proposer && parseInt(x.cycle) === c.cycle && x.step === s.key);
@@ -756,20 +756,30 @@
                         if (isMyPlan && isSaved) mySavedCount++;
 
                         let finalBg = isSaved ? 'bg-green-50 border-green-300' : (isMyPlan ? s.bg + ' border-' + s.border : 'bg-slate-50 border-slate-200 opacity-80');
-                        let finalIcon = isSaved ? 'text-green-500' : 'text-slate-400';
+                        
+                        // 🌟 เปลี่ยนไอคอนเป็น YouTube ถ้าเป็นขั้น Do
+                        let finalIcon = '';
+                        if (isSaved) {
+                            if (s.key === 'do') finalIcon = '<i class="fa-brands fa-youtube text-red-500 text-3xl"></i>';
+                            else finalIcon = '<i class="fa-solid fa-check-circle text-green-500 text-2xl"></i>';
+                        } else {
+                            finalIcon = `<i class="fa-solid ${s.icon} text-slate-400 text-2xl"></i>`;
+                        }
                         
                         let actionBtn = '';
                         if (isMyPlan) {
-                            actionBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded hover:bg-indigo-700 shadow-sm"><i class="fa-solid fa-upload mr-1"></i>อัปโหลด</button>`;
+                            let uploadBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded hover:bg-indigo-700 shadow-sm whitespace-nowrap"><i class="fa-solid ${s.key === 'do' ? 'fa-link' : 'fa-upload'} mr-1"></i>${s.key === 'do' ? 'แนบลิงก์' : 'อัปโหลด'}</button>`;
+                            let viewBtn = (isSaved && s.key === 'do') ? `<a href="${logData.mediaUrl}" target="_blank" class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : '';
+                            actionBtn = `<div class="flex flex-col gap-1 items-end">${viewBtn}${uploadBtn}</div>`;
                         } else {
-                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded hover:bg-red-200"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : `<span class="text-xs text-gray-400 font-bold">ยังไม่ส่งผลงาน</span>`;
-                            actionBtn = `<div class="flex flex-col items-end gap-1"><span class="text-[10px] bg-slate-200 text-gray-600 px-1.5 rounded">ดูได้อย่างเดียว</span>${viewBtn}</div>`;
+                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : `<span class="text-xs text-gray-400 font-bold">ยังไม่มีวิดีโอ</span>`;
+                            actionBtn = `<div class="flex flex-col items-end gap-1">${viewBtn}</div>`;
                         }
 
                         let cardHtml = `
                             <div class="${finalBg} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md">
                                 <div class="flex items-center gap-3">
-                                    <div class="text-2xl ${finalIcon}"><i class="fa-solid ${isSaved ? 'fa-check-circle' : s.icon}"></i></div>
+                                    <div>${finalIcon}</div>
                                     <div>
                                         <h5 class="text-sm font-bold text-navy-900 leading-tight">วงรอบที่ ${c.cycle} (${s.name})</h5>
                                         <p class="text-[10px] text-gray-500 mt-0.5 truncate w-32">MT: ${plan.proposer}</p>
@@ -784,7 +794,20 @@
                 });
             });
 
-            container.innerHTML = myCards.join('') + otherCards.join('');
+            // 🌟 แทรกหัวข้อคั่นระหว่างงานของเรา กับงานของสมาชิก
+            let finalHtml = myCards.join('');
+            if (otherCards.length > 0) {
+                finalHtml += `
+                    <div class="col-span-full mt-4 mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-users-rectangle text-amber-500 text-lg"></i>
+                            <h4 class="font-bold text-gray-700 border-l-4 border-amber-500 pl-2">ดูวิดีโอการสอนของสมาชิก</h4>
+                        </div>
+                    </div>
+                ` + otherCards.join('');
+            }
+
+            container.innerHTML = finalHtml;
             document.getElementById('oc-progress-text').textContent = `${mySavedCount}/9 แผน (เฉพาะของคุณ)`;
             document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/9)*100}%`;
         }
@@ -834,17 +857,18 @@
             document.getElementById('yt-status-msg').innerHTML = 'รอการตรวจสอบลิงก์...';
 
             if (step === 'do') {
+                document.getElementById('oc-pdf-container').classList.add('hidden'); // ซ่อนส่วนอัปโหลด PDF
                 document.getElementById('oc-media-label').innerText = 'ลิงก์วิดีโอ YouTube';
                 document.getElementById('lb-oc-img').classList.add('hidden');
                 document.getElementById('oc-yt-container').classList.remove('hidden');
             } else {
+                document.getElementById('oc-pdf-container').classList.remove('hidden'); // แสดงส่วนอัปโหลด PDF
                 document.getElementById('oc-media-label').innerText = 'ไฟล์ภาพประกอบ';
                 document.getElementById('lb-oc-img').classList.remove('hidden');
                 document.getElementById('oc-yt-container').classList.add('hidden');
             }
             document.getElementById('ocLogbookModal').classList.remove('hidden');
         }
-
         function validateYouTubeUrl() {
             const url = document.getElementById('lb-oc-yt').value;
             const msg = document.getElementById('yt-status-msg');
@@ -858,22 +882,25 @@
             let proposer = document.getElementById('lb-oc-proposer').value;
             let cycle = document.getElementById('lb-oc-cycle').value;
             let step = document.getElementById('lb-oc-step').value;
-            let pdfFile = document.getElementById('lb-oc-pdf').files[0];
             
             let payload = { action: 'saveOpenClassLogbook', department: myDepartment, proposer: proposer, cycle: cycle, step: step };
 
+            // 🌟 ตรวจสอบข้อมูลก่อนส่ง
             if (step === 'do') {
                 let ytUrl = document.getElementById('lb-oc-yt').value;
                 if(!/^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/.test(ytUrl)) { Swal.fire('ลิงก์ผิดพลาด', 'กรุณาระบุลิงก์ YouTube ให้ถูกต้อง', 'warning'); return; }
                 payload.ytUrl = ytUrl;
             } else {
+                let pdfFile = document.getElementById('lb-oc-pdf').files[0];
                 let imgFile = document.getElementById('lb-oc-img').files[0];
                 if (!pdfFile && !imgFile) { Swal.fire('ข้อมูลไม่ครบ', 'กรุณาอัปโหลดไฟล์อย่างน้อย 1 อย่าง', 'warning'); return; }
+                
+                showLoading('กำลังแปลงไฟล์ภาพและ PDF...');
                 if (imgFile) { payload.imgBase64 = await fileToBase64(imgFile); payload.imgMime = imgFile.type; }
+                if (pdfFile) payload.pdfBase64 = await fileToBase64(pdfFile);
             }
 
-            showLoading('กำลังบันทึกและอัปโหลดไฟล์...');
-            if (pdfFile) payload.pdfBase64 = await fileToBase64(pdfFile);
+            showLoading('กำลังบันทึกข้อมูล...');
 
             fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(async res => {
                 if(res.status === 'success') {
@@ -883,7 +910,6 @@
                 } else Swal.fire('ผิดพลาด', res.message, 'error');
             });
         }
-
         function fileToBase64(file) {
             return new Promise((resolve) => {
                 let reader = new FileReader();
