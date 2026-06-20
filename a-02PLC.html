@@ -690,7 +690,7 @@
             container.innerHTML = '';
             let savedCount = 0;
 
-            for (let i = 1; i <= 30; i++) { // 🌟 แก้เป็น 30
+            for (let i = 1; i <= 30; i++) {
                 let plan = currentPLCPlan && currentPLCPlan.plans ? currentPLCPlan.plans.find(x => parseInt(x.week) === i) : null;
                 let logData = allLogbooks.lunch.find(x => parseInt(x.week) === i);
                 
@@ -704,16 +704,17 @@
                 let mtName = plan ? plan.modelTeacher : 'ไม่มีแผน';
                 let actionBtn = '';
 
+                // 🌟 ปรับปุ่มให้เต็มความกว้าง (w-full) และจัดให้อยู่กึ่งกลาง
                 if (!plan) {
-                    actionBtn = `<span class="text-[11px] text-gray-400 font-bold"><i class="fa-solid fa-ban"></i> ไม่มีแผน</span>`;
+                    actionBtn = `<span class="block w-full py-1.5 text-[11px] text-gray-400 font-bold text-center rounded border border-dashed border-gray-200 bg-gray-50/50"><i class="fa-solid fa-ban mr-1"></i> ไม่มีแผน</span>`;
                 } else if (isMine) {
-                    actionBtn = `<button onclick="openLunchLogbookModal(${i}, '${mtName}')" class="px-2.5 py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded hover:bg-blue-700 shadow-sm whitespace-nowrap"><i class="fa-solid fa-upload mr-1"></i>อัปโหลด</button>`;
+                    actionBtn = `<button onclick="openLunchLogbookModal(${i}, '${mtName}')" class="w-full py-1.5 bg-blue-600 text-white text-[11px] font-bold rounded hover:bg-blue-700 shadow-sm flex justify-center items-center gap-1.5 transition-colors"><i class="fa-solid fa-upload"></i>อัปโหลด</button>`;
                 } else {
-                    actionBtn = `<button onclick="Swal.fire('ไม่มีสิทธิ์', 'สงวนสิทธิ์แก้ไขเฉพาะ Model Teacher เท่านั้น', 'warning')" class="px-2.5 py-1.5 bg-gray-200 text-gray-500 text-[11px] font-bold rounded cursor-not-allowed whitespace-nowrap"><i class="fa-solid fa-lock mr-1"></i>ไม่มีสิทธิ์</button>`;
+                    actionBtn = `<button onclick="Swal.fire('ไม่มีสิทธิ์', 'สงวนสิทธิ์แก้ไขเฉพาะ Model Teacher เท่านั้น', 'warning')" class="w-full py-1.5 bg-gray-200 text-gray-500 text-[11px] font-bold rounded cursor-not-allowed flex justify-center items-center gap-1.5 transition-colors"><i class="fa-solid fa-lock"></i>ไม่มีสิทธิ์</button>`;
                 }
 
                 container.innerHTML += `
-                    <div class="${bgColor} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md gap-2">
+                    <div class="${bgColor} border p-3 rounded-xl flex flex-col justify-between transition-all hover:shadow-md gap-3 h-full">
                         <div class="flex items-center gap-3 overflow-hidden">
                             <div class="text-2xl shrink-0 ${iconColor}"><i class="fa-solid ${isSaved ? 'fa-check-circle' : 'fa-circle-notch'}"></i></div>
                             <div class="truncate">
@@ -721,7 +722,9 @@
                                 <p class="text-[10px] text-gray-500 mt-0.5 truncate">MT: ${mtName}</p>
                             </div>
                         </div>
-                        <div class="shrink-0">${actionBtn}</div>
+                        <div class="w-full border-t ${isSaved ? 'border-green-200' : 'border-slate-200'} pt-2 mt-auto">
+                            ${actionBtn}
+                        </div>
                     </div>`;
             }
             document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 แผน`;
@@ -752,7 +755,6 @@
                         let isSaved = !!logData;
                         if (isMyPlan && isSaved) mySavedCount++;
 
-                        // 🌟 ไม่แยกสีวงรอบ ใช้สีเดียวแบบ Lunch PLC
                         let finalBg = isSaved ? 'bg-green-50 border-green-300' : (isMyPlan ? 'bg-slate-50 border-slate-200' : 'bg-slate-50 border-slate-200 opacity-80');
                         
                         let finalIcon = '';
@@ -764,18 +766,18 @@
                         }
                         
                         let actionBtn = '';
+                        // 🌟 ปรับปุ่มให้เต็มความกว้าง (w-full) และแยกสัดส่วนชัดเจนถ้ามี 2 ปุ่ม
                         if (isMyPlan) {
-                            // 🌟 จัดปุ่มให้อยู่แนวนอน (flex-row) ไม่ล้นกล่อง
-                            let uploadBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="px-2.5 py-1.5 bg-indigo-600 text-white text-[11px] font-bold rounded hover:bg-indigo-700 shadow-sm whitespace-nowrap"><i class="fa-solid ${s.key === 'do' ? 'fa-link' : 'fa-upload'} mr-1"></i>${s.key === 'do' ? 'แนบลิงก์' : 'อัปโหลด'}</button>`;
-                            let viewBtn = (isSaved && s.key === 'do') ? `<a href="${logData.mediaUrl}" target="_blank" class="px-2.5 py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : '';
-                            actionBtn = `<div class="flex flex-row items-center gap-1.5">${viewBtn}${uploadBtn}</div>`;
+                            let uploadBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="flex-1 py-1.5 bg-indigo-600 text-white text-[11px] font-bold rounded hover:bg-indigo-700 shadow-sm flex justify-center items-center gap-1.5 transition-colors"><i class="fa-solid ${s.key === 'do' ? 'fa-link' : 'fa-upload'}"></i>${s.key === 'do' ? 'แนบลิงก์' : 'อัปโหลด'}</button>`;
+                            let viewBtn = (isSaved && s.key === 'do') ? `<a href="${logData.mediaUrl}" target="_blank" class="flex-1 py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 flex justify-center items-center gap-1.5 transition-colors"><i class="fa-brands fa-youtube"></i>ดูวิดีโอ</a>` : '';
+                            actionBtn = `<div class="flex w-full gap-2">${viewBtn}${uploadBtn}</div>`;
                         } else {
-                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="px-2.5 py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 whitespace-nowrap"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : `<span class="text-[11px] text-gray-400 font-bold">ยังไม่มีวิดีโอ</span>`;
-                            actionBtn = `<div class="flex flex-row items-center">${viewBtn}</div>`;
+                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="w-full py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 flex justify-center items-center gap-1.5 transition-colors"><i class="fa-brands fa-youtube"></i>ดูวิดีโอ</a>` : `<span class="block w-full py-1.5 text-[11px] text-gray-400 font-bold text-center bg-gray-50/50 rounded border border-dashed border-gray-200">ยังไม่มีวิดีโอ</span>`;
+                            actionBtn = `<div class="w-full">${viewBtn}</div>`;
                         }
 
                         let cardHtml = `
-                            <div class="${finalBg} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md gap-2">
+                            <div class="${finalBg} border p-3 rounded-xl flex flex-col justify-between transition-all hover:shadow-md gap-3 h-full">
                                 <div class="flex items-center gap-3 overflow-hidden">
                                     <div class="shrink-0 w-8 text-center">${finalIcon}</div>
                                     <div class="truncate">
@@ -783,7 +785,9 @@
                                         <p class="text-[10px] text-gray-500 mt-0.5 truncate">MT: ${plan.proposer}</p>
                                     </div>
                                 </div>
-                                <div class="shrink-0">${actionBtn}</div>
+                                <div class="w-full border-t ${isSaved ? 'border-green-300' : 'border-slate-200'} pt-2 mt-auto">
+                                    ${actionBtn}
+                                </div>
                             </div>`;
                         
                         if (isMyPlan) myCards.push(cardHtml);
@@ -805,7 +809,6 @@
             }
 
             container.innerHTML = finalHtml;
-            // 🌟 แก้เป็น 18 แผน (6 วงรอบ x 3 ขั้นตอน)
             document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 แผน (เฉพาะของคุณ)`;
             document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/18)*100}%`;
         }
