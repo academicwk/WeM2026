@@ -690,6 +690,13 @@
             container.innerHTML = '';
             let savedCount = 0;
 
+            // 🌟 เพิ่มการดึงสายชั้นมาแสดงต่อท้าย Header
+            const lunchHeader = container.parentElement.querySelector('h4');
+            if (lunchHeader) {
+                let gradeText = userGradePrefix && userGradePrefix !== "-" ? userGradePrefix : "ไม่ระบุสายชั้น";
+                lunchHeader.innerHTML = `<i class="fa-solid fa-utensils mr-2"></i>Lunch PLC Logbook (${gradeText})`;
+            }
+
             for (let i = 1; i <= 30; i++) {
                 let plan = currentPLCPlan && currentPLCPlan.plans ? currentPLCPlan.plans.find(x => parseInt(x.week) === i) : null;
                 let logData = allLogbooks.lunch.find(x => parseInt(x.week) === i);
@@ -704,7 +711,6 @@
                 let mtName = plan ? plan.modelTeacher : 'ไม่มีแผน';
                 let actionBtn = '';
 
-                // 🌟 ปรับปุ่มให้เต็มความกว้าง (w-full) และจัดให้อยู่กึ่งกลาง
                 if (!plan) {
                     actionBtn = `<span class="block w-full py-1.5 text-[11px] text-gray-400 font-bold text-center rounded border border-dashed border-gray-200 bg-gray-50/50"><i class="fa-solid fa-ban mr-1"></i> ไม่มีแผน</span>`;
                 } else if (isMine) {
@@ -727,7 +733,8 @@
                         </div>
                     </div>`;
             }
-            document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 แผน`;
+            // 🌟 เปลี่ยนคำว่า แผน เป็น ครั้ง
+            document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 ครั้ง`;
             document.getElementById('lunch-progress-bar').style.width = `${(savedCount/30)*100}%`;
         }
 
@@ -737,6 +744,13 @@
             let mySavedCount = 0;
             let myCards = [];
             let otherCards = [];
+
+            // 🌟 เพิ่มการดึงกลุ่มสาระฯ มาแสดงต่อท้าย Header
+            const ocHeader = container.parentElement.querySelector('h4');
+            if (ocHeader) {
+                let deptName = myDepartment && myDepartment !== "-" ? myDepartment : "ไม่ระบุกลุ่มสาระฯ";
+                ocHeader.innerHTML = `<i class="fa-solid fa-chalkboard-user mr-2"></i>Open Class PLC Logbook (${deptName})`;
+            }
 
             allLogbooks.ocPlans.forEach(plan => {
                 let isMyPlan = plan.proposer === currentUser.name;
@@ -766,7 +780,6 @@
                         }
                         
                         let actionBtn = '';
-                        // 🌟 ปรับปุ่มให้เต็มความกว้าง (w-full) และแยกสัดส่วนชัดเจนถ้ามี 2 ปุ่ม
                         if (isMyPlan) {
                             let uploadBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="flex-1 py-1.5 bg-indigo-600 text-white text-[11px] font-bold rounded hover:bg-indigo-700 shadow-sm flex justify-center items-center gap-1.5 transition-colors"><i class="fa-solid ${s.key === 'do' ? 'fa-link' : 'fa-upload'}"></i>${s.key === 'do' ? 'แนบลิงก์' : 'อัปโหลด'}</button>`;
                             let viewBtn = (isSaved && s.key === 'do') ? `<a href="${logData.mediaUrl}" target="_blank" class="flex-1 py-1.5 bg-red-100 text-red-600 text-[11px] font-bold rounded hover:bg-red-200 flex justify-center items-center gap-1.5 transition-colors"><i class="fa-brands fa-youtube"></i>ดูวิดีโอ</a>` : '';
@@ -809,7 +822,8 @@
             }
 
             container.innerHTML = finalHtml;
-            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 แผน (เฉพาะของคุณ)`;
+            // 🌟 เปลี่ยนคำว่า แผน เป็น ครั้ง
+            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 ครั้ง (เฉพาะของคุณ)`;
             document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/18)*100}%`;
         }
 
