@@ -90,7 +90,7 @@
                         </div>
                     </div>
 
-                    <button onclick="Swal.fire('อยู่ระหว่างการพัฒนา', 'ระบบบันทึก Logbook จะเปิดให้บริการในส่วนถัดไปครับ', 'info')" id="btn-plc-logbook" class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center justify-between w-full opacity-80 focus:outline-none relative overflow-hidden">
+                    <button onclick="toggleLogbookOptions()" id="btn-plc-logbook" class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-amber-500 flex items-center justify-between w-full focus:outline-none relative overflow-hidden mt-4">
                         <div class="absolute inset-0 bg-gradient-to-r from-amber-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div class="flex items-center gap-4 text-left relative z-10">
                             <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-inner">
@@ -101,9 +101,30 @@
                             </div>
                         </div>
                         <div class="bg-slate-100 text-gray-600 font-bold py-2 px-4 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors relative z-10 flex items-center gap-2 text-sm shrink-0">
-                            เร็วๆ นี้ <i class="fa-solid fa-clock"></i>
+                            บันทึกงาน <i id="icon-toggle-logbook" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
                         </div>
                     </button>
+
+                    <div id="logbook-options-container" class="hidden transform origin-top transition-all duration-300 ease-in-out pl-6 md:pl-16 space-y-6 mt-4">
+                        
+                        <div class="bg-white p-5 rounded-2xl border border-blue-200 shadow-sm">
+                            <div class="flex justify-between items-end mb-3 border-b pb-2">
+                                <h4 class="font-bold text-blue-800"><i class="fa-solid fa-utensils mr-2"></i>Lunch PLC Logbook</h4>
+                                <span id="lunch-progress-text" class="text-xs font-bold text-gray-500">0/15 แผน</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-100 rounded-full mb-4 overflow-hidden"><div id="lunch-progress-bar" class="h-full bg-blue-500 transition-all duration-500" style="width: 0%"></div></div>
+                            <div id="lunch-logbook-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-indigo-200 shadow-sm">
+                            <div class="flex justify-between items-end mb-3 border-b pb-2">
+                                <h4 class="font-bold text-indigo-800"><i class="fa-solid fa-chalkboard-user mr-2"></i>Open Class PLC Logbook</h4>
+                                <span id="oc-progress-text" class="text-xs font-bold text-gray-500">0/9 แผน</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-100 rounded-full mb-4 overflow-hidden"><div id="oc-progress-bar" class="h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div></div>
+                            <div id="oc-logbook-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -195,6 +216,53 @@
         </div>
     </div>
 
+<div id="lunchLogbookModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeModal('lunchLogbookModal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-bold text-navy-900 mb-4 border-b pb-2"><i class="fa-solid fa-upload text-blue-500 mr-2"></i>อัปโหลดผลงาน (Lunch PLC)</h3>
+            <input type="hidden" id="lb-lunch-week">
+            <input type="hidden" id="lb-lunch-mt">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-bold text-gray-700 block mb-1">ไฟล์ PDF บันทึก Logbook</label>
+                    <input type="file" id="lb-lunch-pdf" accept="application/pdf" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-gray-700 block mb-1">ไฟล์ภาพประกอบการทำ PLC</label>
+                    <input type="file" id="lb-lunch-img" accept="image/*" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+                </div>
+            </div>
+            <button onclick="submitLunchLogbook()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold shadow-md transition-colors"><i class="fa-solid fa-save mr-2"></i>บันทึกข้อมูล</button>
+        </div>
+    </div>
+
+    <div id="ocLogbookModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeModal('ocLogbookModal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-bold text-navy-900 mb-4 border-b pb-2" id="oc-lb-title"><i class="fa-solid fa-upload text-indigo-500 mr-2"></i>อัปโหลดผลงาน</h3>
+            <input type="hidden" id="lb-oc-proposer">
+            <input type="hidden" id="lb-oc-cycle">
+            <input type="hidden" id="lb-oc-step">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-bold text-gray-700 block mb-1">ไฟล์ PDF บันทึก Logbook</label>
+                    <input type="file" id="lb-oc-pdf" accept="application/pdf" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+                </div>
+                
+                <div id="oc-media-container">
+                    <label class="text-sm font-bold text-gray-700 block mb-1" id="oc-media-label">ไฟล์ภาพประกอบ</label>
+                    <input type="file" id="lb-oc-img" accept="image/*" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+                    
+                    <div id="oc-yt-container" class="hidden">
+                        <input type="text" id="lb-oc-yt" placeholder="วางลิงก์ YouTube ที่นี่..." oninput="validateYouTubeUrl()" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm outline-none focus:border-red-500">
+                        <p id="yt-status-msg" class="text-xs font-bold mt-1 text-gray-500">รอการตรวจสอบลิงก์...</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="submitOpenClassLogbook()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold shadow-md transition-colors"><i class="fa-solid fa-save mr-2"></i>บันทึกข้อมูล</button>
+        </div>
+    </div>
+    
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
         
@@ -203,7 +271,9 @@
         let currentPLCPlan = null; 
         let currentPLCOpenClass = null; 
         let userGradePrefix = "";
-
+        let allLogbooks = { lunch: [], ocPlans: [], ocLogbooks: [] };
+        let myDepartment = "";
+        
         function showLoading(text = 'กำลังโหลดข้อมูล...') {
             Swal.fire({ title: text, allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() });
         }
@@ -257,6 +327,8 @@
             await fetchAllUsersForDropdown();
             await fetchPLCPlanData(); 
             await fetchPLCPlanOpenClass(); 
+            myDepartment = document.getElementById('display-group').textContent;
+            await fetchLogbookData();
             Swal.close(); 
         });
 
@@ -585,6 +657,241 @@
                 } else { Swal.fire('เกิดข้อผิดพลาด', res.message, 'error'); }
             }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
         }
+
+// ================= LOGBOOK SYSTEM =================
+        function toggleLogbookOptions() {
+            const container = document.getElementById('logbook-options-container');
+            const icon = document.getElementById('icon-toggle-logbook');
+            container.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+            if(!container.classList.contains('hidden')) setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            renderLogbookCards();
+        }
+
+        async function fetchLogbookData() {
+            try {
+                const res = await fetch(GAS_API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'getPLCLogbookData', grade: userGradePrefix, department: myDepartment })
+                }).then(r => r.json());
+                if (res.status === 'success') {
+                    allLogbooks.lunch = res.data.lunchLogbooks;
+                    allLogbooks.ocPlans = res.data.openClassPlans;
+                    allLogbooks.ocLogbooks = res.data.openClassLogbooks;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderLogbookCards() {
+            renderLunchLogbooks();
+            renderOpenClassLogbooks();
+        }
+
+        function renderLunchLogbooks() {
+            const container = document.getElementById('lunch-logbook-cards');
+            container.innerHTML = '';
+            let savedCount = 0;
+
+            for (let i = 1; i <= 15; i++) {
+                let plan = currentPLCPlan && currentPLCPlan.plans ? currentPLCPlan.plans.find(x => parseInt(x.week) === i) : null;
+                let logData = allLogbooks.lunch.find(x => parseInt(x.week) === i);
+                
+                let isSaved = !!logData;
+                if (isSaved) savedCount++;
+                let isMine = plan && plan.modelTeacher === currentUser.name;
+                
+                let bgColor = isSaved ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200 opacity-80';
+                let iconColor = isSaved ? 'text-green-500' : 'text-slate-400';
+                
+                let mtName = plan ? plan.modelTeacher : 'ไม่มีแผน';
+                let actionBtn = '';
+
+                if (!plan) {
+                    actionBtn = `<span class="text-xs text-gray-400 font-bold"><i class="fa-solid fa-ban"></i> ไม่มีแผน</span>`;
+                } else if (isMine) {
+                    actionBtn = `<button onclick="openLunchLogbookModal(${i}, '${mtName}')" class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 shadow-sm"><i class="fa-solid fa-upload mr-1"></i>อัปโหลด</button>`;
+                } else {
+                    actionBtn = `<button onclick="Swal.fire('ไม่มีสิทธิ์', 'สงวนสิทธิ์แก้ไขเฉพาะ Model Teacher เท่านั้น', 'warning')" class="px-3 py-1 bg-gray-200 text-gray-500 text-xs font-bold rounded cursor-not-allowed"><i class="fa-solid fa-lock mr-1"></i>ไม่มีสิทธิ์</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="${bgColor} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="text-2xl ${iconColor}"><i class="fa-solid ${isSaved ? 'fa-check-circle' : 'fa-circle-notch'}"></i></div>
+                            <div>
+                                <h5 class="text-sm font-bold text-navy-900 leading-tight">สัปดาห์ที่ ${i}</h5>
+                                <p class="text-[10px] text-gray-500 mt-0.5 truncate w-32">MT: ${mtName}</p>
+                            </div>
+                        </div>
+                        <div>${actionBtn}</div>
+                    </div>`;
+            }
+            document.getElementById('lunch-progress-text').textContent = `${savedCount}/15 แผน`;
+            document.getElementById('lunch-progress-bar').style.width = `${(savedCount/15)*100}%`;
+        }
+
+        function renderOpenClassLogbooks() {
+            const container = document.getElementById('oc-logbook-cards');
+            container.innerHTML = '';
+            let mySavedCount = 0;
+            let myCards = [];
+            let otherCards = [];
+
+            // หาแผนทั้งหมดในกลุ่มสาระ
+            allLogbooks.ocPlans.forEach(plan => {
+                let isMyPlan = plan.proposer === currentUser.name;
+                
+                plan.cycles.forEach(c => {
+                    const steps = [
+                        { key: 'plan', name: 'ขั้น Plan', icon: 'fa-pencil', bg: 'bg-blue-50', border: 'border-blue-200' },
+                        { key: 'do', name: 'ขั้น Do', icon: 'fa-person-chalkboard', bg: 'bg-amber-50', border: 'border-amber-200' },
+                        { key: 'see', name: 'ขั้น See', icon: 'fa-eye', bg: 'bg-green-50', border: 'border-green-200' }
+                    ];
+
+                    steps.forEach(s => {
+                        // ถ้าเป็นแผนคนอื่น และไม่ใช่ขั้น Do ให้ข้ามไปเลย ไม่ต้องแสดง
+                        if (!isMyPlan && s.key !== 'do') return;
+
+                        let logData = allLogbooks.ocLogbooks.find(x => x.proposer === plan.proposer && parseInt(x.cycle) === c.cycle && x.step === s.key);
+                        let isSaved = !!logData;
+                        if (isMyPlan && isSaved) mySavedCount++;
+
+                        let finalBg = isSaved ? 'bg-green-50 border-green-300' : (isMyPlan ? s.bg + ' border-' + s.border : 'bg-slate-50 border-slate-200 opacity-80');
+                        let finalIcon = isSaved ? 'text-green-500' : 'text-slate-400';
+                        
+                        let actionBtn = '';
+                        if (isMyPlan) {
+                            actionBtn = `<button onclick="openOcLogbookModal('${plan.proposer}', ${c.cycle}, '${s.key}')" class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded hover:bg-indigo-700 shadow-sm"><i class="fa-solid fa-upload mr-1"></i>อัปโหลด</button>`;
+                        } else {
+                            let viewBtn = isSaved ? `<a href="${logData.mediaUrl}" target="_blank" class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded hover:bg-red-200"><i class="fa-brands fa-youtube mr-1"></i>ดูวิดีโอ</a>` : `<span class="text-xs text-gray-400 font-bold">ยังไม่ส่งผลงาน</span>`;
+                            actionBtn = `<div class="flex flex-col items-end gap-1"><span class="text-[10px] bg-slate-200 text-gray-600 px-1.5 rounded">ดูได้อย่างเดียว</span>${viewBtn}</div>`;
+                        }
+
+                        let cardHtml = `
+                            <div class="${finalBg} border p-3 rounded-xl flex items-center justify-between transition-all hover:shadow-md">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-2xl ${finalIcon}"><i class="fa-solid ${isSaved ? 'fa-check-circle' : s.icon}"></i></div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-navy-900 leading-tight">วงรอบที่ ${c.cycle} (${s.name})</h5>
+                                        <p class="text-[10px] text-gray-500 mt-0.5 truncate w-32">MT: ${plan.proposer}</p>
+                                    </div>
+                                </div>
+                                <div>${actionBtn}</div>
+                            </div>`;
+                        
+                        if (isMyPlan) myCards.push(cardHtml);
+                        else otherCards.push(cardHtml);
+                    });
+                });
+            });
+
+            container.innerHTML = myCards.join('') + otherCards.join('');
+            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/9 แผน (เฉพาะของคุณ)`;
+            document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/9)*100}%`;
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // --- Lunch Modal Actions ---
+        function openLunchLogbookModal(week, mtName) {
+            document.getElementById('lb-lunch-week').value = week;
+            document.getElementById('lb-lunch-mt').value = mtName;
+            document.getElementById('lb-lunch-pdf').value = '';
+            document.getElementById('lb-lunch-img').value = '';
+            document.getElementById('lunchLogbookModal').classList.remove('hidden');
+        }
+
+        async function submitLunchLogbook() {
+            let week = document.getElementById('lb-lunch-week').value;
+            let mt = document.getElementById('lb-lunch-mt').value;
+            let pdfFile = document.getElementById('lb-lunch-pdf').files[0];
+            let imgFile = document.getElementById('lb-lunch-img').files[0];
+
+            if (!pdfFile && !imgFile) { Swal.fire('ข้อมูลไม่ครบ', 'กรุณาอัปโหลดไฟล์อย่างน้อย 1 อย่าง', 'warning'); return; }
+
+            let payload = { action: 'saveLunchLogbook', grade: userGradePrefix, week: week, modelTeacher: mt };
+            
+            showLoading('กำลังบันทึกและอัปโหลดไฟล์...');
+            if (pdfFile) payload.pdfBase64 = await fileToBase64(pdfFile);
+            if (imgFile) { payload.imgBase64 = await fileToBase64(imgFile); payload.imgMime = imgFile.type; }
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(async res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon:'success', title:'บันทึกสำเร็จ', showConfirmButton:false, timer:1500 });
+                    closeModal('lunchLogbookModal');
+                    await fetchLogbookData(); renderLogbookCards();
+                } else Swal.fire('ผิดพลาด', res.message, 'error');
+            });
+        }
+
+        // --- Open Class Modal Actions ---
+        function openOcLogbookModal(proposer, cycle, step) {
+            document.getElementById('lb-oc-proposer').value = proposer;
+            document.getElementById('lb-oc-cycle').value = cycle;
+            document.getElementById('lb-oc-step').value = step;
+            document.getElementById('lb-oc-pdf').value = '';
+            document.getElementById('lb-oc-img').value = '';
+            document.getElementById('lb-oc-yt').value = '';
+            document.getElementById('yt-status-msg').innerHTML = 'รอการตรวจสอบลิงก์...';
+
+            if (step === 'do') {
+                document.getElementById('oc-media-label').innerText = 'ลิงก์วิดีโอ YouTube';
+                document.getElementById('lb-oc-img').classList.add('hidden');
+                document.getElementById('oc-yt-container').classList.remove('hidden');
+            } else {
+                document.getElementById('oc-media-label').innerText = 'ไฟล์ภาพประกอบ';
+                document.getElementById('lb-oc-img').classList.remove('hidden');
+                document.getElementById('oc-yt-container').classList.add('hidden');
+            }
+            document.getElementById('ocLogbookModal').classList.remove('hidden');
+        }
+
+        function validateYouTubeUrl() {
+            const url = document.getElementById('lb-oc-yt').value;
+            const msg = document.getElementById('yt-status-msg');
+            const regex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
+            if(url.trim() === '') { msg.innerHTML = 'รอการตรวจสอบลิงก์...'; return; }
+            if(regex.test(url)) { msg.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check-circle"></i> ลิงก์ถูกต้อง สามารถใช้งานได้</span>'; } 
+            else { msg.innerHTML = '<span class="text-red-600"><i class="fa-solid fa-times-circle"></i> ลิงก์ไม่ถูกต้อง (ต้องเป็น YouTube เท่านั้น)</span>'; }
+        }
+
+        async function submitOpenClassLogbook() {
+            let proposer = document.getElementById('lb-oc-proposer').value;
+            let cycle = document.getElementById('lb-oc-cycle').value;
+            let step = document.getElementById('lb-oc-step').value;
+            let pdfFile = document.getElementById('lb-oc-pdf').files[0];
+            
+            let payload = { action: 'saveOpenClassLogbook', department: myDepartment, proposer: proposer, cycle: cycle, step: step };
+
+            if (step === 'do') {
+                let ytUrl = document.getElementById('lb-oc-yt').value;
+                if(!/^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/.test(ytUrl)) { Swal.fire('ลิงก์ผิดพลาด', 'กรุณาระบุลิงก์ YouTube ให้ถูกต้อง', 'warning'); return; }
+                payload.ytUrl = ytUrl;
+            } else {
+                let imgFile = document.getElementById('lb-oc-img').files[0];
+                if (!pdfFile && !imgFile) { Swal.fire('ข้อมูลไม่ครบ', 'กรุณาอัปโหลดไฟล์อย่างน้อย 1 อย่าง', 'warning'); return; }
+                if (imgFile) { payload.imgBase64 = await fileToBase64(imgFile); payload.imgMime = imgFile.type; }
+            }
+
+            showLoading('กำลังบันทึกและอัปโหลดไฟล์...');
+            if (pdfFile) payload.pdfBase64 = await fileToBase64(pdfFile);
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(async res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon:'success', title:'บันทึกสำเร็จ', showConfirmButton:false, timer:1500 });
+                    closeModal('ocLogbookModal');
+                    await fetchLogbookData(); renderLogbookCards();
+                } else Swal.fire('ผิดพลาด', res.message, 'error');
+            });
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve) => {
+                let reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+                reader.readAsDataURL(file);
+            });
+        }
+        
     </script>
 </body>
 </html>
