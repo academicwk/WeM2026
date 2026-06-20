@@ -400,12 +400,10 @@
         }
 
         function openLunchModal() {
-            // 1. ตรวจสอบสิทธิ์ว่าใช่หัวหน้าสายชั้นของตัวเองหรือไม่
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             const headName = savedSettings[`head_grade_${userGradePrefix}`] || "";
             const isHead = (currentUser.name === headName);
 
-            // แจ้งเตือนสิทธิ์ด้านบน
             let alertBox = document.getElementById('lunch-role-alert');
             if(!alertBox) {
                 alertBox = document.createElement('div');
@@ -422,11 +420,9 @@
                 document.getElementById('lunch-submit-btn').classList.remove('hidden');
             }
 
-            // 2. แสดงข้อมูลทั่วไป
             document.getElementById('lunch-proposer').value = currentPLCPlan ? currentPLCPlan.proposer : (headName || currentUser.name);
             document.getElementById('lunch-grade').value = currentPLCPlan ? currentPLCPlan.grade : userGradePrefix;
 
-            // ดึงเฉพาะคนในสายชั้นตัวเอง
             const gradeMembers = allUsers.filter(u => {
                 if (!u.Room || u.Room === "-") return false;
                 let uPrefix = String(u.Room).split('/')[0].trim();
@@ -434,7 +430,6 @@
                 return uGroup === userGradePrefix;
             });
 
-            // สร้าง Dropdown สมาชิก และตั้งค่าล็อค (ถ้าไม่ใช่หัวหน้า)
             let memberHtml = '';
             let disableAttr = !isHead ? "disabled" : "";
             let bgClass = !isHead ? "bg-gray-100 text-gray-500 cursor-not-allowed opacity-80" : "bg-white text-gray-700 focus:border-blue-500";
@@ -450,9 +445,8 @@
             }
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
-            // สร้างตารางกำหนดการ
             let tbodyHtml = '';
-            for(let i=1; i<=15; i++) {
+            for(let i=1; i<=30; i++) { // 🌟 แก้ตรงนี้เป็น 30
                 let savedDate = "", savedMT = "";
                 if (currentPLCPlan && currentPLCPlan.plans) {
                     let p = currentPLCPlan.plans.find(x => parseInt(x.week) === i);
@@ -475,8 +469,6 @@
             document.getElementById('lunchModal').classList.remove('hidden');
         }
 
-        function closeLunchModal() { document.getElementById('lunchModal').classList.add('hidden'); }
-
         function submitLunchPLC() {
             const proposer = document.getElementById('lunch-proposer').value;
             const grade = document.getElementById('lunch-grade').value;
@@ -484,7 +476,7 @@
             for(let i=1; i<=12; i++) { let m = document.getElementById(`lunch-member-${i}`).value; if(m) members.push(m); }
 
             let plans = [], hasAtLeastOnePlan = false;
-            for(let i=1; i<=15; i++) {
+            for(let i=1; i<=30; i++) { // 🌟 แก้ตรงนี้เป็น 30
                 let rawDate = document.getElementById(`lunch-date-${i}`).value;
                 let mt = document.getElementById(`lunch-mt-${i}`).value;
                 if (rawDate || mt) { hasAtLeastOnePlan = true; plans.push({ week: i, dateThai: formatThaiDate(rawDate), dateRaw: rawDate, modelTeacher: mt }); }
@@ -504,6 +496,8 @@
                 } else { Swal.fire('เกิดข้อผิดพลาด', res.message, 'error'); }
             }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
         }
+
+        function closeLunchModal() { document.getElementById('lunchModal').classList.add('hidden'); }
 
         // ================= OPEN CLASS PLC =================
         async function fetchPLCPlanOpenClass() {
@@ -554,13 +548,17 @@
             const adminList = ["นายธนพงศ์ สุขะ", "นางสาวจิณณานิจ ไพโรจน์ณรงค์"];
             let cyclesHtml = '';
 
+            // 🌟 เพิ่มเป็น 6 เดือน / 6 วงรอบ
             const cycleMonths = [
                 { name: "มิถุนายน 2569", min: "2026-06-01", max: "2026-06-30" },
                 { name: "กรกฎาคม 2569", min: "2026-07-01", max: "2026-07-31" },
-                { name: "สิงหาคม 2569", min: "2026-08-01", max: "2026-08-31" }
+                { name: "สิงหาคม 2569", min: "2026-08-01", max: "2026-08-31" },
+                { name: "กันยายน 2569", min: "2026-09-01", max: "2026-09-30" },
+                { name: "ตุลาคม 2569", min: "2026-10-01", max: "2026-10-31" },
+                { name: "พฤศจิกายน 2569", min: "2026-11-01", max: "2026-11-30" }
             ];
 
-            for(let i=1; i<=3; i++) {
+            for(let i=1; i<=6; i++) { // 🌟 แก้เป็น 6
                 let cycleInfo = cycleMonths[i-1];
                 let p = currentPLCOpenClass && currentPLCOpenClass.cycles ? currentPLCOpenClass.cycles.find(x => x.cycle === i) : null;
                 let p_date = p && p.plan ? p.plan.dateRaw : ""; let p_admin = p && p.plan ? p.plan.admin : "";
@@ -616,7 +614,6 @@
             document.getElementById('oc-cycles-container').innerHTML = cyclesHtml;
             document.getElementById('openClassModal').classList.remove('hidden');
         }
-        function closeOpenClassModal() { document.getElementById('openClassModal').classList.add('hidden'); }
 
         function submitOpenClassPLC() {
             const proposer = document.getElementById('oc-proposer').value;
@@ -627,7 +624,7 @@
             for(let i=1; i<=4; i++) { let m = document.getElementById(`oc-member-${i}`).value; if(m) members.push(m); }
 
             let cycles = [], hasAtLeastOneCycle = false;
-            for(let i=1; i<=3; i++) {
+            for(let i=1; i<=6; i++) { // 🌟 แก้เป็น 6
                 let p_d = document.getElementById(`oc-c${i}-p-d`).value, p_admin = document.getElementById(`oc-c${i}-p-admin`).value;
                 let d_d = document.getElementById(`oc-c${i}-d-d`).value, d_p = document.getElementById(`oc-c${i}-d-period`).value, d_r = document.getElementById(`oc-c${i}-d-r`).value, d_s = document.getElementById(`oc-c${i}-d-s`).value, d_admin = document.getElementById(`oc-c${i}-d-admin`).value;
                 let s_d = document.getElementById(`oc-c${i}-s-d`).value, s_admin = document.getElementById(`oc-c${i}-s-admin`).value;
@@ -657,6 +654,8 @@
                 } else { Swal.fire('เกิดข้อผิดพลาด', res.message, 'error'); }
             }).catch(e => { Swal.fire('เกิดข้อผิดพลาด', 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ', 'error'); });
         }
+        function closeOpenClassModal() { document.getElementById('openClassModal').classList.add('hidden'); }
+
 
 // ================= LOGBOOK SYSTEM =================
         function toggleLogbookOptions() {
