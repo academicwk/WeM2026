@@ -691,23 +691,21 @@ function renderDashboardCards(payload) {
             container.innerHTML = '';
             const teachers = payload.teachers;
 
-            // 1. ดึงการตั้งค่าจาก LocalStorage (ที่ซิงค์มาจากตาราง Config)
             const settings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
 
-            // 🌟 2. กำหนดชื่อย่อและคีย์ตั้งค่าให้ตรงกับภาพตาราง 100%
+            // 🌟 ปรับ Configuration: แยก PLC เป็น 2 รายการ และใช้สวิตช์เปิด-ปิดเมนู PLC ตัวเดียวกัน (menu-acad-2)
             const SYSTEM_CONFIG = [
                 { key: 'lessonPlan', label: 'แผนฯ', settingKey: 'menu-acad-1' },
-                { key: 'plc', label: 'PLC', settingKey: 'menu-acad-2' },
+                { key: 'lunchPLC', label: 'Lunch PLC', settingKey: 'menu-acad-2' },        // หลอด Lunch PLC
+                { key: 'openClassPLC', label: 'Open Class', settingKey: 'menu-acad-2' },    // หลอด Open Class PLC
                 { key: 'research', label: 'วิจัย', settingKey: 'menu-acad-3' },
                 { key: 'media', label: 'สื่อฯ', settingKey: 'menu-acad-4' },
                 { key: 'testBank', label: 'คลังข้อสอบ', settingKey: 'menu-acad-5' },
-                { key: 'idPlan', label: 'ID Plan', settingKey: 'menu-hr-1' } // คีย์ตรงตามตารางเป๊ะ
+                { key: 'idPlan', label: 'ID Plan', settingKey: 'menu-hr-1' }
             ];
 
-            // 3. กรองเอาระบบที่ "เปิดใช้งาน" (TRUE) มาแสดง
             const activeSystems = SYSTEM_CONFIG.filter(sys => {
                 let val = settings[sys.settingKey];
-                // เช็คว่าค่าเป็น true หรือ "TRUE" (รองรับค่าจาก Google Sheet โดยตรง)
                 return val === true || String(val).toUpperCase() === "TRUE" || String(val).toLowerCase() === "on";
             });
 
@@ -721,7 +719,6 @@ function renderDashboardCards(payload) {
                 return;
             }
 
-            // 4. วาด Card รายบุคคลพร้อมหลอด Progress Bar
             teachers.forEach(t => {
                 let progressBarsHtml = '';
                 
@@ -729,14 +726,13 @@ function renderDashboardCards(payload) {
                     let stat = t.stats[sys.key] || { percent: 0 };
                     let pct = stat.percent;
                     
-                    // เปลี่ยนสีหลอดตามความคืบหน้า
                     let barColor = pct >= 100 ? 'bg-green-500' : (pct > 0 ? 'bg-amber-400' : 'bg-red-400');
                     let textColor = pct >= 100 ? 'text-green-600' : (pct > 0 ? 'text-amber-600' : 'text-slate-400');
                     let bgColor = pct > 0 ? 'bg-white' : 'bg-slate-50';
 
-                    // สร้างรูปแบบ: ตัวอักษรและเปอร์เซ็นต์อยู่ด้านบน หลอดอยู่ด้านล่าง
+                    // 🌟 ถ้าชื่อเป็น Lunch หรือ Open Class อาจจะยาวไป ปรับขนาดกล่องหลอดให้ยืดหยุ่นขึ้น (w-[100px] md:w-[115px])
                     progressBarsHtml += `
-                        <div class="${bgColor} border border-slate-200 p-2 rounded-lg flex flex-col w-[95px] md:w-[110px] shadow-sm shrink-0">
+                        <div class="${bgColor} border border-slate-200 p-2 rounded-lg flex flex-col w-[100px] md:w-[115px] shadow-sm shrink-0">
                             <div class="flex justify-between items-center mb-1.5">
                                 <span class="text-[10px] font-bold text-navy-900 truncate pr-1">${sys.label}</span>
                                 <span class="text-[10px] font-bold ${textColor}">${pct}%</span>
