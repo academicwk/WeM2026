@@ -113,6 +113,19 @@
                                 <span id="lunch-progress-text" class="text-xs font-bold text-gray-500">0/15 แผน</span>
                             </div>
                             <div class="w-full h-2 bg-gray-100 rounded-full mb-4 overflow-hidden"><div id="lunch-progress-bar" class="h-full bg-blue-500 transition-all duration-500" style="width: 0%"></div></div>
+                            
+                            <div class="flex flex-wrap gap-2 mb-5">
+                                <a href="https://notebooklm.google.com/" target="_blank" class="px-3 py-1.5 bg-white border border-gray-300 text-gray-800 hover:bg-gray-100 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-robot"></i> NotebookLM
+                                </a>
+                                <a href="https://drive.google.com/uc?export=download&id=1YP1k_qeZbd3zkGfd5ffVGikuSqZuvZ4g" class="px-3 py-1.5 bg-emerald-700 text-white hover:bg-emerald-800 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-download"></i> Template สำหรับ AI
+                                </a>
+                                <a href="https://drive.google.com/uc?export=download&id=1z_oYiSNcUTzpc8m2S8hz2wUUwJtoeOLg" class="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-download"></i> แบบฟอร์ม Lunch Logbook
+                                </a>
+                            </div>
+
                             <div id="lunch-logbook-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
                         </div>
 
@@ -122,6 +135,25 @@
                                 <span id="oc-progress-text" class="text-xs font-bold text-gray-500">0/9 แผน</span>
                             </div>
                             <div class="w-full h-2 bg-gray-100 rounded-full mb-4 overflow-hidden"><div id="oc-progress-bar" class="h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div></div>
+                            
+                            <div class="flex flex-wrap gap-2 mb-5">
+                                <a href="https://notebooklm.google.com/" target="_blank" class="px-3 py-1.5 bg-white border border-gray-300 text-gray-800 hover:bg-gray-100 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-robot"></i> NotebookLM
+                                </a>
+                                <a href="https://drive.google.com/uc?export=download&id=17oZebCakSsSJLJn_VcEw7AQ2vlGx0cz8" class="px-3 py-1.5 bg-rose-800 text-white hover:bg-rose-900 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-download"></i> Plan - Template สำหรับ AI
+                                </a>
+                                <a href="https://drive.google.com/uc?export=download&id=1-MPrAVFgDO2ihwpQmQyuKTVrs2iv7r2d" class="px-3 py-1.5 bg-rose-800 text-white hover:bg-rose-900 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-download"></i> See - Template สำหรับ AI
+                                </a>
+                                <a href="https://drive.google.com/uc?export=download&id=1PhVqPcB9EYP5379fyRm9LU8aTiNXQ0zZ" class="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-download"></i> แบบฟอร์ม Plan Logbook
+                                </a>
+                                <a href="https://drive.google.com/uc?export=download&id=1WSbLC9scL6vKiiE1dra_7C2mHzhGNDiB" class="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-download"></i> แบบฟอร์ม See Logbook
+                                </a>
+                            </div>
+
                             <div id="oc-logbook-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
                         </div>
                     </div>
@@ -131,7 +163,6 @@
         </div>
     </main>
 
-    <!-- Modal: Lunch PLC -->
     <div id="lunchModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
         <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
             <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
@@ -156,7 +187,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2" id="lunch-members-container"></div>
                 </div>
 
-                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (15 สัปดาห์)</h4>
+                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (30 สัปดาห์)</h4>
                 <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-slate-100 text-gray-600 font-bold">
@@ -179,7 +210,6 @@
         </div>
     </div>
 
-    <!-- Modal: Open Class PLC -->
     <div id="openClassModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
         <div class="bg-white rounded-2xl w-full max-w-5xl shadow-2xl relative flex flex-col my-auto">
             <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
@@ -204,7 +234,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2" id="oc-members-container"></div>
                 </div>
 
-                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (3 วงรอบ)</h4>
+                <h4 class="font-bold text-navy-900 text-base mb-3 border-l-4 border-amber-500 pl-3">ส่วนที่ 2: แผนกำหนดการกิจกรรม (6 วงรอบ)</h4>
                 <div id="oc-cycles-container" class="space-y-4"></div>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
@@ -216,7 +246,7 @@
         </div>
     </div>
 
-<div id="lunchLogbookModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div id="lunchLogbookModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button onclick="closeModal('lunchLogbookModal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 class="text-lg font-bold text-navy-900 mb-4 border-b pb-2"><i class="fa-solid fa-upload text-blue-500 mr-2"></i>อัปโหลดผลงาน (Lunch PLC)</h3>
@@ -446,7 +476,7 @@
             document.getElementById('lunch-members-container').innerHTML = memberHtml;
 
             let tbodyHtml = '';
-            for(let i=1; i<=30; i++) { // 🌟 แก้ตรงนี้เป็น 30
+            for(let i=1; i<=30; i++) {
                 let savedDate = "", savedMT = "";
                 if (currentPLCPlan && currentPLCPlan.plans) {
                     let p = currentPLCPlan.plans.find(x => parseInt(x.week) === i);
@@ -476,7 +506,7 @@
             for(let i=1; i<=12; i++) { let m = document.getElementById(`lunch-member-${i}`).value; if(m) members.push(m); }
 
             let plans = [], hasAtLeastOnePlan = false;
-            for(let i=1; i<=30; i++) { // 🌟 แก้ตรงนี้เป็น 30
+            for(let i=1; i<=30; i++) {
                 let rawDate = document.getElementById(`lunch-date-${i}`).value;
                 let mt = document.getElementById(`lunch-mt-${i}`).value;
                 if (rawDate || mt) { hasAtLeastOnePlan = true; plans.push({ week: i, dateThai: formatThaiDate(rawDate), dateRaw: rawDate, modelTeacher: mt }); }
@@ -548,7 +578,6 @@
             const adminList = ["นายธนพงศ์ สุขะ", "นางสาวจิณณานิจ ไพโรจน์ณรงค์"];
             let cyclesHtml = '';
 
-            // 🌟 เพิ่มเป็น 6 เดือน / 6 วงรอบ
             const cycleMonths = [
                 { name: "มิถุนายน 2569", min: "2026-06-01", max: "2026-06-30" },
                 { name: "กรกฎาคม 2569", min: "2026-07-01", max: "2026-07-31" },
@@ -558,7 +587,7 @@
                 { name: "พฤศจิกายน 2569", min: "2026-11-01", max: "2026-11-30" }
             ];
 
-            for(let i=1; i<=6; i++) { // 🌟 แก้เป็น 6
+            for(let i=1; i<=6; i++) {
                 let cycleInfo = cycleMonths[i-1];
                 let p = currentPLCOpenClass && currentPLCOpenClass.cycles ? currentPLCOpenClass.cycles.find(x => x.cycle === i) : null;
                 let p_date = p && p.plan ? p.plan.dateRaw : ""; let p_admin = p && p.plan ? p.plan.admin : "";
@@ -624,7 +653,7 @@
             for(let i=1; i<=4; i++) { let m = document.getElementById(`oc-member-${i}`).value; if(m) members.push(m); }
 
             let cycles = [], hasAtLeastOneCycle = false;
-            for(let i=1; i<=6; i++) { // 🌟 แก้เป็น 6
+            for(let i=1; i<=6; i++) {
                 let p_d = document.getElementById(`oc-c${i}-p-d`).value, p_admin = document.getElementById(`oc-c${i}-p-admin`).value;
                 let d_d = document.getElementById(`oc-c${i}-d-d`).value, d_p = document.getElementById(`oc-c${i}-d-period`).value, d_r = document.getElementById(`oc-c${i}-d-r`).value, d_s = document.getElementById(`oc-c${i}-d-s`).value, d_admin = document.getElementById(`oc-c${i}-d-admin`).value;
                 let s_d = document.getElementById(`oc-c${i}-s-d`).value, s_admin = document.getElementById(`oc-c${i}-s-admin`).value;
@@ -732,7 +761,7 @@
                         </div>
                     </div>`;
             }
-            // 🌟 เพิ่มการคำนวณและแสดงร้อยละ (%)
+            
             let percent = Math.round((savedCount / 30) * 100);
             document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 ครั้ง (${percent}%)`;
             document.getElementById('lunch-progress-bar').style.width = `${percent}%`;
@@ -821,7 +850,7 @@
             }
 
             container.innerHTML = finalHtml;
-            // 🌟 เพิ่มการคำนวณและแสดงร้อยละ (%)
+            
             let percent = Math.round((mySavedCount / 18) * 100);
             document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 ครั้ง (${percent}%) (เฉพาะของคุณ)`;
             document.getElementById('oc-progress-bar').style.width = `${percent}%`;
@@ -900,7 +929,6 @@
             
             let payload = { action: 'saveOpenClassLogbook', department: myDepartment, proposer: proposer, cycle: cycle, step: step };
 
-            // 🌟 ตรวจสอบข้อมูลก่อนส่ง
             if (step === 'do') {
                 let ytUrl = document.getElementById('lb-oc-yt').value;
                 if(!/^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/.test(ytUrl)) { Swal.fire('ลิงก์ผิดพลาด', 'กรุณาระบุลิงก์ YouTube ให้ถูกต้อง', 'warning'); return; }
