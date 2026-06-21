@@ -693,11 +693,11 @@ function renderDashboardCards(payload) {
 
             const settings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
 
-            // 🌟 ปรับ Configuration: แยก PLC เป็น 2 รายการ และใช้สวิตช์เปิด-ปิดเมนู PLC ตัวเดียวกัน (menu-acad-2)
+            // 🌟 แก้ไขชื่อป้ายเป็น Open Class PLC
             const SYSTEM_CONFIG = [
                 { key: 'lessonPlan', label: 'แผนฯ', settingKey: 'menu-acad-1' },
-                { key: 'lunchPLC', label: 'Lunch PLC', settingKey: 'menu-acad-2' },        // หลอด Lunch PLC
-                { key: 'openClassPLC', label: 'Open Class', settingKey: 'menu-acad-2' },    // หลอด Open Class PLC
+                { key: 'lunchPLC', label: 'Lunch PLC', settingKey: 'menu-acad-2' },
+                { key: 'openClassPLC', label: 'Open Class PLC', settingKey: 'menu-acad-2' }, // 🌟 อัปเดตตรงนี้
                 { key: 'research', label: 'วิจัย', settingKey: 'menu-acad-3' },
                 { key: 'media', label: 'สื่อฯ', settingKey: 'menu-acad-4' },
                 { key: 'testBank', label: 'คลังข้อสอบ', settingKey: 'menu-acad-5' },
@@ -730,11 +730,10 @@ function renderDashboardCards(payload) {
                     let textColor = pct >= 100 ? 'text-green-600' : (pct > 0 ? 'text-amber-600' : 'text-slate-400');
                     let bgColor = pct > 0 ? 'bg-white' : 'bg-slate-50';
 
-                    // 🌟 ถ้าชื่อเป็น Lunch หรือ Open Class อาจจะยาวไป ปรับขนาดกล่องหลอดให้ยืดหยุ่นขึ้น (w-[100px] md:w-[115px])
                     progressBarsHtml += `
                         <div class="${bgColor} border border-slate-200 p-2 rounded-lg flex flex-col w-[100px] md:w-[115px] shadow-sm shrink-0">
                             <div class="flex justify-between items-center mb-1.5">
-                                <span class="text-[10px] font-bold text-navy-900 truncate pr-1">${sys.label}</span>
+                                <span class="text-[10px] font-bold text-navy-900 truncate pr-1" title="${sys.label}">${sys.label}</span>
                                 <span class="text-[10px] font-bold ${textColor}">${pct}%</span>
                             </div>
                             <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
