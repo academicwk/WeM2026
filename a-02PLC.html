@@ -690,7 +690,6 @@
             container.innerHTML = '';
             let savedCount = 0;
 
-            // 🌟 เพิ่มการดึงสายชั้นมาแสดงต่อท้าย Header
             const lunchHeader = container.parentElement.querySelector('h4');
             if (lunchHeader) {
                 let gradeText = userGradePrefix && userGradePrefix !== "-" ? userGradePrefix : "ไม่ระบุสายชั้น";
@@ -733,9 +732,10 @@
                         </div>
                     </div>`;
             }
-            // 🌟 เปลี่ยนคำว่า แผน เป็น ครั้ง
-            document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 ครั้ง`;
-            document.getElementById('lunch-progress-bar').style.width = `${(savedCount/30)*100}%`;
+            // 🌟 เพิ่มการคำนวณและแสดงร้อยละ (%)
+            let percent = Math.round((savedCount / 30) * 100);
+            document.getElementById('lunch-progress-text').textContent = `${savedCount}/30 ครั้ง (${percent}%)`;
+            document.getElementById('lunch-progress-bar').style.width = `${percent}%`;
         }
 
         function renderOpenClassLogbooks() {
@@ -745,7 +745,6 @@
             let myCards = [];
             let otherCards = [];
 
-            // 🌟 เพิ่มการดึงกลุ่มสาระฯ มาแสดงต่อท้าย Header
             const ocHeader = container.parentElement.querySelector('h4');
             if (ocHeader) {
                 let deptName = myDepartment && myDepartment !== "-" ? myDepartment : "ไม่ระบุกลุ่มสาระฯ";
@@ -822,9 +821,10 @@
             }
 
             container.innerHTML = finalHtml;
-            // 🌟 เปลี่ยนคำว่า แผน เป็น ครั้ง
-            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 ครั้ง (เฉพาะของคุณ)`;
-            document.getElementById('oc-progress-bar').style.width = `${(mySavedCount/18)*100}%`;
+            // 🌟 เพิ่มการคำนวณและแสดงร้อยละ (%)
+            let percent = Math.round((mySavedCount / 18) * 100);
+            document.getElementById('oc-progress-text').textContent = `${mySavedCount}/18 ครั้ง (${percent}%) (เฉพาะของคุณ)`;
+            document.getElementById('oc-progress-bar').style.width = `${percent}%`;
         }
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
