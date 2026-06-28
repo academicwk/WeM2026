@@ -60,6 +60,7 @@
                             <div class="bg-white p-6 rounded-2xl border border-purple-200 shadow-sm">
                                 <div class="flex justify-between items-center mb-4 border-b border-purple-100 pb-3">
                                     <div>
+                                        <!-- 🌟 1. แก้ไขข้อความด้านบนสุดของ card -->
                                         <h4 class="font-bold text-purple-800 text-lg"><i class="fa-solid fa-list-check mr-2"></i>เลือกมาตรฐานที่ต้องการที่รับผิดชอบ ไม่เกิน 3 รายการ</h4>
                                         <p class="text-xs text-gray-500 mt-1 font-medium" id="pre-qa-level-text">ระบบกำลังตรวจสอบระดับชั้นของคุณ...</p>
                                     </div>
@@ -67,9 +68,13 @@
                                         เลือกแล้ว: <span id="pre-qa-count">0</span>/3
                                     </div>
                                 </div>
+
+                                <!-- 🌟 2. เพิ่มส่วนแสดงสถานะ -->
+                                <div id="pre-qa-status-container" class="mb-4"></div>
                                 
                                 <div id="pre-qa-list" class="max-h-[50vh] overflow-y-auto pr-2 space-y-2 mb-6">
-                                    </div>
+                                    <!-- ตัวเลือกจะถูกสร้างอัตโนมัติที่นี่ -->
+                                </div>
 
                                 <button onclick="submitPreQA()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-save"></i> บันทึกข้อมูล
@@ -249,10 +254,10 @@
         }
 
         // ================= QA DATA & LOGIC =================
-        let qaLevel = ""; // เก็บค่าว่าผู้ใช้เป็น ปฐมวัย หรือ ขั้นพื้นฐาน
-        let selectedPreQA = []; // เก็บตัวเลือก
+        let qaLevel = ""; 
+        let selectedPreQA = []; 
+        let savedPreQAData = []; // ตัวแปรเก็บข้อมูลที่เคยบันทึกไว้
 
-        // ข้อมูลมาตรฐาน (จัดรูปแบบเพื่อประมวลผล)
         const QA_DATA = {
             "ปฐมวัย": [
                 { type: "h1", text: "มาตรฐานที่ 1 คุณภาพของเด็ก" },
@@ -461,16 +466,56 @@
             ]
         };
 
-        // ฟังก์ชันประมวลผลก่อนเริ่มวาด List
-        function initPreQA() {
+        // 🌟 ดึงข้อมูลที่เคยบันทึกไว้
+        async function fetchPreQAData() {
+            try {
+                const res = await fetch(GAS_API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'getPreQAData', username: currentUser.username })
+                }).then(r => r.json());
+                
+                if (res.status === 'success') {
+                    savedPreQAData = res.data || [];
+                }
+            } catch (e) {
+                console.error('Error fetching PreQA data:', e);
+            }
+        }
+
+        // ประมวลผลและวาดหน้าจอ Pre-QA
+        async function initPreQA() {
             const room = currentUser.room || "";
             qaLevel = room.startsWith("อ.") ? "ปฐมวัย" : "ขั้นพื้นฐาน";
             document.getElementById('pre-qa-level-text').innerHTML = `ระดับ: <span class="text-purple-700 font-bold">${qaLevel}</span>`;
             
+            // รอโหลดข้อมูลเดิม (ถ้ายังไม่ได้โหลด)
+            if (savedPreQAData.length === 0) {
+                await fetchPreQAData();
+            }
+            
+            const statusContainer = document.getElementById('pre-qa-status-container');
             const listContainer = document.getElementById('pre-qa-list');
             listContainer.innerHTML = '';
-            selectedPreQA = []; // Reset selected array
-            updatePreQACount();
+            selectedPreQA = [];
+
+            // 🌟 วาดแถบสถานะ (รอการบันทึก / บันทึกแล้ว)
+            if (savedPreQAData.length === 0) {
+                statusContainer.innerHTML = `
+                    <div class="bg-amber-50 border border-amber-200 text-amber-700 p-3 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> สถานะ: รอการบันทึก
+                    </div>
+                `;
+            } else {
+                let savedItemsListHtml = savedPreQAData.map(itemStr => `<li>${itemStr}</li>`).join('');
+                statusContainer.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-sm mb-4">
+                        <p class="font-bold mb-2"><i class="fa-solid fa-check-circle mr-2"></i>สถานะ: มาตรฐานการศึกษาที่เลือก ประกอบด้วย</p>
+                        <ul class="list-disc pl-8 space-y-1 mb-3 text-gray-700 font-medium">
+                            ${savedItemsListHtml}
+                        </ul>
+                        <p class="text-xs text-green-700 bg-green-100 p-2 rounded-lg font-bold"><i class="fa-solid fa-info-circle mr-1"></i>กลุ่มบริหารงานวิชาการจะได้จัดทำคำสั่งแต่งตั้งผู้รับผิดชอบต่อไป</p>
+                    </div>
+                `;
+            }
 
             const itemsToRender = QA_DATA[qaLevel] || [];
             
@@ -483,18 +528,21 @@
                     el.className = "mt-2 mb-1 px-3 py-1.5 font-bold text-sm text-gray-700 border-l-4 border-purple-400 bg-white shadow-sm rounded-r-lg";
                     el.innerHTML = item.text;
                 } else if (item.type === "item") {
-                    // Checkbox ID item
+                    // ตรวจสอบว่าข้อนี้ถูกเลือกไว้ในอดีตหรือไม่
+                    const isChecked = savedPreQAData.some(savedStr => savedStr.startsWith(item.id));
+                    if (isChecked) selectedPreQA.push({id: item.id, text: item.text});
+
                     el.className = "ml-4 mr-2 bg-white border border-gray-200 rounded-lg p-3 hover:border-purple-400 transition-colors shadow-sm cursor-pointer flex items-start gap-3 group";
                     el.onclick = function(e) {
                         if(e.target.tagName !== 'INPUT') {
                             const cb = document.getElementById(`cb-qa-${index}`);
                             cb.checked = !cb.checked;
-                            handleQACheckChange(cb, item);
+                            handleQACheckChange(cb, {id: item.id, text: item.text});
                         }
                     };
                     
                     el.innerHTML = `
-                        <input type="checkbox" id="cb-qa-${index}" value="${item.id}" class="mt-0.5 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer" onclick="handleQACheckChange(this, {id:'${item.id}', text:'${item.text}'})">
+                        <input type="checkbox" id="cb-qa-${index}" value="${item.id}" ${isChecked ? 'checked' : ''} class="mt-0.5 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer" onclick="handleQACheckChange(this, {id:'${item.id}', text:'${item.text}'})">
                         <div class="flex-1">
                             <label for="cb-qa-${index}" class="text-sm font-bold text-navy-900 cursor-pointer group-hover:text-purple-700 transition-colors block leading-tight mb-1">${item.id}</label>
                             <p class="text-xs text-gray-600 cursor-pointer">${item.text}</p>
@@ -503,9 +551,10 @@
                 }
                 listContainer.appendChild(el);
             });
+
+            updatePreQACount();
         }
 
-        // ฟังก์ชันจัดการการคลิก Checkbox (ห้ามเกิน 3 ข้อ)
         function handleQACheckChange(checkbox, itemData) {
             if (checkbox.checked) {
                 if (selectedPreQA.length >= 3) {
@@ -524,18 +573,15 @@
             document.getElementById('pre-qa-count').textContent = selectedPreQA.length;
         }
 
-        // แทรกการรัน initPreQA() ใน function toggleSection เฉพาะตอนเปิด pre-iqa
         const originalToggleSection = toggleSection;
         toggleSection = function(containerId, iconId) {
             originalToggleSection(containerId, iconId);
             if (containerId === 'pre-iqa-container' && document.getElementById(containerId).classList.contains('hidden') === false) {
-                if(selectedPreQA.length === 0 && document.getElementById('pre-qa-list').innerHTML.trim() === '') {
-                    initPreQA();
-                }
+                // อัปเดตข้อมูลทุกครั้งที่กดขยายเพื่อความแน่ใจ
+                initPreQA();
             }
         };
 
-        // ฟังก์ชันส่งข้อมูล
         function submitPreQA() {
             if (selectedPreQA.length === 0) {
                 Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณาเลือกมาตรฐานที่รับผิดชอบอย่างน้อย 1 ข้อ (สูงสุด 3 ข้อ)', 'warning');
@@ -555,18 +601,18 @@
             fetch(GAS_API_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
-            }).then(r => r.json()).then(res => {
+            }).then(r => r.json()).then(async res => {
                 if (res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', showConfirmButton: false, timer: 1500 }).then(() => {
-                        toggleSection('pre-iqa-container', 'icon-pre-iqa'); // ปิดหน้าต่างเมื่อบันทึกเสร็จ
-                    });
+                    // อัปเดตตัวแปรข้อมูลที่บันทึกไว้ และโหลดหน้าจอใหม่
+                    savedPreQAData = selectedPreQA.map(s => `${s.id} ${s.text}`);
+                    await initPreQA();
+
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', showConfirmButton: false, timer: 1500 });
                 } else {
                     Swal.fire('ข้อผิดพลาด', res.message, 'error');
                 }
             }).catch(err => {
                 Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับระบบได้', 'error');
             });
-        }
-    </script>
-</body>
+        }</body>
 </html>
