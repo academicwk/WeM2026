@@ -24,7 +24,7 @@
                     <i class="fa-solid fa-arrow-left text-lg"></i>
                 </a>
                 <div class="border-l-4 border-gold-500 pl-3 py-1">
-                    <h2 class="text-xl font-bold text-navy-900 leading-none">แผนการจัดการเรียนรู้ / แผนการจัดประสบการณ์</h2>
+                    <h2 class="text-xl font-bold text-navy-900 leading-none" id="header-title">แผนการจัดการเรียนรู้ / แผนการจัดประสบการณ์</h2>
                     <p class="text-xs font-medium text-gray-500 mt-1.5" id="lp-header-subtitle">โครงการปรับปรุงและพัฒนาหลักสูตรสถานศึกษา โดย นายพีระศิน ไชยศร</p>
                 </div>
             </div>
@@ -39,7 +39,7 @@
             <div class="max-w-5xl mx-auto bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-4">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="font-bold text-navy-900 text-base"><i class="fa-solid fa-chart-pie text-gold-500 mr-2"></i>ภาพรวมการส่งแผนการสอนและบันทึกหลังสอน</h3>
-                    <span id="overall-text" class="text-sm font-bold text-gray-600">0/64 รายการ (0%)</span>
+                    <span id="overall-text" class="text-sm font-bold text-gray-600">0/0 รายการ (0%)</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner">
                     <div id="overall-bar" class="h-full bg-red-500 transition-all duration-500" style="width: 0%"></div>
@@ -108,7 +108,7 @@
     <div id="planModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button onclick="closePlanModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-lg font-bold text-navy-900 mb-1 border-b pb-2"><i class="fa-solid fa-book-open text-gold-500 mr-2"></i>ส่งแผนการสอน</h3>
+            <h3 class="text-lg font-bold text-navy-900 mb-1 border-b pb-2" id="modal-header-title"><i class="fa-solid fa-book-open text-gold-500 mr-2"></i>ส่งแผนการสอน</h3>
             <p class="text-sm font-medium text-gray-500 mb-4" id="modal-subtitle">หน่วยที่ x สัปดาห์ที่ y</p>
             
             <input type="hidden" id="modal-unit">
@@ -144,6 +144,9 @@
         let uploadedData = {}; 
         let tempBase64Plan = ""; 
         let logUploadParams = null; 
+        
+        // 🌟 ตัวแปรเช็คระดับชั้น
+        let isKindergarten = false;
 
         async function loadSidebarComponent() {
             try {
@@ -172,6 +175,16 @@
                 document.getElementById('sidebar-user-icon').classList.add('hidden');
             }
 
+            // 🌟 ตรวจสอบระดับชั้นว่าเป็น ปฐมวัย (อ.) หรือ ประถมศึกษา (ป.)
+            const userRoom = String(currentUser.room || "").trim();
+            isKindergarten = userRoom.startsWith("อ.");
+            
+            if (isKindergarten) {
+                document.getElementById('header-title').textContent = "แผนการจัดประสบการณ์ (ปฐมวัย)";
+            } else {
+                document.getElementById('header-title').textContent = "แผนการจัดการเรียนรู้ (ประถมศึกษา)";
+            }
+
             setInterval(() => {
                 const now = new Date();
                 const clockElement = document.getElementById('current-date');
@@ -182,15 +195,12 @@
         document.addEventListener("DOMContentLoaded", async () => {
             await loadSidebarComponent();
             setupUserData();
-            applyMenuStates(); // โหลดเวอร์ชันและสีปุ่มเมนูมาแปะ
+            applyMenuStates(); 
             
             fetchSubjectHeader();
             fetchLessonPlans();
         });
 
-        // ----------------------------------------------------
-        // ฟังก์ชันอัปเดตเวอร์ชันบน Sidebar
-        // ----------------------------------------------------
         function applyMenuStates() {
             const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
             const version = savedSettings['sys_version'] || '2.0.1';
@@ -253,94 +263,151 @@
             container.innerHTML = '';
             
             let totalOverallCompleted = 0;
-            const totalOverallTarget = 64; 
+            let totalOverallTarget = 64; 
 
-            for (let unit = 1; unit <= 8; unit++) {
-                let completedItems = 0;
-                const totalItems = 8; 
-                let rowsHtml = '';
+            // 🌟 แยกการสร้างหน้าจอ อนุบาล vs ประถม
+            if (isKindergarten) {
+                totalOverallTarget = 80; // 40 แผน + 40 บันทึก
+                let html = '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
                 
-                let displayUnitName = `<span class="text-gray-400 font-normal">ยังไม่ได้ระบุชื่อหน่วย</span>`;
-                for(let w=1; w<=4; w++) {
-                    if(uploadedData[`unit_${unit}_week_${w}_unitName`]) {
-                        displayUnitName = uploadedData[`unit_${unit}_week_${w}_unitName`];
-                        break;
-                    }
-                }
-
-                for (let week = 1; week <= 4; week++) {
-                    const planUrl = uploadedData[`unit_${unit}_week_${week}_plan`] || '';
-                    const logUrl = uploadedData[`unit_${unit}_week_${week}_log`] || '';
-                    const title = uploadedData[`unit_${unit}_week_${week}_title`] || '';
-
-                    if (planUrl) completedItems++;
-                    if (logUrl) completedItems++;
+                // สร้าง 40 การ์ด
+                for (let u = 1; u <= 40; u++) {
+                    let w = 1; // ใช้วีคที่ 1 ในการอ้างอิงข้อมูลหลังบ้านเสมอ
+                    const planUrl = uploadedData[`unit_${u}_week_${w}_plan`] || '';
+                    const logUrl = uploadedData[`unit_${u}_week_${w}_log`] || '';
+                    const title = uploadedData[`unit_${u}_week_${w}_title`] || '';
+                    const unitName = uploadedData[`unit_${u}_week_${w}_unitName`] || '';
+                    
+                    if (planUrl) totalOverallCompleted++;
+                    if (logUrl) totalOverallCompleted++;
 
                     const planBtn = planUrl 
-                        ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
-                        : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
+                        ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors mx-auto" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
+                        : `<button onclick="openPlanModal(${u}, ${w})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all mx-auto" title="ส่งแผนการสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>`;
 
                     const logBtn = logUrl 
-                        ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
-                        : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
+                        ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors mx-auto" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
+                        : `<button onclick="openLogUploader(${u}, ${w})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all mx-auto" title="ส่งบันทึกหลังสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>`;
 
                     const hasData = planUrl || logUrl;
-                    const rowClass = hasData ? "bg-green-50/70 border-green-100" : "hover:bg-slate-50 border-slate-100";
+                    const borderClass = hasData ? "border-green-200 bg-green-50/50" : "border-slate-200 bg-white";
 
-                    rowsHtml += `
-                        <div class="grid grid-cols-12 gap-2 items-center py-2.5 border-b last:border-none transition-colors ${rowClass}">
-                            <div class="col-span-6 pl-4 overflow-hidden">
-                                <p class="text-sm font-bold text-gray-700 leading-tight">สัปดาห์ที่ ${week}</p>
-                                <p class="text-xs text-gray-500 truncate mt-0.5" title="${title}">${title || '<span class="text-gray-300 font-light">ยังไม่ระบุชื่อเรื่อง</span>'}</p>
+                    html += `
+                        <div class="rounded-xl shadow-sm border ${borderClass} p-4 flex flex-col hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-center border-b border-slate-100 pb-2 mb-2">
+                                <span class="text-sm font-bold text-navy-900"><i class="fa-solid fa-shapes text-gold-500 mr-1.5"></i>หน่วยที่ ${u}</span>
                             </div>
-                            
-                            <div class="col-span-3 flex items-center gap-3 justify-center border-r border-slate-200">
-                                <button onclick="openPlanModal(${unit}, ${week})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all" title="ส่งแผนการสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>
-                                ${planBtn}
+                            <div class="mb-3 flex-1 overflow-hidden">
+                                <p class="text-[11px] text-gray-500 font-bold mb-0.5 truncate" title="${unitName}">หน่วย: ${unitName || '<span class="font-light">ยังไม่ระบุ</span>'}</p>
+                                <p class="text-[11px] text-gray-500 truncate" title="${title}">เรื่อง: ${title || '<span class="font-light">ยังไม่ระบุ</span>'}</p>
                             </div>
-                            
-                            <div class="col-span-3 flex items-center gap-3 justify-center">
-                                <button onclick="openLogUploader(${unit}, ${week})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all" title="ส่งบันทึกหลังสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>
-                                ${logBtn}
+                            <div class="grid grid-cols-2 gap-2 mt-auto border-t border-slate-100 pt-3">
+                                <div class="flex flex-col gap-1.5 justify-center">
+                                    <span class="text-[10px] text-center text-gray-500 font-bold">แผนฯ (4 แผน)</span>
+                                    ${planBtn}
+                                </div>
+                                <div class="flex flex-col gap-1.5 justify-center border-l border-slate-200">
+                                    <span class="text-[10px] text-center text-gray-500 font-bold">บันทึกหลังสอน</span>
+                                    ${logBtn}
+                                </div>
                             </div>
                         </div>
                     `;
                 }
+                html += '</div>';
+                container.innerHTML = html;
 
-                totalOverallCompleted += completedItems;
-                const pct = Math.round((completedItems / totalItems) * 100);
-                const barColor = pct === 100 ? 'bg-green-500' : (pct >= 50 ? 'bg-blue-500' : (pct > 0 ? 'bg-amber-500' : 'bg-red-500'));
+            } else {
+                // 🌟 สำหรับประถมศึกษา (ของเดิม)
+                container.className = "grid grid-cols-1 gap-6 max-w-5xl mx-auto pb-10";
+                for (let unit = 1; unit <= 8; unit++) {
+                    let completedItems = 0;
+                    const totalItems = 8; 
+                    let rowsHtml = '';
+                    
+                    let displayUnitName = `<span class="text-gray-400 font-normal">ยังไม่ได้ระบุชื่อหน่วย</span>`;
+                    for(let w=1; w<=4; w++) {
+                        if(uploadedData[`unit_${unit}_week_${w}_unitName`]) {
+                            displayUnitName = uploadedData[`unit_${unit}_week_${w}_unitName`];
+                            break;
+                        }
+                    }
 
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col hover:shadow-md transition-shadow";
-                card.innerHTML = `
-                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
-                        <div class="flex items-center gap-4 overflow-hidden pr-4">
-                            <div class="w-12 h-12 bg-navy-900 text-gold-400 font-bold rounded-xl flex items-center justify-center shadow-sm text-xl shrink-0">${unit}</div>
-                            <div class="truncate">
-                                <p class="text-xs font-bold text-gray-500 mb-0.5">หน่วยการเรียนรู้ที่ ${unit}</p>
-                                <h3 class="font-bold text-navy-900 text-lg truncate">${displayUnitName}</h3>
+                    for (let week = 1; week <= 4; week++) {
+                        const planUrl = uploadedData[`unit_${unit}_week_${week}_plan`] || '';
+                        const logUrl = uploadedData[`unit_${unit}_week_${week}_log`] || '';
+                        const title = uploadedData[`unit_${unit}_week_${week}_title`] || '';
+
+                        if (planUrl) completedItems++;
+                        if (logUrl) completedItems++;
+
+                        const planBtn = planUrl 
+                            ? `<a href="${planUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
+                            : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
+
+                        const logBtn = logUrl 
+                            ? `<a href="${logUrl}" target="_blank" class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center shadow transition-colors" title="เรียกดูไฟล์ PDF"><i class="fa-solid fa-file-pdf text-sm"></i></a>`
+                            : `<button disabled class="w-8 h-8 bg-gray-200 text-gray-400 rounded flex items-center justify-center cursor-not-allowed"><i class="fa-solid fa-file-pdf text-sm"></i></button>`;
+
+                        const hasData = planUrl || logUrl;
+                        const rowClass = hasData ? "bg-green-50/70 border-green-100" : "hover:bg-slate-50 border-slate-100";
+
+                        rowsHtml += `
+                            <div class="grid grid-cols-12 gap-2 items-center py-2.5 border-b last:border-none transition-colors ${rowClass}">
+                                <div class="col-span-6 pl-4 overflow-hidden">
+                                    <p class="text-sm font-bold text-gray-700 leading-tight">สัปดาห์ที่ ${week}</p>
+                                    <p class="text-xs text-gray-500 truncate mt-0.5" title="${title}">${title || '<span class="text-gray-300 font-light">ยังไม่ระบุชื่อเรื่อง</span>'}</p>
+                                </div>
+                                
+                                <div class="col-span-3 flex items-center gap-3 justify-center border-r border-slate-200">
+                                    <button onclick="openPlanModal(${unit}, ${week})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all" title="ส่งแผนการสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                    ${planBtn}
+                                </div>
+                                
+                                <div class="col-span-3 flex items-center gap-3 justify-center">
+                                    <button onclick="openLogUploader(${unit}, ${week})" class="w-8 h-8 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-600 rounded flex items-center justify-center border border-gray-300 shadow-sm transition-all" title="ส่งบันทึกหลังสอน"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                    ${logBtn}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    totalOverallCompleted += completedItems;
+                    const pct = Math.round((completedItems / totalItems) * 100);
+                    const barColor = pct === 100 ? 'bg-green-500' : (pct >= 50 ? 'bg-blue-500' : (pct > 0 ? 'bg-amber-500' : 'bg-red-500'));
+
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col hover:shadow-md transition-shadow";
+                    card.innerHTML = `
+                        <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
+                            <div class="flex items-center gap-4 overflow-hidden pr-4">
+                                <div class="w-12 h-12 bg-navy-900 text-gold-400 font-bold rounded-xl flex items-center justify-center shadow-sm text-xl shrink-0">${unit}</div>
+                                <div class="truncate">
+                                    <p class="text-xs font-bold text-gray-500 mb-0.5">หน่วยการเรียนรู้ที่ ${unit}</p>
+                                    <h3 class="font-bold text-navy-900 text-lg truncate">${displayUnitName}</h3>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[11px] font-bold text-gray-500">ความคืบหน้า</span>
+                                <p class="text-base font-black text-navy-900">${pct}%</p>
                             </div>
                         </div>
-                        <div class="text-right shrink-0">
-                            <span class="text-[11px] font-bold text-gray-500">ความคืบหน้า</span>
-                            <p class="text-base font-black text-navy-900">${pct}%</p>
+                        <div class="w-full bg-slate-100 h-1.5 shadow-inner"><div class="h-full ${barColor} transition-all duration-500" style="width: ${pct}%"></div></div>
+                        
+                        <div class="p-5 pt-3">
+                            <div class="grid grid-cols-12 gap-2 bg-slate-100 py-2 px-2 rounded-lg text-center text-xs font-bold text-slate-600 mb-2 shadow-sm">
+                                <div class="col-span-6 text-left pl-2">สัปดาห์ / ชื่อเรื่อง</div>
+                                <div class="col-span-3">แผนการสอน</div>
+                                <div class="col-span-3">บันทึกหลังสอน</div>
+                            </div>
+                            <div class="flex flex-col border border-slate-100 rounded-lg overflow-hidden">${rowsHtml}</div>
                         </div>
-                    </div>
-                    <div class="w-full bg-slate-100 h-1.5 shadow-inner"><div class="h-full ${barColor} transition-all duration-500" style="width: ${pct}%"></div></div>
-                    
-                    <div class="p-5 pt-3">
-                        <div class="grid grid-cols-12 gap-2 bg-slate-100 py-2 px-2 rounded-lg text-center text-xs font-bold text-slate-600 mb-2 shadow-sm">
-                            <div class="col-span-6 text-left pl-2">สัปดาห์ / ชื่อเรื่อง</div>
-                            <div class="col-span-3">แผนการสอน</div>
-                            <div class="col-span-3">บันทึกหลังสอน</div>
-                        </div>
-                        <div class="flex flex-col border border-slate-100 rounded-lg overflow-hidden">${rowsHtml}</div>
-                    </div>
-                `;
-                container.appendChild(card);
+                    `;
+                    container.appendChild(card);
+                }
             }
 
+            // แถบความคืบหน้าด้านบนสุดใช้คำนวณร่วมกัน
             const overallPct = Math.round((totalOverallCompleted / totalOverallTarget) * 100);
             const overallBarColor = overallPct === 100 ? 'bg-green-500' : (overallPct >= 50 ? 'bg-blue-500' : (overallPct > 0 ? 'bg-amber-500' : 'bg-red-500'));
             
@@ -352,7 +419,15 @@
         function openPlanModal(unit, week) {
             document.getElementById('modal-unit').value = unit;
             document.getElementById('modal-week').value = week;
-            document.getElementById('modal-subtitle').textContent = `สัปดาห์ที่ ${week} | หน่วยการเรียนรู้ที่ ${unit}`;
+            
+            // เปลี่ยนข้อความใน Modal ตามระดับชั้น
+            if (isKindergarten) {
+                document.getElementById('modal-header-title').innerHTML = '<i class="fa-solid fa-shapes text-gold-500 mr-2"></i>ส่งแผนการจัดประสบการณ์';
+                document.getElementById('modal-subtitle').textContent = `สัปดาห์/หน่วยที่ ${unit}`;
+            } else {
+                document.getElementById('modal-header-title').innerHTML = '<i class="fa-solid fa-book-open text-gold-500 mr-2"></i>ส่งแผนการสอน';
+                document.getElementById('modal-subtitle').textContent = `สัปดาห์ที่ ${week} | หน่วยการเรียนรู้ที่ ${unit}`;
+            }
             
             let oldUnitName = "";
             for(let w=1; w<=4; w++) {
@@ -394,32 +469,12 @@
                 Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อหน่วย, ชื่อเรื่อง และแนบไฟล์ PDF ให้ครบถ้วน', 'warning');
                 return;
             }
-            executeUpload(unit, week, 'plan', tempBase64Plan, "plan.pdf", unitName, lessonTitle);
-        }
 
-        function openLogUploader(unit, week) {
-            logUploadParams = { unit, week };
-            document.getElementById('logPdfUploader').click();
-        }
-
-        function handleLogFileSelect(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (file.type !== "application/pdf") { Swal.fire('ผิดพลาด', 'ต้องเป็นไฟล์ PDF เท่านั้น', 'error'); return; }
-            
-            const reader = new FileReader();
-            reader.onload = (ev) => { executeUpload(logUploadParams.unit, logUploadParams.week, 'log', ev.target.result, "log.pdf", "", ""); };
-            reader.readAsDataURL(file);
-            e.target.value = ''; 
-        }
-
-        function executeUpload(unit, week, type, base64, filename, unitName, lessonTitle) {
             const subject = document.getElementById('subject-input').value;
             const grade = document.getElementById('grade-input').value;
 
             if (!subject || !grade) {
-                Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุ "รายวิชา" และ "ระดับชั้น" ในกล่องด้านบนก่อนอัปโหลดไฟล์ครับ', 'warning');
-                if (type === 'plan') closePlanModal();
+                Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุ "รายวิชา" และ "ระดับชั้น" ด้านบนก่อน', 'warning');
                 return;
             }
 
@@ -432,23 +487,67 @@
                     name: currentUser.name,
                     subject: subject,
                     grade: grade,
-                    unit: unit, week: week, fileType: type,
-                    base64: base64, filename: filename,
+                    unit: unit, week: week, fileType: 'plan',
+                    base64: tempBase64Plan, filename: "plan.pdf",
                     unitName: unitName, lessonTitle: lessonTitle
                 })
             }).then(r => r.json()).then(res => {
                 if (res.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'สำเร็จ', timer: 1500, showConfirmButton: false });
-                    if (type === 'plan') closePlanModal();
+                    closePlanModal();
                     
-                    uploadedData[`unit_${unit}_week_${week}_${type}`] = res.fileUrl;
-                    if(type === 'plan') {
-                        uploadedData[`unit_${unit}_week_${week}_unitName`] = unitName;
-                        uploadedData[`unit_${unit}_week_${week}_title`] = lessonTitle;
-                    }
+                    uploadedData[`unit_${unit}_week_${week}_plan`] = res.fileUrl;
+                    uploadedData[`unit_${unit}_week_${week}_unitName`] = unitName;
+                    uploadedData[`unit_${unit}_week_${week}_title`] = lessonTitle;
+                    
                     renderUnitCards();
                 } else Swal.fire('ผิดพลาด', res.message, 'error');
             }).catch(e => Swal.fire('ผิดพลาด', 'อัปโหลดไม่สำเร็จ', 'error'));
+        }
+
+        function openLogUploader(unit, week) {
+            logUploadParams = { unit, week };
+            document.getElementById('logPdfUploader').click();
+        }
+
+        function handleLogFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.type !== "application/pdf") { Swal.fire('ผิดพลาด', 'ต้องเป็นไฟล์ PDF เท่านั้น', 'error'); return; }
+            
+            const subject = document.getElementById('subject-input').value;
+            const grade = document.getElementById('grade-input').value;
+
+            if (!subject || !grade) {
+                Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุ "รายวิชา" และ "ระดับชั้น" ด้านบนก่อน', 'warning');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (ev) => { 
+                Swal.fire({ title: 'กำลังบันทึกและอัปโหลด...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                
+                fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'uploadLessonPlan',
+                        name: currentUser.name,
+                        subject: subject,
+                        grade: grade,
+                        unit: logUploadParams.unit, week: logUploadParams.week, fileType: 'log',
+                        base64: ev.target.result.split(',')[1], filename: "log.pdf",
+                        unitName: "", lessonTitle: ""
+                    })
+                }).then(r => r.json()).then(res => {
+                    if (res.status === 'success') {
+                        Swal.fire({ icon: 'success', title: 'สำเร็จ', timer: 1500, showConfirmButton: false });
+                        uploadedData[`unit_${logUploadParams.unit}_week_${logUploadParams.week}_log`] = res.fileUrl;
+                        renderUnitCards();
+                    } else Swal.fire('ผิดพลาด', res.message, 'error');
+                }).catch(e => Swal.fire('ผิดพลาด', 'อัปโหลดไม่สำเร็จ', 'error'));
+            };
+            reader.readAsDataURL(file);
+            e.target.value = ''; 
         }
     </script>
 </body>
