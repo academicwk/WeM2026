@@ -235,6 +235,7 @@
         }
 
         // ================= เรนเดอร์หน้าจอ (สร้างการ์ด) =================
+        // ================= เรนเดอร์หน้าจอ (สร้างการ์ด) =================
         function renderUnitCards() {
             const container = document.getElementById('unit-cards-container');
             container.innerHTML = '';
@@ -288,18 +289,19 @@
                 updateProgressBar(Math.round((totalSaved / maxTarget) * 100), `${totalSaved}/${maxTarget} ไฟล์`);
 
             } else {
-                // 🌟 สำหรับประถมศึกษา: 8 หน่วย * 8 สัปดาห์
-                const maxTarget = 128; // (แผน 64 + บันทึก 64)
+                // 🌟 สำหรับประถมศึกษา: 8 หน่วย * 4 สัปดาห์ = 32 สัปดาห์
+                const maxTarget = 64; // (แผน 32 + บันทึก 32)
                 let html = '';
 
                 for (let u = 1; u <= 8; u++) {
                     html += `
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 mb-4">
                             <h3 class="text-lg font-bold text-navy-900 border-b pb-2 mb-4"><i class="fa-solid fa-layer-group text-blue-500 mr-2"></i>หน่วยที่ ${u}</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4"> 
                     `;
                     
-                    for (let w = 1; w <= 8; w++) {
+                    // 🌟 วนลูปแค่ 4 สัปดาห์ต่อ 1 หน่วย
+                    for (let w = 1; w <= 4; w++) {
                         let planUrl = uploadedData[`unit_${u}_week_${w}_plan`];
                         let recordUrl = uploadedData[`unit_${u}_week_${w}_record`];
                         let unitName = uploadedData[`unit_${u}_week_${w}_unitName`] || "";
@@ -311,21 +313,21 @@
                         let bgClass = (planUrl && recordUrl) ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200';
                         
                         html += `
-                            <div class="${bgClass} border rounded-xl p-3 flex flex-col h-full hover:shadow-md transition-shadow">
-                                <div class="text-[11px] font-bold text-navy-900 mb-1 text-center bg-white rounded border border-gray-100 py-1 shadow-sm">สัปดาห์ ${w}</div>
-                                ${unitName ? `<div class="text-[9px] text-gray-500 truncate mb-0.5" title="${unitName}">น: ${unitName}</div>` : ''}
-                                ${lessonTitle ? `<div class="text-[9px] text-gray-500 truncate mb-2" title="${lessonTitle}">ร: ${lessonTitle}</div>` : ''}
+                            <div class="${bgClass} border rounded-xl p-4 flex flex-col h-full hover:shadow-md transition-shadow">
+                                <div class="text-[12px] font-bold text-navy-900 mb-2 text-center bg-white rounded border border-gray-100 py-1.5 shadow-sm">สัปดาห์ ${w}</div>
+                                ${unitName ? `<div class="text-[10px] text-gray-500 truncate mb-1" title="${unitName}">น: ${unitName}</div>` : ''}
+                                ${lessonTitle ? `<div class="text-[10px] text-gray-500 truncate mb-3" title="${lessonTitle}">ร: ${lessonTitle}</div>` : ''}
                                 
-                                <div class="mt-auto space-y-1.5">
+                                <div class="mt-auto space-y-2">
                                     ${planUrl ? 
-                                        `<div class="flex gap-1"><a href="${planUrl}" target="_blank" class="flex-1 bg-blue-100 text-blue-700 py-1.5 rounded text-[9px] font-bold text-center hover:bg-blue-200"><i class="fa-solid fa-file-pdf"></i> แผนฯ</a><button onclick="deletePlan(${u}, ${w}, 'plan')" class="bg-red-100 text-red-600 px-2 rounded hover:bg-red-200"><i class="fa-solid fa-trash"></i></button></div>` 
+                                        `<div class="flex gap-1.5"><a href="${planUrl}" target="_blank" class="flex-1 bg-blue-100 text-blue-700 py-1.5 rounded-lg text-[10px] font-bold text-center hover:bg-blue-200"><i class="fa-solid fa-file-pdf"></i> แผนฯ</a><button onclick="deletePlan(${u}, ${w}, 'plan')" class="bg-red-100 text-red-600 px-2.5 rounded-lg hover:bg-red-200"><i class="fa-solid fa-trash"></i></button></div>` 
                                         : 
-                                        `<button onclick="openPlanModal(${u}, ${w}, 'plan')" class="w-full bg-white border border-gray-300 text-gray-600 py-1.5 rounded text-[9px] font-bold hover:bg-blue-600 hover:text-white transition-colors"><i class="fa-solid fa-upload"></i> แผนฯ</button>`
+                                        `<button onclick="openPlanModal(${u}, ${w}, 'plan')" class="w-full bg-white border border-gray-300 text-gray-600 py-1.5 rounded-lg text-[10px] font-bold hover:bg-blue-600 hover:text-white transition-colors"><i class="fa-solid fa-upload"></i> แผนฯ</button>`
                                     }
                                     ${recordUrl ? 
-                                        `<div class="flex gap-1"><a href="${recordUrl}" target="_blank" class="flex-1 bg-amber-100 text-amber-700 py-1.5 rounded text-[9px] font-bold text-center hover:bg-amber-200"><i class="fa-solid fa-file-pdf"></i> บันทึกฯ</a><button onclick="deletePlan(${u}, ${w}, 'record')" class="bg-red-100 text-red-600 px-2 rounded hover:bg-red-200"><i class="fa-solid fa-trash"></i></button></div>` 
+                                        `<div class="flex gap-1.5"><a href="${recordUrl}" target="_blank" class="flex-1 bg-amber-100 text-amber-700 py-1.5 rounded-lg text-[10px] font-bold text-center hover:bg-amber-200"><i class="fa-solid fa-file-pdf"></i> บันทึกฯ</a><button onclick="deletePlan(${u}, ${w}, 'record')" class="bg-red-100 text-red-600 px-2.5 rounded-lg hover:bg-red-200"><i class="fa-solid fa-trash"></i></button></div>` 
                                         : 
-                                        `<button onclick="openPlanModal(${u}, ${w}, 'record')" class="w-full bg-white border border-gray-300 text-gray-600 py-1.5 rounded text-[9px] font-bold hover:bg-amber-500 hover:text-white transition-colors"><i class="fa-solid fa-upload"></i> บันทึกฯ</button>`
+                                        `<button onclick="openPlanModal(${u}, ${w}, 'record')" class="w-full bg-white border border-gray-300 text-gray-600 py-1.5 rounded-lg text-[10px] font-bold hover:bg-amber-500 hover:text-white transition-colors"><i class="fa-solid fa-upload"></i> บันทึกฯ</button>`
                                     }
                                 </div>
                             </div>
