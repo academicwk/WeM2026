@@ -486,6 +486,9 @@
 
             Swal.fire({ title: 'กำลังบันทึกและอัปโหลด...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
+            // 🌟 จุดที่แก้ไข: เช็คและตัดคำนำหน้า (Prefix) ออกก่อนส่งไปหลังบ้าน
+            const base64Data = tempBase64Plan.includes(',') ? tempBase64Plan.split(',')[1] : tempBase64Plan;
+
             fetch(GAS_API_URL, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -494,7 +497,8 @@
                     subject: subject,
                     grade: grade,
                     unit: unit, week: week, fileType: 'plan',
-                    base64: tempBase64Plan, filename: "plan.pdf",
+                    base64: base64Data, // 🌟 เปลี่ยนมาใช้ตัวแปรที่ถูกตัด Prefix แล้ว
+                    filename: "plan.pdf",
                     unitName: unitName, lessonTitle: lessonTitle
                 })
             }).then(r => r.json()).then(res => {
