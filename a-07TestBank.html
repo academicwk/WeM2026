@@ -196,11 +196,15 @@
                 overall.total++;
                 overall[status]++;
 
-                // บวกเพิ่มในสายชั้น (ถ้ามี)
-                const g = item.grade;
-                if (gradeStats[g]) {
-                    gradeStats[g].total++;
-                    gradeStats[g][status]++;
+                // 🌟 ตรวจสอบระดับชั้น: ตัดเอาเฉพาะคำขึ้นต้น หรือจับคู่กับ อ.1-ป.6
+                // (ถ้าข้อมูลเป็น ป.6/1-6/5 ระบบจะหาเจอว่าขึ้นต้นด้วย ป.6 แล้วนำไปจัดกลุ่มให้ถูกต้อง)
+                const rawGrade = item.grade ? item.grade.trim() : '';
+                const matchedGrade = grades.find(g => rawGrade.startsWith(g));
+
+                // บวกเพิ่มในสายชั้น (ถ้าตรงกับสายชั้นหลัก อ.1 - ป.6)
+                if (matchedGrade && gradeStats[matchedGrade]) {
+                    gradeStats[matchedGrade].total++;
+                    gradeStats[matchedGrade][status]++;
                 }
             });
 
