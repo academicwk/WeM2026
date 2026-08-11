@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- ไลบรารีสำหรับสร้างกราฟ (Chart.js) และตัวเลขกำกับ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
     <!-- ไลบรารีสำหรับนับหน้า PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script>
@@ -171,102 +176,147 @@
             }
         }
 
+        // ประกาศตัวแปรกราฟไว้ด้านนอก เพื่อให้สามารถเคลียร์กราฟเก่าทิ้งได้เมื่อรีเฟรช
+        let pieChartInstance = null;
+        let barChartInstance = null;
+
         function renderDashboard() {
             const container = document.getElementById('dashboard-content');
             if (!container) return;
 
-            // ตั้งค่าตัวแปรสำหรับนับจำนวน
-            let overall = { total: 0, waiting: 0, reviewing: 0, approved: 0, revising: 0 };
+            // 1. ตั้งค่าและคำนวณตัวเลข
+            let overall = { waiting: 0, reviewing: 0, approved: 0, revising: 0 };
             const grades = ['อ.1', 'อ.2', 'อ.3', 'ป.1', 'ป.2', 'ป.3', 'ป.4', 'ป.5', 'ป.6'];
             let gradeStats = {};
             
             grades.forEach(g => {
-                gradeStats[g] = { total: 0, waiting: 0, reviewing: 0, approved: 0, revising: 0 };
+                gradeStats[g] = { waiting: 0, reviewing: 0, approved: 0, revising: 0 };
             });
 
-            // คำนวณข้อมูลจาก testBankData
             testBankData.forEach(item => {
                 let status = '';
-                if (!item.pdfUrl) status = 'waiting'; // รอส่งไฟล์
+                if (!item.pdfUrl) status = 'waiting';
                 else if (item.reviewStatus === 'อนุมัติ') status = 'approved';
                 else if (item.reviewStatus === 'ปรับปรุง') status = 'revising';
-                else status = 'reviewing'; // กำลังกลั่นกรอง
+                else status = 'reviewing';
 
-                // บวกเพิ่มในภาพรวม
-                overall.total++;
                 overall[status]++;
 
-                // 🌟 ตรวจสอบระดับชั้น: ตัดเอาเฉพาะคำขึ้นต้น หรือจับคู่กับ อ.1-ป.6
-                // (ถ้าข้อมูลเป็น ป.6/1-6/5 ระบบจะหาเจอว่าขึ้นต้นด้วย ป.6 แล้วนำไปจัดกลุ่มให้ถูกต้อง)
                 const rawGrade = item.grade ? item.grade.trim() : '';
                 const matchedGrade = grades.find(g => rawGrade.startsWith(g));
-
-                // บวกเพิ่มในสายชั้น (ถ้าตรงกับสายชั้นหลัก อ.1 - ป.6)
-                if (matchedGrade && gradeStats[matchedGrade]) {
-                    gradeStats[matchedGrade].total++;
+                if (matchedGrade) {
                     gradeStats[matchedGrade][status]++;
                 }
             });
 
-            // สร้างตารางข้อมูลแยกสายชั้น
-            let tableHtml = '';
-            grades.forEach(g => {
-                const st = gradeStats[g];
-                tableHtml += `
-                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-none">
-                        <td class="py-2.5 px-4 text-center font-bold text-navy-900 border-r border-slate-100">${g}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-gray-700 bg-gray-50/50">${st.total}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-gray-500">${st.waiting}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-amber-600">${st.reviewing}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-green-600">${st.approved}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-red-600">${st.revising}</td>
-                    </tr>
-                `;
-            });
-
-            // ประกอบ HTML ทั้งหมด
+            // 2. วาดโครงสร้าง HTML สำหรับใส่กราฟ (แบ่งซ้าย-ขวา)
             container.innerHTML = `
-                <!-- การ์ดภาพรวม -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center flex flex-col justify-center">
-                        <p class="text-xs font-bold text-gray-500 mb-1">รอส่งไฟล์</p>
-                        <p class="text-3xl font-black text-gray-700">${overall.waiting}</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- กราฟวงกลม: ภาพรวมทั้งหมด -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-navy-900 mb-2 text-center text-sm bg-slate-50 py-1.5 rounded-lg border border-slate-100">สัดส่วนสถานะภาพรวม</h4>
+                        <div class="relative w-full h-56 flex justify-center items-center">
+                            <canvas id="overallPieChart"></canvas>
+                        </div>
                     </div>
-                    <div class="bg-amber-50 p-4 rounded-xl shadow-sm border border-amber-200 text-center flex flex-col justify-center">
-                        <p class="text-xs font-bold text-amber-700 mb-1">กำลังกลั่นกรอง</p>
-                        <p class="text-3xl font-black text-amber-600">${overall.reviewing}</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-xl shadow-sm border border-green-200 text-center flex flex-col justify-center">
-                        <p class="text-xs font-bold text-green-700 mb-1">อนุมัติ</p>
-                        <p class="text-3xl font-black text-green-600">${overall.approved}</p>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-xl shadow-sm border border-red-200 text-center flex flex-col justify-center">
-                        <p class="text-xs font-bold text-red-700 mb-1">ปรับปรุง</p>
-                        <p class="text-3xl font-black text-red-600">${overall.revising}</p>
-                    </div>
-                </div>
-
-                <!-- ตารางแยกตามสายชั้น -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-2">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left whitespace-nowrap">
-                            <thead class="bg-slate-100 text-navy-900 font-bold text-xs border-b border-slate-200">
-                                <tr>
-                                    <th class="py-3 px-4 text-center border-r border-slate-200 w-24">สายชั้น</th>
-                                    <th class="py-3 px-4 text-center bg-gray-200/50">วิชาทั้งหมด</th>
-                                    <th class="py-3 px-4 text-center text-gray-600">รอส่งไฟล์</th>
-                                    <th class="py-3 px-4 text-center text-amber-700">กำลังกลั่นกรอง</th>
-                                    <th class="py-3 px-4 text-center text-green-700">อนุมัติ</th>
-                                    <th class="py-3 px-4 text-center text-red-700">ปรับปรุง</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${tableHtml}
-                            </tbody>
-                        </table>
+                    
+                    <!-- กราฟแท่ง: แยกตามสายชั้น -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 md:col-span-2">
+                        <h4 class="font-bold text-navy-900 mb-2 text-center text-sm bg-slate-50 py-1.5 rounded-lg border border-slate-100">ความก้าวหน้าแยกตามสายชั้น</h4>
+                        <div class="relative w-full h-56">
+                            <canvas id="gradesBarChart"></canvas>
+                        </div>
                     </div>
                 </div>
             `;
+
+            // 3. วาดกราฟ (ใช้ setTimeout เพื่อรอให้ HTML ด้านบนแสดงผลเสร็จก่อน)
+            setTimeout(() => {
+                // ลงทะเบียน Plugin สำหรับแสดงตัวเลขบนกราฟ
+                Chart.register(ChartDataLabels);
+
+                const colors = {
+                    waiting: '#94a3b8',   // สีเทา
+                    reviewing: '#f59e0b', // สีส้ม
+                    approved: '#22c55e',  // สีเขียว
+                    revising: '#ef4444'   // สีแดง
+                };
+
+                const labels = {
+                    waiting: 'รอส่งไฟล์',
+                    reviewing: 'กำลังกลั่นกรอง',
+                    approved: 'อนุมัติ',
+                    revising: 'ปรับปรุง'
+                };
+
+                // ------------- สร้างกราฟวงกลม (Doughnut) -------------
+                const pieCtx = document.getElementById('overallPieChart').getContext('2d');
+                if(pieChartInstance) pieChartInstance.destroy(); // ลบของเก่าออกก่อน
+                
+                pieChartInstance = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [labels.waiting, labels.reviewing, labels.approved, labels.revising],
+                        datasets: [{
+                            data: [overall.waiting, overall.reviewing, overall.approved, overall.revising],
+                            backgroundColor: [colors.waiting, colors.reviewing, colors.approved, colors.revising],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '50%',
+                        plugins: {
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, padding: 15 } 
+                            },
+                            datalabels: {
+                                color: '#ffffff',
+                                font: { family: 'Sarabun', weight: 'bold', size: 14 },
+                                formatter: (value) => value > 0 ? value : '' // ซ่อนเลขถ้าเป็น 0
+                            }
+                        }
+                    }
+                });
+
+                // ------------- สร้างกราฟแท่ง (Stacked Bar) -------------
+                const barCtx = document.getElementById('gradesBarChart').getContext('2d');
+                if(barChartInstance) barChartInstance.destroy();
+                
+                const datasets = ['waiting', 'reviewing', 'approved', 'revising'].map(status => ({
+                    label: labels[status],
+                    data: grades.map(g => gradeStats[g][status]),
+                    backgroundColor: colors[status],
+                    borderRadius: 4
+                }));
+
+                barChartInstance = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: grades,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Sarabun', weight: 'bold' } } },
+                            y: { stacked: true, border: { display: false }, ticks: { precision: 0, font: { family: 'Sarabun' } } }
+                        },
+                        plugins: {
+                            legend: { display: false }, // ซ่อน Legend ซ้ำซ้อนกับกราฟวงกลม
+                            datalabels: {
+                                color: '#ffffff',
+                                font: { family: 'Sarabun', weight: 'bold', size: 12 },
+                                formatter: (value) => value > 0 ? value : '' // ซ่อนเลขถ้าเป็น 0
+                            }
+                        }
+                    }
+                });
+            }, 100);
         }
         
         function renderExamCards() {
