@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบงานคลังข้อสอบ | WeM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ไลบรารีสำหรับนับหน้า PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Sarabun', 'sans-serif'] }, colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } } } } }
+    </script>
+</head>
+<body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
+
+    <div id="sidebar-container" class="h-full flex shrink-0"></div>
+
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
+                <a href="main.html#zone-academic" class="w-10 h-10 bg-slate-100 hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm border border-gray-200 shrink-0">
+                    <i class="fa-solid fa-arrow-left text-lg"></i>
+                </a>
+                <div class="border-l-4 border-gold-500 pl-3 py-1">
+                    <h2 class="text-xl font-bold text-navy-900 leading-none">ระบบงานคลังข้อสอบ</h2>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบบริหารงานวิชาการ</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
+                <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="Icon" border="0" class="h-12 w-auto object-contain">
+                <span id="current-date"></span>
+            </div>
+        </header>
+
+        <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
+            
+            <!-- ส่วนที่ 1: แบบฟอร์มจัดทำต้นฉบับข้อสอบ -->
+            <div class="max-w-6xl mx-auto mb-8">
+                <h3 class="text-lg font-bold text-navy-900 mb-3 border-b-2 border-gold-400 pb-1 inline-block">1. แบบฟอร์มจัดทำต้นฉบับข้อสอบ</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <a href="#" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-3 px-2 rounded-xl shadow-sm flex flex-col items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-word text-2xl text-blue-500"></i>
+                        <span class="text-[11px] font-bold text-center leading-tight">แบบฟอร์ม 1<br>เลือกตอบและเขียนตอบ</span>
+                    </a>
+                    <a href="#" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-3 px-2 rounded-xl shadow-sm flex flex-col items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-word text-2xl text-blue-500"></i>
+                        <span class="text-[11px] font-bold text-center leading-tight">แบบฟอร์ม 2<br>ข้อสอบเขียนตอบ</span>
+                    </a>
+                    <a href="#" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-3 px-2 rounded-xl shadow-sm flex flex-col items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-word text-2xl text-blue-500"></i>
+                        <span class="text-[11px] font-bold text-center leading-tight">แบบฟอร์ม 3<br>การประเมินทักษะปฏิบัติ</span>
+                    </a>
+                    <a href="#" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-3 px-2 rounded-xl shadow-sm flex flex-col items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-word text-2xl text-blue-500"></i>
+                        <span class="text-[11px] font-bold text-center leading-tight">แบบฟอร์ม 4<br>การสอบปากเปล่า</span>
+                    </a>
+                    <a href="#" target="_blank" class="bg-white border border-blue-200 hover:border-blue-500 hover:bg-blue-50 text-blue-700 py-3 px-2 rounded-xl shadow-sm flex flex-col items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-word text-2xl text-blue-500"></i>
+                        <span class="text-[11px] font-bold text-center leading-tight">แบบฟอร์ม 5<br>ปฐมวัย</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ส่วนที่ 2: การส่งต้นฉบับข้อสอบ -->
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+                    <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gold-400 pb-1 inline-block">2. การส่งต้นฉบับข้อสอบ</h3>
+                    <button onclick="openExamFormModal()" class="bg-navy-900 hover:bg-navy-800 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> สร้างรายการส่งข้อสอบ
+                    </button>
+                </div>
+
+                <div id="exam-cards-container" class="space-y-4 pb-10">
+                    <div class="text-center py-10 text-gray-500 font-bold bg-white rounded-xl border"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><br>กำลังโหลดข้อมูล...</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal สร้าง/แก้ไข รายการข้อสอบ -->
+    <div id="examFormModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-lines text-gold-400 mr-2"></i>ข้อมูลต้นฉบับข้อสอบ</h3>
+                <button onclick="closeExamFormModal()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4">
+                <input type="hidden" id="modal-exam-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-bold text-gray-700 block mb-1">รหัสวิชา</label>
+                        <input type="text" id="modal-sub-code" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="เช่น ว11101">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-gray-700 block mb-1">ชั้น</label>
+                        <select id="modal-sub-grade" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 bg-white">
+                            <option value="อ.1">อ.1</option><option value="อ.2">อ.2</option><option value="อ.3">อ.3</option>
+                            <option value="ป.1">ป.1</option><option value="ป.2">ป.2</option><option value="ป.3">ป.3</option>
+                            <option value="ป.4">ป.4</option><option value="ป.5">ป.5</option><option value="ป.6">ป.6</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-gray-700 block mb-1">รายวิชา</label>
+                    <input type="text" id="modal-sub-name" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="เช่น วิทยาศาสตร์">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-bold text-gray-700 block mb-1">ประเภทการจัดสอบ</label>
+                        <select id="modal-exam-type" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 bg-white">
+                            <option value="กลางภาค">กลางภาค</option>
+                            <option value="ปลายภาค">ปลายภาค</option>
+                            <option value="ปลายปี">ปลายปี</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-gray-700 block mb-1">จำนวนข้อ</label>
+                        <input type="number" id="modal-exam-count" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="ระบุตัวเลข">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-gray-700 block mb-1">รูปแบบข้อสอบ</label>
+                    <input type="text" id="modal-exam-format" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="เช่น ปรนัย 20 ข้อ อัตนัย 2 ข้อ">
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
+                <button onclick="closeExamFormModal()" class="px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300">ยกเลิก</button>
+                <button onclick="submitExamForm()" class="px-4 py-2 bg-navy-900 text-white font-bold rounded-lg hover:bg-navy-800 shadow-md">บันทึกข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- input upload file ซ่อนไว้ -->
+    <input type="file" id="examPdfUploader" accept="application/pdf" class="hidden" onchange="handleExamFileUpload(event)">
+
+    <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        let currentUser = null;
+        let testBankData = [];
+        let uploadExamId = null;
+
+        // รายชื่อกรรมการกลั่นกรองและชั้นที่รับผิดชอบ
+        const REVIEWERS = {
+            "นางสาววรากรณ์ ศรีสุธรรม": ["ป.1", "ป.2"],
+            "นายพีระศิน ไชยศร": ["ป.3", "ป.4"],
+            "นางสุรินรัตน์ พรมราช": ["ป.5", "ป.6"],
+            "นางสาวศศิธร พรหมประเสริฐ": ["อ.1", "อ.2", "อ.3"]
+        };
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadSidebarComponent();
+            setupUserData();
+            fetchTestBankData();
+        });
+
+        async function loadSidebarComponent() {
+            try {
+                const response = await fetch('sidebar.html');
+                document.getElementById('sidebar-container').innerHTML = await response.text();
+            } catch (error) { console.error('Error loading sidebar:', error); }
+        }
+
+        function setupUserData() {
+            const userData = localStorage.getItem('wem_user');
+            if (!userData) { window.location.href = "index.html"; return; }
+            currentUser = JSON.parse(userData);
+
+            const nameParts = (currentUser.name || "").split(" ");
+            document.getElementById('display-firstname').textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            document.getElementById('display-lastname').textContent = nameParts.slice(1).join(" ") || ""; 
+            document.getElementById('display-position').textContent = currentUser.position || "-";
+            document.getElementById('display-group').textContent = currentUser.group || "-";
+            document.getElementById('display-room').textContent = currentUser.room || "-";
+
+            if (currentUser.image && currentUser.image.trim() !== "") {
+                document.getElementById('sidebar-user-img').src = currentUser.image;
+                document.getElementById('sidebar-user-img').classList.remove('hidden');
+                document.getElementById('sidebar-user-icon').classList.add('hidden');
+            }
+
+            setInterval(() => {
+                const now = new Date();
+                const clockElement = document.getElementById('current-date');
+                if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
+            }, 1000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.toggle('hidden');
+        }
+        function closeSidebarMobile() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+                document.getElementById('sidebarOverlay').classList.add('hidden');
+            }
+        }
+        function handleLogout() { localStorage.removeItem('wem_user'); window.location.href = "index.html"; }
+
+        // ================= ฟังก์ชันหลักของคลังข้อสอบ =================
+        async function fetchTestBankData() {
+            const container = document.getElementById('exam-cards-container');
+            try {
+                const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getTestBank' }) }).then(r => r.json());
+                if (res.status === 'success') {
+                    testBankData = res.data;
+                    renderExamCards();
+                } else {
+                    container.innerHTML = `<div class="text-center py-10 text-red-500 font-bold">ไม่สามารถโหลดข้อมูลได้: ${res.message}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="text-center py-10 text-red-500 font-bold">การเชื่อมต่อผิดพลาด</div>`;
+            }
+        }
+
+        function renderExamCards() {
+            const container = document.getElementById('exam-cards-container');
+            container.innerHTML = '';
+
+            // ตรวจสอบสิทธิ์การกลั่นกรอง
+            const myReviewGrades = REVIEWERS[currentUser.name] || [];
+
+            // กรองรายการที่จะแสดง (เป็นเจ้าของข้อสอบ หรือ เป็นกรรมการของชั้นนั้น)
+            const visibleData = testBankData.filter(d => d.teacherName === currentUser.name || myReviewGrades.includes(d.grade));
+
+            if (visibleData.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-gray-400 font-bold bg-white rounded-xl border shadow-sm">ยังไม่มีรายการส่งข้อสอบของคุณ</div>`;
+                return;
+            }
+
+            visibleData.forEach(item => {
+                const isMyExam = item.teacherName === currentUser.name;
+                const canReview = myReviewGrades.includes(item.grade);
+
+                let statusBadge = '';
+                let statusColor = '';
+                if (!item.pdfUrl) { statusBadge = 'รอส่งไฟล์'; statusColor = 'bg-gray-100 text-gray-600 border-gray-200'; }
+                else if (item.reviewStatus === 'กำลังกลั่นกรอง') { statusBadge = 'รอตรวจ'; statusColor = 'bg-amber-100 text-amber-700 border-amber-300'; }
+                else if (item.reviewStatus === 'อนุมัติ') { statusBadge = 'อนุมัติ'; statusColor = 'bg-green-100 text-green-700 border-green-300'; }
+                else { statusBadge = 'ปรับปรุง'; statusColor = 'bg-red-100 text-red-700 border-red-300'; }
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition-shadow relative overflow-hidden";
+                
+                let reviewBoxHtml = '';
+                if (canReview) {
+                    reviewBoxHtml = `
+                        <div id="review-box-${item.id}" class="hidden w-full mt-4 p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
+                            <label class="text-xs font-bold text-indigo-800 mb-1 block">ความคิดเห็นจากกรรมการ</label>
+                            <input type="text" id="comment-${item.id}" class="w-full border border-indigo-200 p-2 rounded-lg text-sm mb-3 outline-none focus:border-indigo-500" value="${item.reviewComment || ''}" placeholder="ระบุความคิดเห็น...">
+                            <div class="flex gap-2">
+                                <button onclick="submitReview('${item.id}', 'กำลังกลั่นกรอง')" class="flex-1 py-2 text-xs font-bold rounded-lg border border-amber-400 text-amber-700 bg-white hover:bg-amber-50">กำลังกลั่นกรอง</button>
+                                <button onclick="submitReview('${item.id}', 'อนุมัติ')" class="flex-1 py-2 text-xs font-bold rounded-lg border border-green-500 text-green-700 bg-white hover:bg-green-50">อนุมัติ</button>
+                                <button onclick="submitReview('${item.id}', 'ปรับปรุง')" class="flex-1 py-2 text-xs font-bold rounded-lg border border-red-400 text-red-600 bg-white hover:bg-red-50">ปรับปรุง</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="absolute left-0 top-0 bottom-0 w-1.5 ${item.reviewStatus === 'อนุมัติ' ? 'bg-green-500' : 'bg-blue-500'}"></div>
+                    <div class="flex-1 w-full pl-3">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded border border-blue-100">${item.subjectCode}</span>
+                            <span class="px-2 py-0.5 bg-purple-50 text-purple-700 text-[10px] font-bold rounded border border-purple-100">${item.grade}</span>
+                            <span class="px-2 py-0.5 ${statusColor} text-[10px] font-bold rounded border">${statusBadge}</span>
+                        </div>
+                        <h4 class="font-bold text-navy-900 text-lg leading-tight mb-1">${item.subjectName}</h4>
+                        <p class="text-xs text-gray-500 mb-0.5">ประเภท: ${item.examType} | รูปแบบ: ${item.examFormat} (${item.questionCount} ข้อ)</p>
+                        <p class="text-xs text-gray-500 font-medium"><i class="fa-solid fa-chalkboard-user mr-1 text-gold-500"></i>ครูผู้สอน: ${item.teacherName}</p>
+                        ${item.reviewComment ? `<p class="text-xs text-red-600 font-bold mt-2 bg-red-50 p-2 rounded-lg inline-block border border-red-100"><i class="fa-solid fa-comment-dots mr-1"></i>กรรมการ: ${item.reviewComment}</p>` : ''}
+                    </div>
+                    
+                    <div class="flex flex-col gap-2 shrink-0 w-full md:w-auto">
+                        <div class="flex items-center justify-between md:justify-end gap-2 text-xs font-bold text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                            <span><i class="fa-solid fa-file-pdf text-red-500 mr-1"></i>จำนวนหน้า:</span>
+                            <span class="text-navy-900">${item.pageCount ? item.pageCount + ' หน้า' : '-'}</span>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            ${isMyExam ? `
+                                <button onclick="openExamFormModal('${item.id}')" class="w-10 h-10 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-500 border border-gray-200 rounded-xl shadow-sm flex items-center justify-center transition-colors" title="แก้ไขข้อมูล"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="triggerUploadExam('${item.id}')" class="flex-1 md:w-auto px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm font-bold flex items-center justify-center transition-colors text-xs" title="อัปโหลดไฟล์ (PDF เท่านั้น)"><i class="fa-solid fa-upload mr-1.5"></i>อัปโหลดข้อสอบ</button>
+                            ` : ''}
+                            
+                            ${item.pdfUrl ? `<a href="${item.pdfUrl}" target="_blank" class="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-sm flex items-center justify-center transition-colors" title="ดูไฟล์ข้อสอบ"><i class="fa-solid fa-eye"></i></a>` : ''}
+                            
+                            ${canReview ? `
+                                <button onclick="toggleReviewBox('${item.id}')" class="flex-1 md:w-auto px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm font-bold flex items-center justify-center transition-colors text-xs"><i class="fa-solid fa-list-check mr-1.5"></i>กลั่นกรอง</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    ${reviewBoxHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- ส่วนจัดการ Form ข้อมูล ---
+        function openExamFormModal(id = null) {
+            if (id) {
+                const data = testBankData.find(d => String(d.id) === String(id));
+                document.getElementById('modal-exam-id').value = data.id;
+                document.getElementById('modal-sub-code').value = data.subjectCode;
+                document.getElementById('modal-sub-name').value = data.subjectName;
+                document.getElementById('modal-sub-grade').value = data.grade;
+                document.getElementById('modal-exam-type').value = data.examType;
+                document.getElementById('modal-exam-format').value = data.examFormat;
+                document.getElementById('modal-exam-count').value = data.questionCount;
+            } else {
+                document.getElementById('modal-exam-id').value = "";
+                document.getElementById('modal-sub-code').value = "";
+                document.getElementById('modal-sub-name').value = "";
+                document.getElementById('modal-sub-grade').value = "ป.1";
+                document.getElementById('modal-exam-type').value = "กลางภาค";
+                document.getElementById('modal-exam-format').value = "";
+                document.getElementById('modal-exam-count').value = "";
+            }
+            document.getElementById('examFormModal').classList.remove('hidden');
+        }
+
+        function closeExamFormModal() { document.getElementById('examFormModal').classList.add('hidden'); }
+
+        function submitExamForm() {
+            const payload = {
+                action: 'saveTestBank',
+                id: document.getElementById('modal-exam-id').value,
+                teacherName: currentUser.name,
+                subjectCode: document.getElementById('modal-sub-code').value,
+                subjectName: document.getElementById('modal-sub-name').value,
+                grade: document.getElementById('modal-sub-grade').value,
+                examType: document.getElementById('modal-exam-type').value,
+                examFormat: document.getElementById('modal-exam-format').value,
+                questionCount: document.getElementById('modal-exam-count').value
+            };
+
+            if(!payload.subjectCode || !payload.subjectName || !payload.examFormat) {
+                Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบถ้วน', 'warning'); return;
+            }
+
+            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(r => r.json()).then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
+                    closeExamFormModal();
+                    fetchTestBankData();
+                } else Swal.fire('ผิดพลาด', res.message, 'error');
+            });
+        }
+
+        // --- ส่วนจัดการ Upload และ นับหน้า PDF ---
+        function triggerUploadExam(id) {
+            uploadExamId = id;
+            document.getElementById('examPdfUploader').click();
+        }
+
+        async function handleExamFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.type !== "application/pdf") { Swal.fire('ผิดพลาด', 'ต้องเป็นไฟล์ PDF เท่านั้น', 'error'); return; }
+
+            Swal.fire({ title: 'กำลังประมวลผลไฟล์...', text: 'กำลังนับหน้าและเตรียมอัปโหลด', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                // ใช้ pdf-lib นับจำนวนหน้า
+                const arrayBuffer = await file.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                const pageCount = pdfDoc.getPageCount();
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    let b64 = ev.target.result;
+                    b64 = b64.includes(',') ? b64.split(',')[1] : b64;
+                    const cleanBase64 = b64.replace(/\s/g, '');
+
+                    fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            action: 'uploadTestBankFile',
+                            id: uploadExamId,
+                            teacherName: currentUser.name,
+                            base64: cleanBase64,
+                            filename: file.name,
+                            pageCount: pageCount
+                        })
+                    }).then(r => r.json()).then(res => {
+                        if(res.status === 'success') {
+                            Swal.fire({ icon: 'success', title: 'อัปโหลดสำเร็จ', timer: 1500, showConfirmButton: false });
+                            fetchTestBankData();
+                        } else Swal.fire('ผิดพลาด', res.message, 'error');
+                    });
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                Swal.fire('ผิดพลาด', 'ไม่สามารถอ่านไฟล์ PDF เพื่อดูจำนวนหน้าได้', 'error');
+            }
+            e.target.value = '';
+        }
+
+        // --- ส่วนการกลั่นกรอง (กรรมการ) ---
+        function toggleReviewBox(id) {
+            document.getElementById('review-box-' + id).classList.toggle('hidden');
+        }
+
+        function submitReview(id, status) {
+            const comment = document.getElementById('comment-' + id).value;
+            Swal.fire({ title: 'กำลังบันทึกผลการกลั่นกรอง...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'reviewTestBank', id: id, reviewStatus: status, reviewComment: comment })
+            }).then(r => r.json()).then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
+                    fetchTestBankData();
+                } else Swal.fire('ผิดพลาด', res.message, 'error');
+            });
+        }
+    </script>
+</body>
+</html>
