@@ -67,11 +67,8 @@
 
             <!-- ส่วนที่ 2: การส่งต้นฉบับข้อสอบ -->
             <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+                <div class="flex items-center mb-4">
                     <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gold-400 pb-1 inline-block">2. การส่งต้นฉบับข้อสอบ</h3>
-                    <button onclick="openExamFormModal()" class="bg-navy-900 hover:bg-navy-800 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> สร้างรายการส่งข้อสอบ
-                    </button>
                 </div>
 
                 <div id="exam-cards-container" class="space-y-4 pb-10">
@@ -81,59 +78,6 @@
 
         </div>
     </main>
-
-    <!-- Modal สร้าง/แก้ไข รายการข้อสอบ -->
-    <div id="examFormModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="px-6 py-4 border-b border-gray-200 bg-navy-900 rounded-t-2xl flex justify-between items-center">
-                <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-lines text-gold-400 mr-2"></i>ข้อมูลต้นฉบับข้อสอบ</h3>
-                <button onclick="closeExamFormModal()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto space-y-4">
-                <input type="hidden" id="modal-exam-id">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-sm font-bold text-gray-700 block mb-1">รหัสวิชา</label>
-                        <input type="text" id="modal-sub-code" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="เช่น ว11101">
-                    </div>
-                    <div>
-                        <label class="text-sm font-bold text-gray-700 block mb-1">ชั้น</label>
-                        <select id="modal-sub-grade" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 bg-white">
-                            <option value="อ.1">อ.1</option><option value="อ.2">อ.2</option><option value="อ.3">อ.3</option>
-                            <option value="ป.1">ป.1</option><option value="ป.2">ป.2</option><option value="ป.3">ป.3</option>
-                            <option value="ป.4">ป.4</option><option value="ป.5">ป.5</option><option value="ป.6">ป.6</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="text-sm font-bold text-gray-700 block mb-1">รายวิชา</label>
-                    <input type="text" id="modal-sub-name" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="เช่น วิทยาศาสตร์">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-sm font-bold text-gray-700 block mb-1">ประเภทการจัดสอบ</label>
-                        <select id="modal-exam-type" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500 bg-white">
-                            <option value="กลางภาค">กลางภาค</option>
-                            <option value="ปลายภาค">ปลายภาค</option>
-                            <option value="ปลายปี">ปลายปี</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-bold text-gray-700 block mb-1">จำนวนข้อ</label>
-                        <input type="number" id="modal-exam-count" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="ระบุตัวเลข">
-                    </div>
-                </div>
-                <div>
-                    <label class="text-sm font-bold text-gray-700 block mb-1">รูปแบบข้อสอบ</label>
-                    <input type="text" id="modal-exam-format" class="w-full border p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="เช่น ปรนัย 20 ข้อ อัตนัย 2 ข้อ">
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-end gap-3 shrink-0">
-                <button onclick="closeExamFormModal()" class="px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300">ยกเลิก</button>
-                <button onclick="submitExamForm()" class="px-4 py-2 bg-navy-900 text-white font-bold rounded-lg hover:bg-navy-800 shadow-md">บันทึกข้อมูล</button>
-            </div>
-        </div>
-    </div>
 
     <!-- input upload file ซ่อนไว้ -->
     <input type="file" id="examPdfUploader" accept="application/pdf" class="hidden" onchange="handleExamFileUpload(event)">
@@ -285,7 +229,6 @@
                         
                         <div class="flex gap-2">
                             ${isMyExam ? `
-                                <button onclick="openExamFormModal('${item.id}')" class="w-10 h-10 bg-white hover:bg-gold-500 hover:text-navy-900 text-gray-500 border border-gray-200 rounded-xl shadow-sm flex items-center justify-center transition-colors" title="แก้ไขข้อมูล"><i class="fa-solid fa-pen"></i></button>
                                 <button onclick="triggerUploadExam('${item.id}')" class="flex-1 md:w-auto px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm font-bold flex items-center justify-center transition-colors text-xs" title="อัปโหลดไฟล์ (PDF เท่านั้น)"><i class="fa-solid fa-upload mr-1.5"></i>อัปโหลดข้อสอบ</button>
                             ` : ''}
                             
@@ -299,60 +242,6 @@
                     ${reviewBoxHtml}
                 `;
                 container.appendChild(card);
-            });
-        }
-
-        // --- ส่วนจัดการ Form ข้อมูล ---
-        function openExamFormModal(id = null) {
-            if (id) {
-                const data = testBankData.find(d => String(d.id) === String(id));
-                document.getElementById('modal-exam-id').value = data.id;
-                document.getElementById('modal-sub-code').value = data.subjectCode;
-                document.getElementById('modal-sub-name').value = data.subjectName;
-                document.getElementById('modal-sub-grade').value = data.grade;
-                document.getElementById('modal-exam-type').value = data.examType;
-                document.getElementById('modal-exam-format').value = data.examFormat;
-                document.getElementById('modal-exam-count').value = data.questionCount;
-            } else {
-                document.getElementById('modal-exam-id').value = "";
-                document.getElementById('modal-sub-code').value = "";
-                document.getElementById('modal-sub-name').value = "";
-                document.getElementById('modal-sub-grade').value = "ป.1";
-                document.getElementById('modal-exam-type').value = "กลางภาค";
-                document.getElementById('modal-exam-format').value = "";
-                document.getElementById('modal-exam-count').value = "";
-            }
-            document.getElementById('examFormModal').classList.remove('hidden');
-        }
-
-        function closeExamFormModal() { document.getElementById('examFormModal').classList.add('hidden'); }
-
-        function submitExamForm() {
-            const payload = {
-                action: 'saveTestBank',
-                id: document.getElementById('modal-exam-id').value,
-                teacherName: currentUser.name,
-                subjectCode: document.getElementById('modal-sub-code').value,
-                subjectName: document.getElementById('modal-sub-name').value,
-                grade: document.getElementById('modal-sub-grade').value,
-                examType: document.getElementById('modal-exam-type').value,
-                examFormat: document.getElementById('modal-exam-format').value,
-                questionCount: document.getElementById('modal-exam-count').value
-            };
-
-            if(!payload.subjectCode || !payload.subjectName || !payload.examFormat) {
-                Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบถ้วน', 'warning'); return;
-            }
-
-            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-            fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(r => r.json()).then(res => {
-                if(res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
-                    closeExamFormModal();
-                    fetchTestBankData();
-                } else Swal.fire('ผิดพลาด', res.message, 'error');
             });
         }
 
