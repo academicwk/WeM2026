@@ -326,8 +326,17 @@
             // ตรวจสอบสิทธิ์การกลั่นกรอง
             const myReviewGrades = REVIEWERS[currentUser.name] || [];
 
-            // 🌟 แก้ไข: ใช้ .includes() แทน === เพื่อรองรับกรณีมีครูหลายคนใน 1 รายวิชา
-            const visibleData = testBankData.filter(d => (d.teacherName && d.teacherName.includes(currentUser.name)) || myReviewGrades.includes(d.grade));
+            // 🌟 ฟังก์ชันช่วยเช็คว่าตรงกับสายชั้นที่รับผิดชอบหรือไม่ (รองรับแบบมีทับ เช่น ป.3/1)
+            const isMyReviewGrade = (grade) => {
+                if (!grade) return false;
+                return myReviewGrades.some(rg => grade.trim().startsWith(rg));
+            };
+
+            // 🌟 แก้ไข: กรองรายการที่จะแสดง โดยใช้ฟังก์ชัน isMyReviewGrade()
+            const visibleData = testBankData.filter(d => 
+                (d.teacherName && d.teacherName.includes(currentUser.name)) || 
+                isMyReviewGrade(d.grade)
+            );
 
             if (visibleData.length === 0) {
                 container.innerHTML = `<div class="text-center py-10 text-gray-400 font-bold bg-white rounded-xl border shadow-sm">ไม่มีรายการวิชาที่คุณรับผิดชอบในระบบ</div>`;
@@ -335,9 +344,10 @@
             }
 
             visibleData.forEach(item => {
-                // 🌟 แก้ไข: ใช้ .includes() ในการเช็คสิทธิ์ปุ่มอัปโหลด
                 const isMyExam = item.teacherName && item.teacherName.includes(currentUser.name);
-                const canReview = myReviewGrades.includes(item.grade);
+                
+                // 🌟 แก้ไข: ใช้ฟังก์ชัน isMyReviewGrade() เพื่อแสดงปุ่มกลั่นกรองให้ถูกต้อง
+                const canReview = isMyReviewGrade(item.grade);
 
                 let statusBadge = '';
                 let statusColor = '';
@@ -378,7 +388,6 @@
                             <p class="text-sm text-gray-600"><span class="font-bold text-gray-500">ประเภท:</span> ${item.examType}</p>
                             <p class="text-sm text-gray-600"><span class="font-bold text-gray-500">รูปแบบ:</span> ${item.examFormat} (${item.questionCount} ข้อ)</p>
                             
-                            <!-- 🌟 เพิ่ม whitespace-pre-wrap เพื่อให้รายชื่อครูแสดงผลขึ้นบรรทัดใหม่ได้ถูกต้อง -->
                             <div class="text-sm text-navy-900 font-bold mt-1 flex items-start gap-1.5">
                                 <i class="fa-solid fa-chalkboard-user text-gold-500 mt-1"></i>
                                 <span class="whitespace-pre-wrap leading-tight">ครูผู้สอน:\n${item.teacherName}</span>
