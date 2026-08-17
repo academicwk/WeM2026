@@ -264,12 +264,14 @@
             let totalOverallTarget = 0;
 
             if (isKindergarten) {
-                // 🌟 สำหรับปฐมวัย: 40 หน่วย (ส่งสัปดาห์ละหน่วย แผน 1 + บันทึก 1)
+                // 🌟 สำหรับปฐมวัย: 40 หน่วย
                 totalOverallTarget = 80;
                 container.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto pb-10";
                 
                 for (let unit = 1; unit <= 40; unit++) {
-                    let week = 1; // ให้อนุบาลถือว่า week=1 เพื่อเซฟลงฐานข้อมูลช่องเดียวกันง่ายๆ
+                    // 🌟 แก้ไขตรงนี้: ให้ สัปดาห์ที่ = หน่วยที่ เสมอ สำหรับปฐมวัย
+                    let week = unit; 
+                    
                     const planUrl = uploadedData[`unit_${unit}_week_${week}_plan`] || '';
                     const logUrl = uploadedData[`unit_${unit}_week_${week}_log`] || '';
                     const unitName = uploadedData[`unit_${unit}_week_${week}_unitName`] || '';
@@ -415,7 +417,6 @@
             document.getElementById('overall-bar').style.width = `${overallPct}%`;
             document.getElementById('overall-bar').className = `h-full transition-all duration-500 ${overallBarColor}`;
         }
-
         function openPlanModal(unit, week) {
             document.getElementById('modal-unit').value = unit;
             document.getElementById('modal-week').value = week;
