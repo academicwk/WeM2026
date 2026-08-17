@@ -19,48 +19,52 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<!-- 🌟 แก้ไข: ใช้ style สำหรับใส่รูปภาพโดยตรง ส่วนการจัดตำแหน่งใช้คลาสของ Tailwind ตามเดิม -->
-<body class="font-sans antialiased min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat bg-fixed bg-navy-900" style="background-image: url('https://img1.pic.in.th/images/WeMBG.jpg');">
+<body class="font-sans antialiased m-0 p-0">
     
-    <!-- กล่องเข้าสู่ระบบ -->
-    <div id="loginCard" class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden hidden relative z-10">
-        <div class="text-center py-4 px-4 bg-white">
-            <div class="mx-auto mb-2 flex justify-center">
-                <img src="https://img2.pic.in.th/WeM2.png" alt="WeM" border="0" class="h-48 w-auto object-contain">
+    <!-- 🌟 สร้าง Div ธรรมดาคลุมทั้งหน้าจอเพื่อแสดงภาพพื้นหลัง -->
+    <div style="background-image: url('https://img1.pic.in.th/images/WeMBG.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; background-color: #0f172a;" class="min-h-screen w-full flex items-center justify-center p-4">
+        
+        <!-- กล่องเข้าสู่ระบบ -->
+        <div id="loginCard" class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden hidden relative z-10">
+            <div class="text-center py-4 px-4 bg-white">
+                <div class="mx-auto mb-2 flex justify-center">
+                    <img src="https://img2.pic.in.th/WeM2.png" alt="WeM" border="0" class="h-48 w-auto object-contain">
+                </div>
+            </div>
+            
+            <div class="p-8 pt-0 bg-white">
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">ชื่อผู้ใช้งาน</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-400"></i></div>
+                            <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white" id="username" type="text" placeholder="Username" required>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">รหัสผ่าน</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
+                            <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white" id="password" type="password" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
+                    </button>
+
+                    <div class="text-center mt-6 pt-6 border-t border-gray-200">
+                        <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="4" border="0" class="h-12 w-auto mx-auto mb-2 object-contain">
+                        <div class="text-red-800 text-[11px] font-bold leading-relaxed">
+                            นวัตกรรมด้านการบริหารและบริการทางการศึกษา<br>
+                            ได้รับการรับรองให้เป็นการปฏิบัติที่เป็นเลิศของสถานศึกษา (Best Practice)<br>
+                            ระดับดีเยี่ยม จากเทศบาลนครระยอง ปีการศึกษา 2568
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        
-        <div class="p-8 pt-0 bg-white">
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">ชื่อผู้ใช้งาน</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-400"></i></div>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white" id="username" type="text" placeholder="Username" required>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">รหัสผ่าน</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-navy-800 focus:border-transparent transition-all bg-white" id="password" type="password" placeholder="Password" required>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
-                </button>
 
-                <div class="text-center mt-6 pt-6 border-t border-gray-200">
-                    <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="4" border="0" class="h-12 w-auto mx-auto mb-2 object-contain">
-                    <div class="text-red-800 text-[11px] font-bold leading-relaxed">
-                        นวัตกรรมด้านการบริหารและบริการทางการศึกษา<br>
-                        ได้รับการรับรองให้เป็นการปฏิบัติที่เป็นเลิศของสถานศึกษา (Best Practice)<br>
-                        ระดับดีเยี่ยม จากเทศบาลนครระยอง ปีการศึกษา 2568
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+    </div> <!-- ปิด Div พื้นหลัง -->
 
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
