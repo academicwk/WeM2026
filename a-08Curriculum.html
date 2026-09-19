@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หลักสูตรสถานศึกษา | WeM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Sarabun', 'sans-serif'] }, colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } } } } }
+    </script>
+</head>
+<body class="bg-slate-100 font-sans antialiased text-gray-800 flex h-screen overflow-hidden">
+
+    <div id="sidebar-container" class="h-full flex shrink-0"></div>
+
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0 border-b border-gray-200">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-navy-900 focus:outline-none text-2xl shrink-0"><i class="fa-solid fa-bars"></i></button>
+                <a href="main.html#zone-academic" class="w-10 h-10 bg-slate-100 hover:bg-navy-800 hover:text-white rounded-full flex items-center justify-center text-navy-900 transition-colors shadow-sm border border-gray-200 shrink-0" title="กลับหน้าวิชาการ">
+                    <i class="fa-solid fa-arrow-left text-lg"></i>
+                </a>
+                <div class="border-l-4 border-gold-500 pl-3 py-1">
+                    <h2 class="text-xl font-bold text-navy-900 leading-none">หลักสูตรสถานศึกษา</h2>
+                    <p class="text-xs font-medium text-gray-500 mt-1.5">ระบบบริหารงานวิชาการ (Academic)</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center text-lg text-green-900 font-medium gap-2 shrink-0">
+                <img src="https://img2.pic.in.th/4d3a830f3eb506411.png" alt="Icon" border="0" class="h-12 w-auto object-contain">
+                <span id="current-date"></span>
+            </div>
+        </header>
+
+        <div class="flex-1 p-4 md:p-6 overflow-y-auto bg-slate-50 relative">
+            <div class="max-w-5xl mx-auto pb-10">
+                <div id="curriculum-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="col-span-full text-center py-10"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-500 mb-3"></i><p class="text-gray-500 font-bold">กำลังดึงข้อมูล...</p></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzps4XSEOdv9oCOAhiC8K5DAs-p29M9KFzhHEGebcS8W7kYUxaHzoVvKt3Xg9cRXkVU/exec";
+        let currentUser = null;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadSidebarComponent();
+            setupUserData();
+            applyMenuStates();
+            fetchCurriculumData();
+        });
+
+        async function loadSidebarComponent() {
+            try {
+                const response = await fetch('sidebar.html');
+                const html = await response.text();
+                document.getElementById('sidebar-container').innerHTML = html;
+            } catch (error) { console.error('Error loading sidebar:', error); }
+        }
+
+        function setupUserData() {
+            const userData = localStorage.getItem('wem_user');
+            if (!userData) { window.location.href = "index.html"; return; }
+            currentUser = JSON.parse(userData);
+            
+            const nameParts = (currentUser.name || "").split(" ");
+            const elFName = document.getElementById('display-firstname'); if(elFName) elFName.textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            const elLName = document.getElementById('display-lastname'); if(elLName) elLName.textContent = nameParts.slice(1).join(" ") || ""; 
+            const elPos = document.getElementById('display-position'); if(elPos) elPos.textContent = currentUser.position || "-";
+            const elGroup = document.getElementById('display-group'); if(elGroup) elGroup.textContent = currentUser.group || "-";
+            const elRoom = document.getElementById('display-room'); if(elRoom) elRoom.textContent = currentUser.room || "-";
+
+            const elImg = document.getElementById('sidebar-user-img');
+            const elIcon = document.getElementById('sidebar-user-icon');
+            if (currentUser.image && currentUser.image.trim() !== "" && elImg && elIcon) {
+                elImg.src = currentUser.image;
+                elImg.classList.remove('hidden');
+                elIcon.classList.add('hidden');
+            }
+
+            setInterval(() => {
+                const now = new Date();
+                const clockElement = document.getElementById('current-date');
+                if (clockElement) clockElement.textContent = `${now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} | ${now.toLocaleTimeString('th-TH')}`;
+            }, 1000);
+        }
+
+        function applyMenuStates() {
+            const savedSettings = JSON.parse(localStorage.getItem('wem_sys_settings')) || {};
+            const versionDisplay = document.getElementById('sidebar-version-display');
+            if(versionDisplay) versionDisplay.textContent = `WeM System Version ${savedSettings['sys_version'] || '2.0.1'}`;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if(sidebar) sidebar.classList.toggle('-translate-x-full');
+            if(overlay) overlay.classList.toggle('hidden');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('wem_user');
+            window.location.href = "index.html";
+        }
+
+        async function fetchCurriculumData() {
+            const container = document.getElementById('curriculum-container');
+            try {
+                const res = await fetch(GAS_API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'getCurriculumData' })
+                }).then(r => r.json());
+
+                if (res.status === 'success') {
+                    renderCards(res.data);
+                } else {
+                    container.innerHTML = `<div class="col-span-full bg-red-50 text-red-600 p-6 rounded-xl text-center border border-red-200 font-bold"><i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i><br>เกิดข้อผิดพลาด: ${res.message}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="col-span-full bg-red-50 text-red-600 p-6 rounded-xl text-center border border-red-200 font-bold"><i class="fa-solid fa-wifi text-2xl mb-2"></i><br>ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้</div>`;
+            }
+        }
+
+        function renderCards(data) {
+            const container = document.getElementById('curriculum-container');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-white border border-slate-200 rounded-2xl p-10 text-center shadow-sm">
+                        <i class="fa-solid fa-book-open text-4xl text-gray-300 mb-3"></i>
+                        <h4 class="text-lg font-bold text-navy-900">ยังไม่มีข้อมูลหลักสูตรสถานศึกษา</h4>
+                    </div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col justify-between gap-4 hover:shadow-md transition-all relative overflow-hidden";
+                
+                const pdfBtn = item.pdfUrl 
+                    ? `<a href="${item.pdfUrl}" target="_blank" class="w-full py-2.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl border border-red-200 hover:border-red-600 shadow-sm flex items-center justify-center gap-2 font-bold transition-colors text-sm"><i class="fa-solid fa-file-pdf text-lg"></i> เปิดไฟล์หลักสูตร</a>`
+                    : `<button disabled class="w-full py-2.5 bg-gray-100 text-gray-400 rounded-xl border border-gray-200 flex items-center justify-center gap-2 font-bold cursor-not-allowed text-sm"><i class="fa-solid fa-file-excel text-lg"></i> ไม่มีไฟล์แนบ</button>`;
+
+                card.innerHTML = `
+                    <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
+                    <div class="flex items-start gap-3 pl-2">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl shrink-0 border border-blue-100 shadow-sm mt-1">
+                            <i class="fa-solid fa-book-journal-whills"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-navy-900 leading-tight mb-2">${item.name}</h3>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-gray-600"><span class="text-gray-400 mr-1"><i class="fa-solid fa-graduation-cap w-4 text-center"></i> ระดับ:</span> ${item.level || '-'}</p>
+                                <p class="text-xs font-bold text-gray-600"><span class="text-gray-400 mr-1"><i class="fa-regular fa-calendar w-4 text-center"></i> พ.ศ.:</span> ${item.year || '-'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-100 pt-4 mt-2">
+                        ${pdfBtn}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
