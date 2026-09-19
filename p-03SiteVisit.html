@@ -140,6 +140,12 @@ function setupUserData() {
             if(overlay) overlay.classList.toggle('hidden');
         }
 
+// ฟังก์ชันสำหรับออกจากระบบ
+        function handleLogout() {
+            localStorage.removeItem('wem_user');
+            window.location.href = "index.html";
+        }
+        
         async function fetchSiteVisitData() {
             const container = document.getElementById('cards-container');
             try {
