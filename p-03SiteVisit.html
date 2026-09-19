@@ -179,22 +179,48 @@ function renderCards(data) {
             if(totalVisitsEl) totalVisitsEl.textContent = data.length;
             container.innerHTML = '';
 
-            // 🌟 1. คำนวณและแสดงผลสรุปรูปแบบการเยี่ยมบ้าน
+            // 🌟 1. นับจำนวนรูปแบบการเยี่ยมบ้าน
             const formatCounts = {};
             data.forEach(item => {
                 const format = item.visitFormat || 'ไม่ระบุ';
                 formatCounts[format] = (formatCounts[format] || 0) + 1;
             });
 
+            // 🌟 2. สร้างชุดสีให้แต่ละประเภท (ให้ป้ายด้านบนและการ์ดด้านล่างใช้สีเดียวกัน)
+            const formatColors = {};
+            const availableColors = [
+                'bg-green-50 text-green-700 border-green-200',     // สีเขียว
+                'bg-purple-50 text-purple-700 border-purple-200',  // สีม่วง
+                'bg-amber-50 text-amber-700 border-amber-200',     // สีเหลือง/ส้ม
+                'bg-blue-50 text-blue-700 border-blue-200',        // สีฟ้า
+                'bg-rose-50 text-rose-700 border-rose-200',        // สีชมพู/แดง
+                'bg-teal-50 text-teal-700 border-teal-200',        // สีเขียวอมฟ้า
+                'bg-indigo-50 text-indigo-700 border-indigo-200'   // สีคราม
+            ];
+            
+            let colorIdx = 0;
+            // กำหนดสีให้แต่ละประเภทแบบอัตโนมัติ
+            for (const format of Object.keys(formatCounts)) {
+                if (format === 'ไม่ระบุ') {
+                    formatColors[format] = 'bg-gray-50 text-gray-600 border-gray-200';
+                } else if (format.includes('ออนไลน์')) {
+                    formatColors[format] = availableColors[1]; // ออนไลน์ = สีม่วง
+                } else if (format.includes('ออนไซต์') || format.includes('บ้าน') || format.includes('ปกติ')) {
+                    formatColors[format] = availableColors[0]; // ไปที่บ้าน/ออนไซต์ = สีเขียว
+                } else {
+                    formatColors[format] = availableColors[colorIdx % availableColors.length];
+                    colorIdx++;
+                }
+            }
+
+            // 🌟 3. วาดกล่องสรุปด้านบน
             if (summaryContainer) {
                 summaryContainer.innerHTML = '';
                 if (Object.keys(formatCounts).length === 0) {
                     summaryContainer.innerHTML = '<span class="text-sm text-gray-400 font-bold">ยังไม่มีข้อมูล</span>';
                 } else {
                     for (const [format, count] of Object.entries(formatCounts)) {
-                        let badgeColor = format.includes('ออนไลน์') ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-green-100 text-green-700 border-green-200';
-                        if (format === 'ไม่ระบุ') badgeColor = 'bg-gray-100 text-gray-600 border-gray-200';
-                        
+                        const badgeColor = formatColors[format];
                         summaryContainer.innerHTML += `
                             <div class="flex items-center gap-2 px-3 py-1.5 ${badgeColor} border rounded-xl shadow-sm">
                                 <span class="text-xs font-bold">${format}</span>
@@ -215,15 +241,15 @@ function renderCards(data) {
                 return;
             }
 
-            // 🌟 2. เรียงลำดับนักเรียนตามเลขที่ (จากน้อยไปมาก)
+            // 🌟 4. เรียงลำดับนักเรียนตามเลขที่ (จากน้อยไปมาก)
             data.sort((a, b) => {
                 let numA = parseInt(a.studentNumber) || 999;
                 let numB = parseInt(b.studentNumber) || 999;
                 return numA - numB;
             });
 
-            // 🌟 3. วาดการ์ดแสดงผลทีละคน
-            data.forEach((item, index) => {
+            // 🌟 5. วาดการ์ดแสดงผลทีละคน
+            data.forEach((item) => {
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:justify-between gap-4 hover:shadow-md transition-all relative overflow-hidden";
                 
@@ -231,7 +257,9 @@ function renderCards(data) {
                     ? `<a href="${item.pdfUrl}" target="_blank" class="w-full sm:w-auto px-5 py-2.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl border border-red-200 hover:border-red-600 shadow-sm flex items-center justify-center gap-2 font-bold transition-colors text-sm"><i class="fa-solid fa-file-pdf text-lg"></i> เปิดดูเอกสาร</a>`
                     : `<button disabled class="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-400 rounded-xl border border-gray-200 flex items-center justify-center gap-2 font-bold cursor-not-allowed text-sm"><i class="fa-solid fa-file-excel text-lg"></i> ไม่มีไฟล์</button>`;
 
-                let formatBadgeColor = item.visitFormat.includes('ออนไลน์') ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-green-50 text-green-700 border-green-200';
+                // 🌟 เรียกใช้สีที่ตั้งค่าไว้ให้ตรงกับกล่องสรุปด้านบน
+                const currentFormat = item.visitFormat || 'ไม่ระบุ';
+                const formatBadgeColor = formatColors[currentFormat];
 
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500"></div>
@@ -243,13 +271,12 @@ function renderCards(data) {
                         
                         <div class="flex-1">
                             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
-                                <!-- 🌟 แสดงเลขที่ตรงนี้ -->
                                 <span class="px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold rounded border border-amber-200 shadow-sm">เลขที่: ${item.studentNumber || '-'}</span>
                                 <span class="px-2 py-0.5 bg-slate-100 text-gray-600 text-[10px] font-bold rounded border shadow-sm">รหัส: ${item.studentId || '-'}</span>
                             </div>
                             <h3 class="text-lg sm:text-xl font-bold text-navy-900 leading-tight mb-2">${item.prefix || ''}${item.firstName || ''} ${item.lastName || ''}</h3>
                             <div class="inline-flex items-center px-3 py-1 ${formatBadgeColor} text-xs font-bold rounded-lg border shadow-sm">
-                                <i class="fa-solid fa-handshake-angle mr-1.5"></i> รูปแบบ: ${item.visitFormat || 'ไม่ระบุ'}
+                                <i class="fa-solid fa-handshake-angle mr-1.5"></i> รูปแบบ: ${currentFormat}
                             </div>
                         </div>
                     </div>
