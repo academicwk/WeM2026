@@ -85,12 +85,40 @@
             } catch (error) { console.error('Error loading sidebar:', error); }
         }
 
-        function setupUserData() {
+function setupUserData() {
             const userData = localStorage.getItem('wem_user');
             if (!userData) { window.location.href = "index.html"; return; }
             currentUser = JSON.parse(userData);
             
-            document.getElementById('teacher-name-display').textContent = `ครูผู้เยี่ยม: ${currentUser.name}`;
+            // 🌟 เพิ่มส่วนนี้กลับมาเพื่อดึงข้อมูลไปแสดงที่ Sidebar ให้ถูกต้อง 🌟
+            const nameParts = (currentUser.name || "").split(" ");
+            
+            const elFName = document.getElementById('display-firstname');
+            if(elFName) elFName.textContent = nameParts[0] || "ไม่ระบุชื่อ";
+            
+            const elLName = document.getElementById('display-lastname');
+            if(elLName) elLName.textContent = nameParts.slice(1).join(" ") || ""; 
+            
+            const elPos = document.getElementById('display-position');
+            if(elPos) elPos.textContent = currentUser.position || "-";
+            
+            const elGroup = document.getElementById('display-group');
+            if(elGroup) elGroup.textContent = currentUser.group || "-";
+            
+            const elRoom = document.getElementById('display-room');
+            if(elRoom) elRoom.textContent = currentUser.room || "-";
+
+            const elImg = document.getElementById('sidebar-user-img');
+            const elIcon = document.getElementById('sidebar-user-icon');
+            if (currentUser.image && currentUser.image.trim() !== "" && elImg && elIcon) {
+                elImg.src = currentUser.image;
+                elImg.classList.remove('hidden');
+                elIcon.classList.add('hidden');
+            }
+            // ---------------------------------------------------------
+
+            const teacherDisplay = document.getElementById('teacher-name-display');
+            if(teacherDisplay) teacherDisplay.textContent = `ครูผู้เยี่ยม: ${currentUser.name}`;
 
             setInterval(() => {
                 const now = new Date();
