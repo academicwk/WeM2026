@@ -44,7 +44,6 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-navy-900 text-lg">รายงานผลการดำเนินงานโครงการ ปีการศึกษา 2568</h3>
-                        <p class="text-sm text-gray-500" id="teacher-name-display">กำลังโหลดข้อมูล...</p>
                     </div>
                 </div>
 
@@ -95,8 +94,6 @@
                 elImg.classList.remove('hidden');
                 elIcon.classList.add('hidden');
             }
-
-            document.getElementById('teacher-name-display').textContent = `ผู้รับผิดชอบ: ${currentUser.name}`;
 
             setInterval(() => {
                 const now = new Date();
@@ -177,6 +174,8 @@
                         
                         <!-- ข้อมูลโครงการ -->
                         <div class="flex-1 w-full">
+                            <!-- 🌟 เพิ่มคำว่า โครงการ ตรงนี้ 🌟 -->
+                            <div class="text-xs font-bold text-gray-400 mb-1">โครงการ</div>
                             <h3 class="text-lg sm:text-xl font-bold text-navy-900 leading-tight mb-2">${item.projectName || 'ไม่ระบุชื่อโครงการ'}</h3>
                             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                 <span class="px-2.5 py-1 bg-slate-100 text-gray-700 text-xs font-bold rounded-lg border shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-users-rectangle text-slate-400"></i> ${item.group || '-'}</span>
