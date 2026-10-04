@@ -50,7 +50,7 @@
 
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             
-            <!-- 🌟 Master Switches (แสดงเฉพาะพีระศิน แยก 2 ปุ่มอิสระ) -->
+            <!-- 🌟 Master Switches (แสดงเฉพาะพีระศิน) -->
             <div class="max-w-6xl mx-auto mb-4 flex justify-end">
                 <div id="master-switch-container" class="hidden bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-wrap items-center gap-6">
                     <div class="flex items-center gap-3">
@@ -113,18 +113,29 @@
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                     <h3 class="text-lg font-bold text-navy-900 border-b-2 border-gold-400 pb-1 inline-block">2. การส่งต้นฉบับข้อสอบ</h3>
                     
-                    <!-- 🌟 ตัวกรองระดับชั้น (สำหรับกรรมการกลั่นกรอง) -->
-                    <div id="master-filter-container" class="hidden bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-2">
-                        <i class="fa-solid fa-filter text-gray-400 text-sm"></i>
-                        <select id="master-grade-filter" onchange="renderExamCards()" class="border-none bg-transparent text-sm font-bold text-navy-900 outline-none cursor-pointer">
-                            <option value="all">ดูทุกระดับชั้น</option>
-                            <option value="ป.1">ป.1</option>
-                            <option value="ป.2">ป.2</option>
-                            <option value="ป.3">ป.3</option>
-                            <option value="ป.4">ป.4</option>
-                            <option value="ป.5">ป.5</option>
-                            <option value="ป.6">ป.6</option>
-                        </select>
+                    <div class="flex items-center gap-2 flex-wrap justify-end">
+                        <!-- 🌟 ตัวกรองข้อสอบแบบเลือกตอบ (เฉพาะที่มีเฉลย) -->
+                        <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-gray-400 text-sm"></i>
+                            <select id="ans-filter" onchange="renderExamCards()" class="border-none bg-transparent text-sm font-bold text-navy-900 outline-none cursor-pointer">
+                                <option value="all">ดูทุกรูปแบบข้อสอบ</option>
+                                <option value="has_ans">เฉพาะข้อสอบแบบเลือกตอบ (ส่งเฉลยแล้ว)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 🌟 ตัวกรองระดับชั้น (สำหรับกรรมการกลั่นกรอง) -->
+                        <div id="master-filter-container" class="hidden bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-gray-400 text-sm"></i>
+                            <select id="master-grade-filter" onchange="renderExamCards()" class="border-none bg-transparent text-sm font-bold text-navy-900 outline-none cursor-pointer">
+                                <option value="all">ดูทุกระดับชั้น</option>
+                                <option value="ป.1">ป.1</option>
+                                <option value="ป.2">ป.2</option>
+                                <option value="ป.3">ป.3</option>
+                                <option value="ป.4">ป.4</option>
+                                <option value="ป.5">ป.5</option>
+                                <option value="ป.6">ป.6</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -136,9 +147,9 @@
         </div>
     </main>
 
-    <!-- 🌟 Modal: ส่งเฉลยคำตอบ -->
+    <!-- 🌟 Modal: ส่งเฉลยคำตอบ (จัดเรียงบนลงล่าง) -->
     <div id="answerModal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative flex flex-col max-h-[90vh]">
+        <div class="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl relative flex flex-col max-h-[90vh]">
             <div class="border-b border-gray-200 pb-3 mb-4 flex justify-between items-center shrink-0">
                 <div>
                     <h3 class="text-lg font-bold text-navy-900"><i class="fa-solid fa-list-check text-green-500 mr-2"></i>บันทึกเฉลยคำตอบ</h3>
@@ -152,10 +163,11 @@
             
             <div class="flex-1 overflow-y-auto px-2">
                 <div class="bg-blue-50 text-blue-700 p-3 rounded-xl text-xs font-bold mb-4 border border-blue-200 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-lg"></i> คลิกเลือกวงกลมตัวอักษรเพื่อกำหนดเป็นเฉลยที่ถูกต้อง (เลือกได้ข้อละ 1 คำตอบ)
+                    <i class="fa-solid fa-circle-info text-lg shrink-0"></i> คลิกเลือกวงกลมตัวอักษรเพื่อกำหนดเป็นเฉลยที่ถูกต้อง (เลือกได้ข้อละ 1 คำตอบ)
                 </div>
-                <!-- ตารางข้อสอบ จะถูกสร้างด้วย JS -->
-                <div id="ans-grid" class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 pb-4"></div>
+                
+                <!-- 🌟 ตารางข้อสอบ เรียงเป็นแนวตั้ง 1 คอลัมน์ (flex-col) -->
+                <div id="ans-grid" class="flex flex-col gap-3 pb-4"></div>
             </div>
 
             <div class="border-t border-gray-200 pt-4 mt-2 shrink-0">
@@ -176,11 +188,9 @@
         let isSystemOpen = true; 
         let isAnsOpen = true;
 
-        // 🌟 รายชื่อกรรมการกลั่นกรองและชั้นที่รับผิดชอบ
+        // 🌟 รายชื่อกรรมการกลั่นกรอง (เหลือเพียง นายพีระศิน ไชยศร ท่านเดียว)
         const REVIEWERS = {
-            "นายพีระศิน ไชยศร": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"], 
-            "นางสุรินรัตน์ พรมราช": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"],
-            "นางสาวศศิธร พรหมประเสริฐ": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"]
+            "นายพีระศิน ไชยศร": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"]
         };
         
         let isMasterReviewer = false;
@@ -256,7 +266,6 @@
                 if (res.status === 'success') {
                     testBankData = res.data;
                     
-                    // ตั้งค่าสถานะเปิด-ปิด 2 สวิตช์
                     isSystemOpen = res.testbankStatus !== undefined ? res.testbankStatus : true;
                     isAnsOpen = res.answerkeyStatus !== undefined ? res.answerkeyStatus : true;
 
@@ -280,7 +289,6 @@
             }
         }
 
-        // 🌟 เปลี่ยนสถานะเปิด-ปิด
         function toggleTestBankSystem(menuId, isOpen) {
             if (menuId === 'sys_testbank_status') {
                 document.getElementById('sys-testbank-status-text').textContent = isOpen ? 'เปิด' : 'ปิด';
@@ -315,7 +323,11 @@
                 gradeStats[g] = { waiting: 0, reviewing: 0, approved: 0, revising: 0 };
             });
 
+            // 🌟 คำนวณสถิติสถานะการส่งเฉลยเฉพาะวิชาเลือกตอบ
+            let ansStats = { total: 0, submitted: 0, pending: 0 };
+
             testBankData.forEach(item => {
+                // คำนวณสถิติภาพรวม
                 let status = '';
                 if (!item.pdfUrl) status = 'waiting';
                 else if (item.reviewStatus === 'อนุมัติ') status = 'approved';
@@ -329,9 +341,40 @@
                 if (matchedGrade) {
                     gradeStats[matchedGrade][status]++;
                 }
+
+                // คำนวณสถิติเฉลย
+                let qCountText = String(item.questionCount || '');
+                if (qCountText.includes('เลือกตอบ')) {
+                    ansStats.total++;
+                    if (item.answerKey && item.answerKey.trim().length > 5) {
+                        ansStats.submitted++;
+                    } else {
+                        ansStats.pending++;
+                    }
+                }
             });
 
+            // 🌟 แทรก Dashboard การส่งเฉลยไว้ด้านบนสุด
             container.innerHTML = `
+                <!-- Dashboard เฉลยคำตอบ -->
+                <h4 class="font-bold text-navy-900 mb-3 mt-2 text-sm"><i class="fa-solid fa-list-check text-green-500 mr-2"></i>สถานะการส่งเฉลยคำตอบ (นับเฉพาะข้อสอบที่มีรูปแบบเลือกตอบ)</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 flex justify-between items-center shadow-sm">
+                        <div><p class="text-xs text-blue-600 font-bold">ต้องส่งเฉลยทั้งหมด</p><h4 class="text-2xl font-black text-blue-900">${ansStats.total} <span class="text-sm font-medium">รายการ</span></h4></div>
+                        <i class="fa-solid fa-file-circle-question text-3xl text-blue-300"></i>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 flex justify-between items-center shadow-sm">
+                        <div><p class="text-xs text-green-600 font-bold">ส่งเฉลยแล้ว</p><h4 class="text-2xl font-black text-green-900">${ansStats.submitted} <span class="text-sm font-medium">รายการ</span></h4></div>
+                        <i class="fa-solid fa-check-circle text-3xl text-green-300"></i>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex justify-between items-center shadow-sm">
+                        <div><p class="text-xs text-amber-600 font-bold">รอส่งเฉลย</p><h4 class="text-2xl font-black text-amber-900">${ansStats.pending} <span class="text-sm font-medium">รายการ</span></h4></div>
+                        <i class="fa-solid fa-clock text-3xl text-amber-300"></i>
+                    </div>
+                </div>
+
+                <!-- Dashboard ภาพรวมสถานะข้อสอบ -->
+                <h4 class="font-bold text-navy-900 mb-3 text-sm"><i class="fa-solid fa-chart-pie text-gold-500 mr-2"></i>สถานะการจัดทำ/กลั่นกรองข้อสอบ</h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                         <h4 class="font-bold text-navy-900 mb-2 text-center text-sm bg-slate-50 py-1.5 rounded-lg border border-slate-100">สัดส่วนสถานะภาพรวม</h4>
@@ -352,19 +395,8 @@
             setTimeout(() => {
                 Chart.register(ChartDataLabels);
 
-                const colors = {
-                    waiting: '#94a3b8',   
-                    reviewing: '#f59e0b', 
-                    approved: '#22c55e',  
-                    revising: '#ef4444'   
-                };
-
-                const labels = {
-                    waiting: 'รอส่งไฟล์',
-                    reviewing: 'กำลังกลั่นกรอง',
-                    approved: 'อนุมัติ',
-                    revising: 'ปรับปรุง'
-                };
+                const colors = { waiting: '#94a3b8', reviewing: '#f59e0b', approved: '#22c55e', revising: '#ef4444' };
+                const labels = { waiting: 'รอส่งไฟล์', reviewing: 'กำลังกลั่นกรอง', approved: 'อนุมัติ', revising: 'ปรับปรุง' };
 
                 const pieCtx = document.getElementById('overallPieChart').getContext('2d');
                 if(pieChartInstance) pieChartInstance.destroy(); 
@@ -376,24 +408,14 @@
                         datasets: [{
                             data: [overall.waiting, overall.reviewing, overall.approved, overall.revising],
                             backgroundColor: [colors.waiting, colors.reviewing, colors.approved, colors.revising],
-                            borderWidth: 2,
-                            borderColor: '#ffffff'
+                            borderWidth: 2, borderColor: '#ffffff'
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '50%',
+                        responsive: true, maintainAspectRatio: false, cutout: '50%',
                         plugins: {
-                            legend: { 
-                                position: 'bottom', 
-                                labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, padding: 15 } 
-                            },
-                            datalabels: {
-                                color: '#ffffff',
-                                font: { family: 'Sarabun', weight: 'bold', size: 14 },
-                                formatter: (value) => value > 0 ? value : '' 
-                            }
+                            legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, padding: 15 } },
+                            datalabels: { color: '#ffffff', font: { family: 'Sarabun', weight: 'bold', size: 14 }, formatter: (value) => value > 0 ? value : '' }
                         }
                     }
                 });
@@ -404,30 +426,21 @@
                 const datasets = ['waiting', 'reviewing', 'approved', 'revising'].map(status => ({
                     label: labels[status],
                     data: grades.map(g => gradeStats[g][status]),
-                    backgroundColor: colors[status],
-                    borderRadius: 4
+                    backgroundColor: colors[status], borderRadius: 4
                 }));
 
                 barChartInstance = new Chart(barCtx, {
                     type: 'bar',
-                    data: {
-                        labels: grades,
-                        datasets: datasets
-                    },
+                    data: { labels: grades, datasets: datasets },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         scales: {
                             x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Sarabun', weight: 'bold' } } },
                             y: { stacked: true, border: { display: false }, ticks: { precision: 0, font: { family: 'Sarabun' } } }
                         },
                         plugins: {
                             legend: { display: false }, 
-                            datalabels: {
-                                color: '#ffffff',
-                                font: { family: 'Sarabun', weight: 'bold', size: 12 },
-                                formatter: (value) => value > 0 ? value : '' 
-                            }
+                            datalabels: { color: '#ffffff', font: { family: 'Sarabun', weight: 'bold', size: 12 }, formatter: (value) => value > 0 ? value : '' }
                         }
                     }
                 });
@@ -450,12 +463,22 @@
                 isMyReviewGrade(d.grade)
             );
 
-            // ใช้ตัวกรองถ้าเป็นกรรมการ
+            // ใช้ตัวกรองระดับชั้นถ้าเป็นกรรมการ
             if (isMasterReviewer) {
                 const selectedGrade = document.getElementById('master-grade-filter').value;
                 if (selectedGrade !== 'all') {
                     visibleData = visibleData.filter(item => item.grade === selectedGrade);
                 }
+            }
+
+            // 🌟 ใช้ตัวกรองประเภทข้อสอบที่มีเฉลยแล้ว
+            const ansFilter = document.getElementById('ans-filter').value;
+            if (ansFilter === 'has_ans') {
+                visibleData = visibleData.filter(item => {
+                    let isSelectType = String(item.questionCount || '').includes('เลือกตอบ');
+                    let hasAns = item.answerKey && item.answerKey.trim().length > 5;
+                    return isSelectType && hasAns;
+                });
             }
 
             if (visibleData.length === 0) {
@@ -467,38 +490,23 @@
                 const isMyExam = item.teacherName && item.teacherName.includes(currentUser.name);
                 const canReview = isMyReviewGrade(item.grade);
 
-                let statusBadge = '';
-                let statusColor = '';
-                
-                let commentBg = 'bg-amber-50'; 
-                let commentBorder = 'border-amber-100'; 
-                let commentTitle = 'text-amber-700'; 
-                let commentIcon = 'text-amber-500'; 
-                let commentText = 'text-amber-600';
+                let statusBadge = ''; let statusColor = '';
+                let commentBg = 'bg-amber-50'; let commentBorder = 'border-amber-100'; let commentTitle = 'text-amber-700'; let commentIcon = 'text-amber-500'; let commentText = 'text-amber-600';
 
                 if (!item.pdfUrl) { 
-                    statusBadge = 'รอส่งไฟล์'; 
-                    statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
+                    statusBadge = 'รอส่งไฟล์'; statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
                     commentBg = 'bg-gray-50'; commentBorder = 'border-gray-100'; commentTitle = 'text-gray-700'; commentIcon = 'text-gray-500'; commentText = 'text-gray-600';
                 }
-                else if (item.reviewStatus === 'กำลังกลั่นกรอง') { 
-                    statusBadge = 'กำลังกลั่นกรอง'; 
-                    statusColor = 'bg-amber-100 text-amber-700 border-amber-300'; 
-                }
+                else if (item.reviewStatus === 'กำลังกลั่นกรอง') { statusBadge = 'กำลังกลั่นกรอง'; statusColor = 'bg-amber-100 text-amber-700 border-amber-300'; }
                 else if (item.reviewStatus === 'อนุมัติ') { 
-                    statusBadge = 'อนุมัติ'; 
-                    statusColor = 'bg-green-100 text-green-700 border-green-300'; 
+                    statusBadge = 'อนุมัติ'; statusColor = 'bg-green-100 text-green-700 border-green-300'; 
                     commentBg = 'bg-green-50'; commentBorder = 'border-green-100'; commentTitle = 'text-green-700'; commentIcon = 'text-green-500'; commentText = 'text-green-600';
                 }
                 else if (item.reviewStatus === 'ปรับปรุง') { 
-                    statusBadge = 'ปรับปรุง'; 
-                    statusColor = 'bg-red-100 text-red-700 border-red-300'; 
+                    statusBadge = 'ปรับปรุง'; statusColor = 'bg-red-100 text-red-700 border-red-300'; 
                     commentBg = 'bg-red-50'; commentBorder = 'border-red-100'; commentTitle = 'text-red-700'; commentIcon = 'text-red-500'; commentText = 'text-red-600';
                 }
-                else { 
-                    statusBadge = item.reviewStatus || 'กำลังกลั่นกรอง'; 
-                    statusColor = 'bg-amber-100 text-amber-700 border-amber-300'; 
-                }
+                else { statusBadge = item.reviewStatus || 'กำลังกลั่นกรอง'; statusColor = 'bg-amber-100 text-amber-700 border-amber-300'; }
 
                 const card = document.createElement('div');
                 card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-5 hover:shadow-md transition-shadow relative overflow-hidden";
@@ -518,7 +526,6 @@
                     `;
                 }
 
-                // 🌟 ระบบการส่งเฉลย (เช็คคำว่า "เลือกตอบ" ในคอลัมน์ "จำนวนข้อ")
                 let ansSection = "";
                 let exportBtn = "";
                 
@@ -601,7 +608,6 @@
             });
         }
 
-        // --- ส่วนจัดการ Upload และ นับหน้า PDF ---
         function triggerUploadExam(id) {
             uploadExamId = id;
             document.getElementById('examPdfUploader').click();
@@ -628,12 +634,7 @@
                     fetch(GAS_API_URL, {
                         method: 'POST',
                         body: JSON.stringify({
-                            action: 'uploadTestBankFile',
-                            id: uploadExamId,
-                            teacherName: currentUser.name,
-                            base64: cleanBase64,
-                            filename: file.name,
-                            pageCount: pageCount
+                            action: 'uploadTestBankFile', id: uploadExamId, teacherName: currentUser.name, base64: cleanBase64, filename: file.name, pageCount: pageCount
                         })
                     }).then(r => r.json()).then(res => {
                         if(res.status === 'success') {
@@ -649,7 +650,6 @@
             e.target.value = '';
         }
 
-        // --- ส่วนการกลั่นกรอง (กรรมการ) ---
         function toggleReviewBox(id) {
             document.getElementById('review-box-' + id).classList.toggle('hidden');
         }
@@ -669,7 +669,6 @@
             });
         }
 
-        // ================= 🌟 ฟังก์ชันส่งเฉลยคำตอบ (Modal) =================
         let currentAnswers = {};
         
         function openAnswerKeyModal(id, subject, grade, savedDataStr) {
@@ -687,7 +686,7 @@
             
             for (let i = 1; i <= maxQ; i++) {
                 const box = document.createElement('div');
-                box.className = "flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-sm mb-4 break-inside-avoid";
+                box.className = "flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-sm";
                 
                 let numLabel = `<span class="w-8 font-black text-navy-900 text-right pr-2 border-r border-slate-300">${i}.</span>`;
                 
@@ -741,30 +740,20 @@
             });
         }
 
-        // ================= 🌟 ฟังก์ชันส่งออกเฉลยเป็น Excel (CSV) =================
         function exportAnswerKeyCSV(savedDataStr, subject, grade) {
             let answers = {};
             try { answers = JSON.parse(decodeURIComponent(savedDataStr)); } catch(e) { return; }
-            
             const maxQ = (grade === 'ป.2') ? 20 : 30;
-            
-            // \uFEFF คือ BOM เพื่อให้เปิดใน Excel ภาษาไทยได้โดยตรงไม่เพี้ยน
             let csvContent = "\uFEFFKey Letter,Question Number,Response/Mapping,Point Value,Tags\n";
-            
             for (let i = 1; i <= maxQ; i++) {
                 let ans = answers[i] || "";
                 csvContent += `,${i},${ans},1,\n`;
             }
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `เฉลยข้อสอบ_${subject}_${grade}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            a.href = url; a.download = `เฉลยข้อสอบ_${subject}_${grade}.csv`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
