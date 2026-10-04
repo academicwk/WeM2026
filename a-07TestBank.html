@@ -19,7 +19,7 @@
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Sarabun', 'sans-serif'] }, colors: { navy: { 800: '#1e3a8a', 900: '#0f172a' }, gold: { 400: '#fbbf24', 500: '#f59e0b' } } } } }
     </script>
     
-    <!-- 🌟 สไตล์สำหรับปุ่มวงกลมเฉลยคำตอบ -->
+    <!-- สไตล์สำหรับปุ่มวงกลมเฉลยคำตอบ -->
     <style>
         .ans-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; transition: all 0.2s; border: 2px solid #e2e8f0; color: #64748b; }
         .ans-circle:hover { border-color: #cbd5e1; background-color: #f8fafc; }
@@ -50,15 +50,26 @@
 
         <div class="flex-1 p-6 overflow-y-auto bg-slate-50 relative">
             
-            <!-- 🌟 Master Switch (แสดงเฉพาะพีระศิน) -->
+            <!-- 🌟 Master Switches (แสดงเฉพาะพีระศิน แยก 2 ปุ่มอิสระ) -->
             <div class="max-w-6xl mx-auto mb-4 flex justify-end">
-                <div id="master-switch-container" class="hidden bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
-                    <span class="text-sm font-bold text-gray-700"><i class="fa-solid fa-power-off text-blue-500 mr-1"></i> เปิด-ปิดการส่งข้อสอบและเฉลย:</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="sys-testbank-toggle" class="sr-only peer" onchange="toggleTestBankSystem(this.checked)">
-                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
-                    <span id="sys-testbank-status-text" class="text-xs font-bold text-gray-500 w-10">เปิด</span>
+                <div id="master-switch-container" class="hidden bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex flex-wrap items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-bold text-gray-700"><i class="fa-solid fa-cloud-arrow-up text-blue-500 mr-1"></i> ส่งข้อสอบ:</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="sys-testbank-toggle" class="sr-only peer" onchange="toggleTestBankSystem('sys_testbank_status', this.checked)">
+                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                        <span id="sys-testbank-status-text" class="text-xs font-bold w-10">เปิด</span>
+                    </div>
+
+                    <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
+                        <span class="text-sm font-bold text-gray-700"><i class="fa-solid fa-list-check text-green-500 mr-1"></i> ส่งเฉลย:</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="sys-answerkey-toggle" class="sr-only peer" onchange="toggleTestBankSystem('sys_answerkey_status', this.checked)">
+                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                        <span id="sys-answerkey-status-text" class="text-xs font-bold w-10">เปิด</span>
+                    </div>
                 </div>
             </div>
 
@@ -161,11 +172,13 @@
         let currentUser = null;
         let testBankData = [];
         let uploadExamId = null;
+        
         let isSystemOpen = true; 
+        let isAnsOpen = true;
 
         // 🌟 รายชื่อกรรมการกลั่นกรองและชั้นที่รับผิดชอบ
         const REVIEWERS = {
-            "นายพีระศิน ไชยศร": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"], // สามารถดูกรองได้ทุกชั้น
+            "นายพีระศิน ไชยศร": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"], 
             "นางสุรินรัตน์ พรมราช": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"],
             "นางสาวศศิธร พรหมประเสริฐ": ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "อ.1", "อ.2", "อ.3"]
         };
@@ -243,12 +256,18 @@
                 if (res.status === 'success') {
                     testBankData = res.data;
                     
-                    // ตั้งค่าสถานะเปิด-ปิดระบบ
+                    // ตั้งค่าสถานะเปิด-ปิด 2 สวิตช์
                     isSystemOpen = res.testbankStatus !== undefined ? res.testbankStatus : true;
+                    isAnsOpen = res.answerkeyStatus !== undefined ? res.answerkeyStatus : true;
+
                     if(document.getElementById('sys-testbank-toggle')) {
                         document.getElementById('sys-testbank-toggle').checked = isSystemOpen;
                         document.getElementById('sys-testbank-status-text').textContent = isSystemOpen ? 'เปิด' : 'ปิด';
-                        document.getElementById('sys-testbank-status-text').className = isSystemOpen ? 'text-xs font-bold text-green-600 w-10' : 'text-xs font-bold text-red-600 w-10';
+                        document.getElementById('sys-testbank-status-text').className = isSystemOpen ? 'text-xs font-bold text-blue-600 w-10' : 'text-xs font-bold text-red-600 w-10';
+                        
+                        document.getElementById('sys-answerkey-toggle').checked = isAnsOpen;
+                        document.getElementById('sys-answerkey-status-text').textContent = isAnsOpen ? 'เปิด' : 'ปิด';
+                        document.getElementById('sys-answerkey-status-text').className = isAnsOpen ? 'text-xs font-bold text-green-600 w-10' : 'text-xs font-bold text-red-600 w-10';
                     }
 
                     renderDashboard(); 
@@ -261,16 +280,21 @@
             }
         }
 
-        // 🌟 เปลี่ยนสถานะเปิด-ปิดระบบรับข้อสอบ
-        function toggleTestBankSystem(isOpen) {
-            document.getElementById('sys-testbank-status-text').textContent = isOpen ? 'เปิด' : 'ปิด';
-            document.getElementById('sys-testbank-status-text').className = isOpen ? 'text-xs font-bold text-green-600 w-10' : 'text-xs font-bold text-red-600 w-10';
+        // 🌟 เปลี่ยนสถานะเปิด-ปิด
+        function toggleTestBankSystem(menuId, isOpen) {
+            if (menuId === 'sys_testbank_status') {
+                document.getElementById('sys-testbank-status-text').textContent = isOpen ? 'เปิด' : 'ปิด';
+                document.getElementById('sys-testbank-status-text').className = isOpen ? 'text-xs font-bold text-blue-600 w-10' : 'text-xs font-bold text-red-600 w-10';
+            } else {
+                document.getElementById('sys-answerkey-status-text').textContent = isOpen ? 'เปิด' : 'ปิด';
+                document.getElementById('sys-answerkey-status-text').className = isOpen ? 'text-xs font-bold text-green-600 w-10' : 'text-xs font-bold text-red-600 w-10';
+            }
             
             fetch(GAS_API_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: 'sys_testbank_status', isEnabled: isOpen })
+                method: 'POST', body: JSON.stringify({ action: 'saveSetting', menuId: menuId, isEnabled: isOpen })
             }).then(r=>r.json()).then(res => {
                 if(res.status === 'success') {
-                    Swal.fire({ icon: 'success', title: isOpen ? 'เปิดระบบรับข้อสอบ' : 'ปิดระบบรับข้อสอบ', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
+                    Swal.fire({ icon: 'success', title: 'อัปเดตสถานะสำเร็จ', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
                     fetchTestBankData(); 
                 }
             });
@@ -329,10 +353,10 @@
                 Chart.register(ChartDataLabels);
 
                 const colors = {
-                    waiting: '#94a3b8',   // สีเทา
-                    reviewing: '#f59e0b', // สีส้ม
-                    approved: '#22c55e',  // สีเขียว
-                    revising: '#ef4444'   // สีแดง
+                    waiting: '#94a3b8',   
+                    reviewing: '#f59e0b', 
+                    approved: '#22c55e',  
+                    revising: '#ef4444'   
                 };
 
                 const labels = {
@@ -494,18 +518,22 @@
                     `;
                 }
 
-                // 🌟 ระบบการส่งเฉลย
+                // 🌟 ระบบการส่งเฉลย (เช็คคำว่า "เลือก" หรือ "ปรนัย" ให้ครอบคลุมทุกคอลัมน์)
                 let ansSection = "";
                 let exportBtn = "";
                 
-                if (item.examType === 'เลือกตอบ' || item.examType === 'ผสม (เลือกตอบ + เขียนตอบ)') {
+                let formatText = String(item.examFormat || '');
+                let typeText = String(item.examType || '');
+                let isSelectType = formatText.includes('เลือก') || formatText.includes('ปรนัย') || typeText.includes('เลือก') || typeText.includes('ปรนัย');
+
+                if (isSelectType) {
                     let hasAns = item.answerKey && item.answerKey.trim().length > 5;
                     let ansBadge = hasAns 
                         ? `<span class="px-2 py-0.5 bg-green-100 text-green-700 border border-green-200 rounded text-[10px] font-bold shadow-sm"><i class="fa-solid fa-check-circle"></i> ส่งเฉลยแล้ว</span>` 
                         : `<span class="px-2 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded text-[10px] font-bold shadow-sm"><i class="fa-solid fa-circle-exclamation"></i> รอการส่งเฉลย</span>`;
                     
                     let ansBtn = "";
-                    if (isSystemOpen && isMyExam) {
+                    if (isAnsOpen && isMyExam) {
                         let ansDataStr = encodeURIComponent(item.answerKey || '{}');
                         ansBtn = `<button onclick="openAnswerKeyModal('${item.id}', '${item.subjectName}', '${item.grade}', '${ansDataStr}')" class="mt-2 py-1.5 px-3 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 rounded-lg text-[11px] font-bold shadow-sm transition-colors flex items-center gap-1.5"><i class="fa-solid fa-list-check"></i> ${hasAns ? 'แก้ไขเฉลยคำตอบ' : 'ส่งเฉลยคำตอบ'}</button>`;
                     }
