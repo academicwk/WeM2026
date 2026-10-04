@@ -155,7 +155,7 @@
                     <i class="fa-solid fa-circle-info text-lg"></i> คลิกเลือกวงกลมตัวอักษรเพื่อกำหนดเป็นเฉลยที่ถูกต้อง (เลือกได้ข้อละ 1 คำตอบ)
                 </div>
                 <!-- ตารางข้อสอบ จะถูกสร้างด้วย JS -->
-                <div id="ans-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4"></div>
+                <div id="ans-grid" class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 pb-4"></div>
             </div>
 
             <div class="border-t border-gray-200 pt-4 mt-2 shrink-0">
@@ -687,7 +687,7 @@
             
             for (let i = 1; i <= maxQ; i++) {
                 const box = document.createElement('div');
-                box.className = "flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-sm";
+                box.className = "flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-sm mb-4 break-inside-avoid";
                 
                 let numLabel = `<span class="w-8 font-black text-navy-900 text-right pr-2 border-r border-slate-300">${i}.</span>`;
                 
