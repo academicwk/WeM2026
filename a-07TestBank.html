@@ -518,13 +518,12 @@
                     `;
                 }
 
-                // 🌟 ระบบการส่งเฉลย (เช็คคำว่า "เลือก" หรือ "ปรนัย" ให้ครอบคลุมทุกคอลัมน์)
+                // 🌟 ระบบการส่งเฉลย (เช็คคำว่า "เลือกตอบ" ในคอลัมน์ "จำนวนข้อ")
                 let ansSection = "";
                 let exportBtn = "";
                 
-                let formatText = String(item.examFormat || '');
-                let typeText = String(item.examType || '');
-                let isSelectType = formatText.includes('เลือก') || formatText.includes('ปรนัย') || typeText.includes('เลือก') || typeText.includes('ปรนัย');
+                let qCountText = String(item.questionCount || '');
+                let isSelectType = qCountText.includes('เลือกตอบ');
 
                 if (isSelectType) {
                     let hasAns = item.answerKey && item.answerKey.trim().length > 5;
