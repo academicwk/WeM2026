@@ -675,7 +675,8 @@
             document.getElementById('ans-id').value = id;
             document.getElementById('ans-title').textContent = `${subject} (${grade})`;
             
-            const maxQ = (grade === 'ป.2') ? 20 : 30;
+            // 🌟 แก้ไข: ใช้ .includes('ป.2') เพื่อเช็คว่ามีคำว่า ป.2 อยู่ในชื่อชั้นหรือไม่ (ครอบคลุม ป.2 ห้อง 1, ป.2 ห้อง 2 ฯลฯ)
+            const maxQ = (String(grade).includes('ป.2')) ? 20 : 30;
             document.getElementById('ans-max-q').value = maxQ;
 
             try { currentAnswers = JSON.parse(decodeURIComponent(savedDataStr)) || {}; } 
@@ -686,7 +687,8 @@
             
             for (let i = 1; i <= maxQ; i++) {
                 const box = document.createElement('div');
-                box.className = "flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-sm";
+                // ใส่ mb-4 break-inside-avoid เพื่อให้เรียงบนลงล่างได้อย่างสวยงาม
+                box.className = "flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-sm mb-4 break-inside-avoid";
                 
                 let numLabel = `<span class="w-8 font-black text-navy-900 text-right pr-2 border-r border-slate-300">${i}.</span>`;
                 
@@ -743,17 +745,27 @@
         function exportAnswerKeyCSV(savedDataStr, subject, grade) {
             let answers = {};
             try { answers = JSON.parse(decodeURIComponent(savedDataStr)); } catch(e) { return; }
-            const maxQ = (grade === 'ป.2') ? 20 : 30;
+            
+            // 🌟 แก้ไข: ใช้ .includes('ป.2') เหมือนกัน เพื่อให้ส่งออกไฟล์มาแค่ 20 ข้อ
+            const maxQ = (String(grade).includes('ป.2')) ? 20 : 30;
+            
+            // \uFEFF คือ BOM เพื่อให้เปิดใน Excel ภาษาไทยได้โดยตรงไม่เพี้ยน
             let csvContent = "\uFEFFKey Letter,Question Number,Response/Mapping,Point Value,Tags\n";
+            
             for (let i = 1; i <= maxQ; i++) {
                 let ans = answers[i] || "";
                 csvContent += `,${i},${ans},1,\n`;
             }
+
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
+            
             const a = document.createElement('a');
-            a.href = url; a.download = `เฉลยข้อสอบ_${subject}_${grade}.csv`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            a.href = url;
+            a.download = `เฉลยข้อสอบ_${subject}_${grade}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
